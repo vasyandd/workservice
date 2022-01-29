@@ -25,7 +25,6 @@
         <mapping class="work.service.entity.Contract" />
         <mapping class="work.service.entity.DeliveryStatement" />
         <mapping class="work.service.entity.Product" />
-        <mapping class="work.service.entity.Shipment" />
         <mapping class="work.service.entity.Notification" />
 
     </session-factory>
