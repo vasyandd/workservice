@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public interface DeliveryStatementRepository {
 
-    DeliveryStatement addDeliveryStatement(DeliveryStatement deliveryStatement);
+    boolean addDeliveryStatement(DeliveryStatement deliveryStatement);
 
     Collection<DeliveryStatement> getDeliveryStatementsByContract(Contract contract);
 

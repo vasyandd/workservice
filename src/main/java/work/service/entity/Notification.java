@@ -15,10 +15,9 @@ public class Notification {
     @Column(nullable = false)
     private Short number;
 
-    @Temporal(value = TemporalType.DATE)
     private LocalDate date;
 
-    @Column(nullable = false)
+    @OneToOne
     private Product product;
 
     @Column(nullable = false, name = "product_number")
@@ -27,7 +26,7 @@ public class Notification {
     @Column(nullable = false, name = "product_quantity")
     private String productQuantity;
 
-    @Column(nullable = false)
+    @OneToOne
     private Contract contract;
 
     public Notification(Short number, Product product, String productNumber,

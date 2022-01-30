@@ -16,17 +16,17 @@ public class Contract {
     @Column(nullable = false)
     private String number;
 
-    @Temporal(value = TemporalType.DATE)
     private LocalDate dateOfConclusion;
-    private Contract parentContract;
+
+    private Long parentId;
 
     public Contract() {
     }
 
-    public Contract(String number, LocalDate dateOfConclusion, Contract parentContract) {
+    public Contract(String number, LocalDate dateOfConclusion, Long parentId) {
         this.number = number;
         this.dateOfConclusion = dateOfConclusion;
-        this.parentContract = parentContract;
+        this.parentId = parentId;
     }
 
     public Long getId() {
@@ -53,11 +53,11 @@ public class Contract {
         this.dateOfConclusion = dateOfConclusion;
     }
 
-    public Contract getParentContract() {
-        return parentContract;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setParentContract(Contract parentContract) {
-        this.parentContract = parentContract;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 }
