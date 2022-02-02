@@ -22,10 +22,10 @@
         <property name="hibernate.connection.characterEncoding">utf8</property>
         <property name="hibernate.connection.useUnicode">true</property>
 
-        <mapping class="work.service.entity.Contract" />
-        <mapping class="work.service.entity.DeliveryStatement" />
-        <mapping class="work.service.entity.Product" />
-        <mapping class="work.service.entity.Notification" />
+        <mapping class="work.app.contract.Contract" />
+        <mapping class="work.app.delivery_statement.DeliveryStatement" />
+        <mapping class="work.app.product.Product" />
+        <mapping class="work.app.notification.Notification" />
 
     </session-factory>
 </hibernate-configuration>
