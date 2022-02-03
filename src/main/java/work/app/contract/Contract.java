@@ -3,6 +3,7 @@ package work.app.contract;
 import work.app.product.Product;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,20 +21,24 @@ public class Contract {
 
     private LocalDate dateOfConclusion;
 
+    private BigInteger price;
+
     @OneToOne
     @JoinColumn(name = "parent_id")
     private Contract parentContract;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<Product> products = new ArrayList<>();
+    private boolean isCompleted;
+
+    private String note;
 
     public Contract() {
     }
 
-    public Contract(String number, LocalDate dateOfConclusion, Contract parentContract) {
+    public Contract(String number, LocalDate dateOfConclusion, Contract parentContract, BigInteger price) {
         this.number = number;
         this.dateOfConclusion = dateOfConclusion;
         this.parentContract = parentContract;
+        this.price = price;
     }
 
     public Long getId() {
@@ -68,11 +73,19 @@ public class Contract {
         this.parentContract = parentContract;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public BigInteger getPrice() {
+        return price;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setPrice(BigInteger price) {
+        this.price = price;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
     }
 }

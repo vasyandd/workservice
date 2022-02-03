@@ -32,6 +32,30 @@ public class MainFrame {
     private JTextField parentContract;
     private JButton saveContractButton;
     private JButton contractBackButton;
+    private JTextField contractPrice;
+    private JTextArea contractNote;
+    private JPanel productPanel;
+    private JTextField dsNumber;
+    private JTextField textField1;
+    private JTextField textField2;
+    private JTextField textField3;
+    private JTextField textField4;
+    private JTextArea textArea1;
+    private JTextField textField5;
+    private JTextField textField6;
+    private JTextField textField7;
+    private JTextField textField8;
+    private JTextField textField9;
+    private JTextField textField10;
+    private JTextField textField11;
+    private JTextField textField12;
+    private JTextField textField13;
+    private JTextField textField14;
+    private JTextField textField15;
+    private JTextField textField16;
+    private JTextField textField17;
+    private JButton saveDsButton;
+    private JButton dsBackButton;
     private final ActionListener BACK_TO_MAIN_MENU = e -> {
         cards.removeAll();
         cards.add(buttons);
@@ -49,22 +73,21 @@ public class MainFrame {
         JFrame jFrame = new JFrame(TITLE);
         jFrame.setContentPane(panel);
         jFrame.setResizable(false);
-        jFrame.setLocation(456, 456);
+        jFrame.setLocation(156, 156);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.pack();
         jFrame.setVisible(true);
         addButtonListeners();
-
-
-
     }
 
     private void addButtonListeners() {
         contractBackButton.addActionListener(BACK_TO_MAIN_MENU);
         notificationBackButton.addActionListener(BACK_TO_MAIN_MENU);
+        dsBackButton.addActionListener(BACK_TO_MAIN_MENU);
         notificationButton.addActionListener(repaintToPanel(notificationPanel));
         contractButton.addActionListener(repaintToPanel(contractPanel));
         dsButton.addActionListener(repaintToPanel(deliveryShipmentPanel));
+        productButton.addActionListener(repaintToPanel(contractPanel));
         saveNotificationButton.addActionListener(e -> {
 //                Notification notification = new Notification();
 //                notification.setContract(new Contract(notificationContract.getText(), LocalDate.now(), null));

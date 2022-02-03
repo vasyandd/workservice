@@ -4,6 +4,7 @@ import work.app.contract.Contract;
 import work.app.product.Product;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.time.Month;
 import java.util.*;
 
@@ -17,14 +18,20 @@ public class DeliveryStatement {
 
     @OneToOne
     @JoinColumn(name = "contract_id")
+    @Column(nullable = false)
     private Contract contract;
 
     @OneToOne
     @JoinColumn(name = "product_id")
+    @Column(nullable = false)
     private Product product;
 
     @Column(nullable = false)
     private Short period;
+
+    private Integer number;
+
+    private BigInteger priceForOneProduct;
 
     private Integer scheduledProductQuantity;
 
@@ -38,6 +45,94 @@ public class DeliveryStatement {
     @MapKeyEnumerated(value = EnumType.STRING)
     private Map<Month, Short> actualShipment = new HashMap<>();
 
+    private boolean isClosed;
+
+    private String note;
+
     public DeliveryStatement() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Contract getContract() {
+        return contract;
+    }
+
+    public void setContract(Contract contract) {
+        this.contract = contract;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Short getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Short period) {
+        this.period = period;
+    }
+
+    public BigInteger getPriceForOneProduct() {
+        return priceForOneProduct;
+    }
+
+    public void setPriceForOneProduct(BigInteger priceForOneProduct) {
+        this.priceForOneProduct = priceForOneProduct;
+    }
+
+    public Integer getScheduledProductQuantity() {
+        return scheduledProductQuantity;
+    }
+
+    public void setScheduledProductQuantity(Integer scheduledProductQuantity) {
+        this.scheduledProductQuantity = scheduledProductQuantity;
+    }
+
+    public Integer getActualProductQuantity() {
+        return actualProductQuantity;
+    }
+
+    public void setActualProductQuantity(Integer actualProductQuantity) {
+        this.actualProductQuantity = actualProductQuantity;
+    }
+
+    public Map<Month, Short> getScheduledShipment() {
+        return scheduledShipment;
+    }
+
+    public void setScheduledShipment(Map<Month, Short> scheduledShipment) {
+        this.scheduledShipment = scheduledShipment;
+    }
+
+    public Map<Month, Short> getActualShipment() {
+        return actualShipment;
+    }
+
+    public void setActualShipment(Map<Month, Short> actualShipment) {
+        this.actualShipment = actualShipment;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }
