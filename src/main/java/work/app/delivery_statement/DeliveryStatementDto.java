@@ -1,75 +1,40 @@
 package work.app.delivery_statement;
 
-import work.app.contract.Contract;
-import work.app.product.Product;
-
-import javax.persistence.*;
 import java.math.BigInteger;
 import java.time.Month;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-@Entity
-@Table(name = "delivery_statement")
-public class DeliveryStatement {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "contract_id")
-    @Column(nullable = false)
-    private Contract contract;
-
-    @OneToOne
-    @JoinColumn(name = "product_id")
-    @Column(nullable = false)
-    private Product product;
-
-    @Column(nullable = false)
+public class DeliveryStatementDto {
+    private String contractNumber;
+    private String productNumber;
     private Short period;
-
     private Integer number;
-
     private BigInteger priceForOneProduct;
-
     private Integer scheduledProductQuantity;
-
     private Integer actualProductQuantity;
-
-    @ElementCollection
-    @MapKeyEnumerated(value = EnumType.STRING)
     private Map<Month, Integer> scheduledShipment = new HashMap<>();
-
-    @ElementCollection
-    @MapKeyEnumerated(value = EnumType.STRING)
     private Map<Month, Integer> actualShipment = new HashMap<>();
-
     private boolean isClosed;
-
     private String note;
 
-    public DeliveryStatement() {
+    public DeliveryStatementDto() {
     }
 
-    public Long getId() {
-        return id;
+    public String getContractNumber() {
+        return contractNumber;
     }
 
-    public Contract getContract() {
-        return contract;
+    public void setContractNumber(String contractNumber) {
+        this.contractNumber = contractNumber;
     }
 
-    public void setContract(Contract contract) {
-        this.contract = contract;
+    public String getProductNumber() {
+        return productNumber;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductNumber(String productNumber) {
+        this.productNumber = productNumber;
     }
 
     public Short getPeriod() {
@@ -78,6 +43,14 @@ public class DeliveryStatement {
 
     public void setPeriod(Short period) {
         this.period = period;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public BigInteger getPriceForOneProduct() {

@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public interface NotificationService {
 
-    Notification addNotification(Notification notification);
+    void saveNotification(NotificationDto notification);
 
     Collection<Notification> getAllNotifications();
 }
