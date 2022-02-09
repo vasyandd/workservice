@@ -39,7 +39,7 @@ public class DeliveryStatement {
 
     @ElementCollection
     @MapKeyEnumerated(value = EnumType.STRING)
-    private Map<Month, Integer> scheduledShipment = new HashMap<>();
+    private Map<Month, Integer> scheduledShipment;
 
     @ElementCollection
     @MapKeyEnumerated(value = EnumType.STRING)

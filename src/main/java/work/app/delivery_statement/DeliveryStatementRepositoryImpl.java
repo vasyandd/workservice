@@ -17,9 +17,11 @@ public class DeliveryStatementRepositoryImpl implements DeliveryStatementReposit
     }
 
     @Override
-    public boolean addDeliveryStatement(DeliveryStatement deliveryStatement) {
+    public boolean saveDeliveryStatement(DeliveryStatement deliveryStatement) {
         Session session = sessionFactory.openSession();
         session.getTransaction().begin();
+        Contract contract = session.getReference(Contract.class, deliveryStatement.getContract().getId());
+
         session.save(deliveryStatement);
         session.getTransaction().commit();
         return true;

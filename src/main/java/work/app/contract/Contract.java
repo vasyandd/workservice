@@ -1,12 +1,8 @@
 package work.app.contract;
 
-import work.app.product.Product;
-
 import javax.persistence.*;
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "contract")

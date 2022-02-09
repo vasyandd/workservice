@@ -87,6 +87,7 @@ public class MainFrame {
 
 
 
+
     public MainFrame(NotificationService notificationService, ContractService contractService,
                      ProductService productService, DeliveryStatementService deliveryStatementService) {
         this.contractService = contractService;
