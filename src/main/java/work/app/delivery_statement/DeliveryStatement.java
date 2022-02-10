@@ -1,12 +1,11 @@
 package work.app.delivery_statement;
 
-import work.app.contract.Contract;
-import work.app.product.Product;
-
 import javax.persistence.*;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.time.Month;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "delivery_statement")
@@ -16,18 +15,14 @@ public class DeliveryStatement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "contract_id")
-    @Column(nullable = false)
-    private Contract contract;
+    private String contractNumber;
 
-    @OneToOne
-    @JoinColumn(name = "product_id")
-    @Column(nullable = false)
-    private Product product;
+    private LocalDate contractDate;
+
+    private String productName;
 
     @Column(nullable = false)
-    private Short period;
+    private Integer period;
 
     private Integer number;
 
@@ -56,28 +51,37 @@ public class DeliveryStatement {
         return id;
     }
 
-    public Contract getContract() {
-        return contract;
+
+    public String getContractNumber() {
+        return contractNumber;
     }
 
-    public void setContract(Contract contract) {
-        this.contract = contract;
+    public void setContractNumber(String contractNumber) {
+        this.contractNumber = contractNumber;
     }
 
-    public Product getProduct() {
-        return product;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public Short getPeriod() {
+    public Integer getPeriod() {
         return period;
     }
 
-    public void setPeriod(Short period) {
+    public void setPeriod(Integer period) {
         this.period = period;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public BigInteger getPriceForOneProduct() {
@@ -100,8 +104,8 @@ public class DeliveryStatement {
         return actualProductQuantity;
     }
 
-    public void setActualProductQuantity(Integer actualProductQuantity) {
-        this.actualProductQuantity = actualProductQuantity;
+    public void increaseActualProductQuantityBy(Integer quantity) {
+        actualProductQuantity += actualProductQuantity;
     }
 
     public Map<Month, Integer> getScheduledShipment() {
@@ -134,5 +138,13 @@ public class DeliveryStatement {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public LocalDate getContractDate() {
+        return contractDate;
+    }
+
+    public void setContractDate(LocalDate contractDate) {
+        this.contractDate = contractDate;
     }
 }

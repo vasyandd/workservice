@@ -1,13 +1,9 @@
 package work.app.view;
 
-import work.app.contract.ContractDto;
-import work.app.contract.ContractService;
-import work.app.delivery_statement.DeliveryStatementDto;
+import work.app.delivery_statement.DeliveryStatement;
 import work.app.delivery_statement.DeliveryStatementService;
-import work.app.notification.NotificationDto;
+import work.app.notification.Notification;
 import work.app.notification.NotificationService;
-import work.app.product.ProductDto;
-import work.app.product.ProductService;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -46,7 +42,6 @@ public class MainFrame {
     private JButton contractBackButton;
     private JTextField contractPrice;
     private JTextArea contractNote;
-    private JPanel productPanel;
     private JTextField dsNumber;
     private JTextField dsProductNumber;
     private JTextField dsProductPrice;
@@ -68,6 +63,7 @@ public class MainFrame {
     private JTextField dsPeriod;
     private JButton saveDsButton;
     private JButton dsBackButton;
+    private JTextField dsContractDate;
     private JTextField productName;
     private JTextArea productDescription;
     private JButton saveProductButton;
@@ -80,19 +76,15 @@ public class MainFrame {
     };
 
     private NotificationService notificationService;
-    private ContractService contractService;
-    private ProductService productService;
     private DeliveryStatementService deliveryStatementService;
 
 
 
 
 
-    public MainFrame(NotificationService notificationService, ContractService contractService,
-                     ProductService productService, DeliveryStatementService deliveryStatementService) {
-        this.contractService = contractService;
-        this.productService = productService;
+    public MainFrame(NotificationService notificationService, DeliveryStatementService deliveryStatementService) {
         this.notificationService = notificationService;
+        this.deliveryStatementService = deliveryStatementService;
         JFrame jFrame = new JFrame(TITLE);
         jFrame.setContentPane(panel);
         jFrame.setResizable(false);
@@ -113,26 +105,9 @@ public class MainFrame {
         dsButton.addActionListener(repaintToPanel(deliveryShipmentPanel));
         productButton.addActionListener(repaintToPanel(contractPanel));
 
-        saveContractButton.addActionListener(e -> {
-            ContractDto contract = new ContractDto();
-            contract.setNumber(contractNumber.getText().trim());
-            contract.setDateOfConclusion(LocalDate.parse(contractDate.getText().trim(), DateTimeFormatter.ISO_LOCAL_DATE));
-            contract.setParentContract(parentContract.getText().trim());
-            contract.setPrice(new BigInteger(contractPrice.getText().trim()));
-            contract.setNote(contractNote.getText().trim());
-            contract.setCompleted(false);
-            contractService.saveContract(contract);
-        });
-
-        saveProductButton.addActionListener(e -> {
-            ProductDto product = new ProductDto();
-            product.setName(productName.getText().trim());
-            product.setDescription(productDescription.getText().trim());
-            productService.saveProduct(product);
-        });
 
         saveNotificationButton.addActionListener(e -> {
-            NotificationDto notification = new NotificationDto();
+            Notification notification = new Notification();
             notification.setContractNumber(notificationContractNumber.getText().trim());
             notification.setDate(LocalDate.parse(notificationDate.getText().trim(), DateTimeFormatter.ISO_LOCAL_DATE));
             notification.setNumber(Integer.valueOf(notificationNumber.getText().trim()));
@@ -143,11 +118,12 @@ public class MainFrame {
         });
 
         saveDsButton.addActionListener(e -> {
-            DeliveryStatementDto deliveryStatement = new DeliveryStatementDto();
+            DeliveryStatement deliveryStatement = new DeliveryStatement();
             deliveryStatement.setNumber(Integer.valueOf(dsNumber.getText().trim()));
             deliveryStatement.setContractNumber(dsContractNumber.getText().trim());
             deliveryStatement.setPeriod(Short.valueOf(dsPeriod.getText().trim()));
-            deliveryStatement.setProductNumber(dsProductNumber.getText().trim());
+            deliveryStatement.setProductName(dsProductNumber.getText().trim());
+            deliveryStatement.setContractDate(LocalDate.parse(dsContractDate.getText().trim(), DateTimeFormatter.ISO_LOCAL_DATE));
             deliveryStatement.setScheduledProductQuantity(Integer.valueOf(dsScheduledProductQuantity.getText().trim()));
             deliveryStatement.setNote(dsNote.getText().trim());
             deliveryStatement.setPriceForOneProduct(new BigInteger(dsProductPrice.getText().trim()));

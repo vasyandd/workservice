@@ -1,8 +1,5 @@
 package work.app.notification;
 
-import work.app.contract.Contract;
-import work.app.product.Product;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -20,24 +17,12 @@ public class Notification {
 
     private LocalDate date;
 
-    @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "product_id")
-    private Product product;
+    private String productName;
 
     @Column(nullable = false, name = "product_quantity")
     private Integer productQuantity;
 
-    @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "contract_id")
-    private Contract contract;
-
-    public Notification(Integer number, Product product,
-                        Integer productQuantity, Contract contract) {
-        this.number = number;
-        this.product = product;
-        this.productQuantity = productQuantity;
-        this.contract = contract;
-    }
+    private String contractNumber;
 
     public Notification() {
     }
@@ -54,12 +39,20 @@ public class Notification {
         this.number = number;
     }
 
-    public Product getProduct() {
-        return product;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public Integer getProductQuantity() {
@@ -70,19 +63,11 @@ public class Notification {
         this.productQuantity = productQuantity;
     }
 
-    public Contract getContract() {
-        return contract;
+    public String getContractNumber() {
+        return contractNumber;
     }
 
-    public void setContract(Contract contract) {
-        this.contract = contract;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setContractNumber(String contractNumber) {
+        this.contractNumber = contractNumber;
     }
 }

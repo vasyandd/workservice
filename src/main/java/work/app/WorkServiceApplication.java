@@ -4,10 +4,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import work.app.notification.NotificationRepository;
-import work.app.notification.NotificationRepositoryImpl;
-import work.app.notification.NotificationService;
-import work.app.notification.NotificationServiceImpl;
 import work.app.view.MainFrame;
 
 public class WorkServiceApplication {
@@ -17,7 +13,7 @@ public class WorkServiceApplication {
 //       // SessionFactory sessionFactory = loadSessionFactory();
 //        NotificationRepository notificationRepository = new NotificationRepositoryImpl(sessionFactory);
 //        NotificationService notificationService = new NotificationServiceImpl(notificationRepository);
-        MainFrame mainFrame = new MainFrame(null);
+        MainFrame mainFrame = new MainFrame(null, null);
 
       //  repository.addDeliveryStatement(new DeliveryStatement(contract, product, (short) 2019, shipment));
 
