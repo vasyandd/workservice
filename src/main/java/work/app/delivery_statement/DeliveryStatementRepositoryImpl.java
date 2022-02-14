@@ -2,6 +2,7 @@ package work.app.delivery_statement;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import work.app.delivery_statement.model.DeliveryStatement;
 
 public class DeliveryStatementRepositoryImpl implements DeliveryStatementRepository {
 
@@ -21,10 +22,11 @@ public class DeliveryStatementRepositoryImpl implements DeliveryStatementReposit
     }
 
     @Override
-    public DeliveryStatement findByContractNumberAndProductNameAndPeriod(String contractNumber, String productName, int year) {
+    public DeliveryStatement findByContract(String contractNumber) {
         Session session = sessionFactory.openSession();
         session.getTransaction().begin();
-        DeliveryStatement deliveryStatement = null;
+        DeliveryStatement deliveryStatement = session.createQuery("from DeliveryStatement ds where ds.contractNumber = :number", DeliveryStatement.class)
+                .setParameter("number", contractNumber).getSingleResult();
         session.getTransaction().commit();
         return deliveryStatement;
     }

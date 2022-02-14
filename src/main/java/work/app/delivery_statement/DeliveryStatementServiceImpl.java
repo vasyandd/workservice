@@ -1,10 +1,9 @@
 package work.app.delivery_statement;
 
 
+import work.app.delivery_statement.model.DeliveryStatement;
+import work.app.delivery_statement.model.DeliveryStatementRow;
 import work.app.notification.Notification;
-
-import java.time.Month;
-import java.util.Map;
 
 public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     private DeliveryStatementRepository deliveryStatementRepository;
@@ -22,12 +21,17 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     }
 
     @Override
+    public DeliveryStatement getDeliveryStatementByContract(String contract) {
+        DeliveryStatement deliveryStatement = deliveryStatementRepository.findByContract(contract);
+        return deliveryStatement;
+    }
+
+    @Override
     public void updateDeliveryStatement(Notification notification) {
-        DeliveryStatement deliveryStatement = deliveryStatementRepository.findByContractNumberAndProductNameAndPeriod(notification.getContractNumber(),
-                notification.getProductName(), notification.getDate().getYear());
-        deliveryStatement.increaseActualProductQuantityBy(notification.getProductQuantity());
-        Map<Month, Integer> actualMap = deliveryStatement.getActualShipment();
-
-
+        DeliveryStatement deliveryStatement = deliveryStatementRepository.findByContract(notification.getContractNumber());
+        DeliveryStatementRow deliveryStatementRow = deliveryStatement.getRowByProductAndPeriod(notification.getProductName(), notification.getDate().getYear());
+        deliveryStatementRow.increaseActualProductQuantity(notification.getDate().getMonth(), notification.getProductQuantity());
+        System.out.println(deliveryStatementRow.getActualProductQuantity());
+        deliveryStatementRepository.saveDeliveryStatement(deliveryStatement);
     }
 }

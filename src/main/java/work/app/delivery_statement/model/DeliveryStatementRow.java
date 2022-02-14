@@ -1,36 +1,20 @@
-package work.app.delivery_statement;
+package work.app.delivery_statement.model;
 
 import javax.persistence.*;
 import java.math.BigInteger;
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.HashMap;
 import java.util.Map;
 
-@Entity
-@Table(name = "delivery_statement")
-public class DeliveryStatement {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String contractNumber;
-
-    private LocalDate contractDate;
+@Embeddable
+public class DeliveryStatementRow {
+    private BigInteger priceForOneProduct;
 
     private String productName;
 
-    @Column(nullable = false)
-    private Integer period;
+    private int scheduledProductQuantity;
 
-    private Integer number;
-
-    private BigInteger priceForOneProduct;
-
-    private Integer scheduledProductQuantity;
-
-    private Integer actualProductQuantity;
+    private int actualProductQuantity;
 
     @ElementCollection
     @MapKeyEnumerated(value = EnumType.STRING)
@@ -44,21 +28,13 @@ public class DeliveryStatement {
 
     private String note;
 
-    public DeliveryStatement() {
-    }
-
-    public Long getId() {
-        return id;
-    }
+    @Column(nullable = false)
+    private Integer period;
 
 
-    public String getContractNumber() {
-        return contractNumber;
+    public DeliveryStatementRow() {
     }
 
-    public void setContractNumber(String contractNumber) {
-        this.contractNumber = contractNumber;
-    }
 
     public String getProductName() {
         return productName;
@@ -76,13 +52,7 @@ public class DeliveryStatement {
         this.period = period;
     }
 
-    public Integer getNumber() {
-        return number;
-    }
 
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
 
     public BigInteger getPriceForOneProduct() {
         return priceForOneProduct;
@@ -104,8 +74,10 @@ public class DeliveryStatement {
         return actualProductQuantity;
     }
 
-    public void increaseActualProductQuantityBy(Integer quantity) {
-        actualProductQuantity += actualProductQuantity;
+    public void increaseActualProductQuantity(Month month, int quantity) {
+        actualProductQuantity += quantity;
+        Integer actualQuantityInMonth = actualShipment.get(month);
+        actualShipment.put(month, actualQuantityInMonth == null ? 0 : actualQuantityInMonth + quantity);
     }
 
     public Map<Month, Integer> getScheduledShipment() {
@@ -140,11 +112,4 @@ public class DeliveryStatement {
         this.note = note;
     }
 
-    public LocalDate getContractDate() {
-        return contractDate;
-    }
-
-    public void setContractDate(LocalDate contractDate) {
-        this.contractDate = contractDate;
-    }
 }

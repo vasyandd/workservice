@@ -2,6 +2,7 @@ package work.app.notification;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 
 @Entity
@@ -69,5 +70,22 @@ public class Notification {
 
     public void setContractNumber(String contractNumber) {
         this.contractNumber = contractNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Notification that = (Notification) o;
+        return Objects.equals(number, that.number) &&
+                Objects.equals(date, that.date) &&
+                Objects.equals(productName, that.productName) &&
+                Objects.equals(productQuantity, that.productQuantity) &&
+                Objects.equals(contractNumber, that.contractNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, date, productName, productQuantity, contractNumber);
     }
 }

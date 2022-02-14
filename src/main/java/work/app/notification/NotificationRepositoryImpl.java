@@ -31,4 +31,15 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         session.getTransaction().commit();
         return notifications;
     }
+
+    @Override
+    public List<Notification> getAllNotificationsByContactNumber(String s) {
+        List<Notification> notifications = null;
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        notifications = session.createQuery("from Notification where contractNumber = :cn", Notification.class)
+                .setParameter("cn", s).list();
+        session.getTransaction().commit();
+        return notifications;
+    }
 }

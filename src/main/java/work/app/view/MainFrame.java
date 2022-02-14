@@ -1,18 +1,13 @@
 package work.app.view;
 
-import work.app.delivery_statement.DeliveryStatement;
 import work.app.delivery_statement.DeliveryStatementService;
 import work.app.notification.Notification;
 import work.app.notification.NotificationService;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import java.math.BigInteger;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainFrame {
     private final static String TITLE = "Окно военпреда";
@@ -118,30 +113,30 @@ public class MainFrame {
         });
 
         saveDsButton.addActionListener(e -> {
-            DeliveryStatement deliveryStatement = new DeliveryStatement();
-            deliveryStatement.setNumber(Integer.valueOf(dsNumber.getText().trim()));
-            deliveryStatement.setContractNumber(dsContractNumber.getText().trim());
-            deliveryStatement.setPeriod(Short.valueOf(dsPeriod.getText().trim()));
-            deliveryStatement.setProductName(dsProductNumber.getText().trim());
-            deliveryStatement.setContractDate(LocalDate.parse(dsContractDate.getText().trim(), DateTimeFormatter.ISO_LOCAL_DATE));
-            deliveryStatement.setScheduledProductQuantity(Integer.valueOf(dsScheduledProductQuantity.getText().trim()));
-            deliveryStatement.setNote(dsNote.getText().trim());
-            deliveryStatement.setPriceForOneProduct(new BigInteger(dsProductPrice.getText().trim()));
-            Map<Month, Integer> scheduledShipment = new HashMap<>();
-            scheduledShipment.put(Month.JANUARY, Integer.valueOf(dsJan.getText().trim()));
-            scheduledShipment.put(Month.FEBRUARY, Integer.valueOf(dsFeb.getText().trim()));
-            scheduledShipment.put(Month.MARCH, Integer.valueOf(dsFeb.getText().trim()));
-            scheduledShipment.put(Month.APRIL, Integer.valueOf(dsFeb.getText().trim()));
-            scheduledShipment.put(Month.MAY, Integer.valueOf(dsFeb.getText().trim()));
-            scheduledShipment.put(Month.JUNE, Integer.valueOf(dsFeb.getText().trim()));
-            scheduledShipment.put(Month.JULY, Integer.valueOf(dsFeb.getText().trim()));
-            scheduledShipment.put(Month.AUGUST, Integer.valueOf(dsFeb.getText().trim()));
-            scheduledShipment.put(Month.SEPTEMBER, Integer.valueOf(dsFeb.getText().trim()));
-            scheduledShipment.put(Month.OCTOBER, Integer.valueOf(dsFeb.getText().trim()));
-            scheduledShipment.put(Month.NOVEMBER, Integer.valueOf(dsFeb.getText().trim()));
-            scheduledShipment.put(Month.DECEMBER, Integer.valueOf(dsFeb.getText().trim()));
-            deliveryStatement.setScheduledShipment(scheduledShipment);
-            deliveryStatementService.saveDeliveryStatement(deliveryStatement);
+//            DeliveryStatement deliveryStatement = new DeliveryStatement();
+//            deliveryStatement.setNumber(Integer.valueOf(dsNumber.getText().trim()));
+//            deliveryStatement.setContractNumber(dsContractNumber.getText().trim());
+//            deliveryStatement.setPeriod(Integer.parseInt(dsPeriod.getText().trim()));
+//            deliveryStatement.setProductName(dsProductNumber.getText().trim());
+//            deliveryStatement.setContractDate(LocalDate.parse(dsContractDate.getText().trim(), DateTimeFormatter.ISO_LOCAL_DATE));
+//            deliveryStatement.setScheduledProductQuantity(Integer.valueOf(dsScheduledProductQuantity.getText().trim()));
+//            deliveryStatement.setNote(dsNote.getText().trim());
+//            deliveryStatement.setPriceForOneProduct(new BigInteger(dsProductPrice.getText().trim()));
+//            Map<Month, Integer> scheduledShipment = new HashMap<>();
+//            scheduledShipment.put(Month.JANUARY, Integer.valueOf(dsJan.getText().trim()));
+//            scheduledShipment.put(Month.FEBRUARY, Integer.valueOf(dsFeb.getText().trim()));
+//            scheduledShipment.put(Month.MARCH, Integer.valueOf(dsFeb.getText().trim()));
+//            scheduledShipment.put(Month.APRIL, Integer.valueOf(dsFeb.getText().trim()));
+//            scheduledShipment.put(Month.MAY, Integer.valueOf(dsFeb.getText().trim()));
+//            scheduledShipment.put(Month.JUNE, Integer.valueOf(dsFeb.getText().trim()));
+//            scheduledShipment.put(Month.JULY, Integer.valueOf(dsFeb.getText().trim()));
+//            scheduledShipment.put(Month.AUGUST, Integer.valueOf(dsFeb.getText().trim()));
+//            scheduledShipment.put(Month.SEPTEMBER, Integer.valueOf(dsFeb.getText().trim()));
+//            scheduledShipment.put(Month.OCTOBER, Integer.valueOf(dsFeb.getText().trim()));
+//            scheduledShipment.put(Month.NOVEMBER, Integer.valueOf(dsFeb.getText().trim()));
+//            scheduledShipment.put(Month.DECEMBER, Integer.valueOf(dsFeb.getText().trim()));
+//            deliveryStatement.setScheduledShipment(scheduledShipment);
+//            deliveryStatementService.saveDeliveryStatement(deliveryStatement);
         });
     }
 
