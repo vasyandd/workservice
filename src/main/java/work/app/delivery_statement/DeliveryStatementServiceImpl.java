@@ -1,6 +1,7 @@
 package work.app.delivery_statement;
 
 
+import work.app.delivery_statement.exception.DeliverStatementNotFoundException;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.model.DeliveryStatementRow;
 import work.app.notification.Notification;
@@ -22,16 +23,29 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
 
     @Override
     public DeliveryStatement getDeliveryStatementByContract(String contract) {
-        DeliveryStatement deliveryStatement = deliveryStatementRepository.findByContract(contract);
-        return deliveryStatement;
+        return deliveryStatementRepository.findByContract(contract)
+                .orElseThrow(() -> new DeliverStatementNotFoundException(
+                        "Отсутствует ведомость поставки к контракту " + contract));
+    }
+
+    @Override
+    public void updateDeliveryStatement(DeliveryStatement deliveryStatement) {
+        deliveryStatementRepository.saveDeliveryStatement(deliveryStatement);
     }
 
     @Override
     public void updateDeliveryStatement(Notification notification) {
-        DeliveryStatement deliveryStatement = deliveryStatementRepository.findByContract(notification.getContractNumber());
-        DeliveryStatementRow deliveryStatementRow = deliveryStatement.getRowByProductAndPeriod(notification.getProductName(), notification.getDate().getYear());
+        DeliveryStatement deliveryStatement = getDeliveryStatementByContract(notification.getContractNumber());
+
+        DeliveryStatementRow deliveryStatementRow = deliveryStatement
+                .getRowByProductAndPeriod(notification.getProductName(), notification.getDate().getYear())
+                .orElseThrow( () -> new DeliverStatementNotFoundException(
+                        "В ведомости поставки № " + deliveryStatement.getNumber()
+                        + " к контракту №" + deliveryStatement.getContractNumber()
+                        + " отсутсвует информация об отгурзке изделия " + notification.getProductName()
+                        + " в " + notification.getDate().getYear() + " году"));
+
         deliveryStatementRow.increaseActualProductQuantity(notification.getDate().getMonth(), notification.getProductQuantity());
-        System.out.println(deliveryStatementRow.getActualProductQuantity());
         deliveryStatementRepository.saveDeliveryStatement(deliveryStatement);
     }
 }

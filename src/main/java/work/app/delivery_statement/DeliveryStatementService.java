@@ -8,5 +8,7 @@ public interface DeliveryStatementService {
 
     void updateDeliveryStatement(Notification notification);
 
+    void updateDeliveryStatement(DeliveryStatement deliveryStatement);
+
     DeliveryStatement getDeliveryStatementByContract(String contract);
 }

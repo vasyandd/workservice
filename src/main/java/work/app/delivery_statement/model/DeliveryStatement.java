@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "delivery_statement")
@@ -86,11 +87,10 @@ public class DeliveryStatement {
         this.rows = rows;
     }
 
-    public DeliveryStatementRow getRowByProductAndPeriod(String productName, int year) {
+    public Optional<DeliveryStatementRow> getRowByProductAndPeriod(String productName, int year) {
         return rows.stream()
                 .filter(ds -> ds.getPeriod() == year && ds.getProductName().equals(productName))
                 //only one row may be with these product and period
-                .findFirst()
-                .get();
+                .findFirst();
     }
 }

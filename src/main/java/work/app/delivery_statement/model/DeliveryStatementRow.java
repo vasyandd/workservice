@@ -78,6 +78,7 @@ public class DeliveryStatementRow {
         actualProductQuantity += quantity;
         Integer actualQuantityInMonth = actualShipment.get(month);
         actualShipment.put(month, actualQuantityInMonth == null ? 0 : actualQuantityInMonth + quantity);
+        if (actualProductQuantity == scheduledProductQuantity) isClosed = true;
     }
 
     public Map<Month, Integer> getScheduledShipment() {
