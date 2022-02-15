@@ -16,7 +16,6 @@ public class WorkServiceApplication {
 
         MainFrame mainFrame = new MainFrame(null, null);
 
-      //  repository.addDeliveryStatement(new DeliveryStatement(contract, product, (short) 2019, shipment));
 
     }
 

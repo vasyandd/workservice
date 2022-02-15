@@ -10,7 +10,7 @@ public class DeliveryStatementRepositoryMock implements DeliveryStatementReposit
     private List<DeliveryStatement> list = new ArrayList<>();
 
     @Override
-    public boolean saveDeliveryStatement(DeliveryStatement deliveryStatement) {
+    public boolean save(DeliveryStatement deliveryStatement) {
         return list.add(deliveryStatement);
     }
 

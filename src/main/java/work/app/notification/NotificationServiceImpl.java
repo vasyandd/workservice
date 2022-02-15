@@ -2,6 +2,8 @@ package work.app.notification;
 
 import work.app.delivery_statement.DeliveryStatementService;
 
+import java.util.List;
+
 public class NotificationServiceImpl implements NotificationService {
     private NotificationRepository notificationRepository;
     private DeliveryStatementService deliveryStatementService;
@@ -17,5 +19,8 @@ public class NotificationServiceImpl implements NotificationService {
         deliveryStatementService.updateDeliveryStatement(notification);
     }
 
-
+    @Override
+    public List<Notification> getAllNotifications() {
+        return notificationRepository.getAllNotifications();
+    }
 }
