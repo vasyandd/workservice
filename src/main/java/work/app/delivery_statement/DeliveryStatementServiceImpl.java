@@ -1,7 +1,7 @@
 package work.app.delivery_statement;
 
 
-import work.app.delivery_statement.exception.DeliverStatementNotFoundException;
+import work.app.exception.DeliverStatementNotFoundException;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.model.DeliveryStatementRow;
 import work.app.notification.Notification;
