@@ -6,15 +6,15 @@ import work.app.delivery_statement.model.DeliveryStatement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeliveryStatementRepositoryMock implements DeliveryStatementRepository {
+public class DeliveryStatementRepositoryMock{
     private List<DeliveryStatement> list = new ArrayList<>();
 
-    @Override
+
     public boolean save(DeliveryStatement deliveryStatement) {
         return list.add(deliveryStatement);
     }
 
-    @Override
+
     public DeliveryStatement findByContract(String contractNumber) {
         return list.stream()
                 .filter(ds -> ds.getContractNumber().equals(contractNumber))

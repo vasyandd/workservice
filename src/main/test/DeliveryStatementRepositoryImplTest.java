@@ -28,9 +28,9 @@ public class DeliveryStatementRepositoryImplTest {
     @BeforeClass
     public static void setUp() {
         notificationRepository = new NotificationRepositoryMock();
-        deliveryStatementRepository = new DeliveryStatementRepositoryMock();
-        deliveryStatementService = new DeliveryStatementServiceImpl(deliveryStatementRepository);
-        notificationService = new NotificationServiceImpl(notificationRepository, deliveryStatementService);
+//        deliveryStatementRepository = new DeliveryStatementRepositoryMock();
+//        deliveryStatementService = new DeliveryStatementServiceImpl(deliveryStatementRepository);
+//        notificationService = new NotificationServiceImpl(notificationRepository, deliveryStatementService);
     }
 
     @Before

@@ -6,8 +6,12 @@ import java.time.Month;
 import java.util.HashMap;
 import java.util.Map;
 
-@Embeddable
+//@Entity
 public class DeliveryStatementRow {
+
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private BigInteger priceForOneProduct;
 
     private String productName;
@@ -16,19 +20,19 @@ public class DeliveryStatementRow {
 
     private int actualProductQuantity;
 
-    @ElementCollection
-    @MapKeyEnumerated(value = EnumType.STRING)
+//    @ElementCollection
+//    @MapKeyEnumerated(value = EnumType.STRING)
     private Map<Month, Integer> scheduledShipment;
 
-    @ElementCollection
-    @MapKeyEnumerated(value = EnumType.STRING)
+//    @ElementCollection
+//    @MapKeyEnumerated(value = EnumType.STRING)
     private Map<Month, Integer> actualShipment = new HashMap<>();
 
     private boolean isClosed;
 
     private String note;
 
-    @Column(nullable = false)
+  //  @Column(nullable = false)
     private Integer period;
 
 

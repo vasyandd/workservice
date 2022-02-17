@@ -18,7 +18,7 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     @Override
     public void saveDeliveryStatement(DeliveryStatement deliveryStatement) {
 
-        deliveryStatementRepository.save(deliveryStatement);
+      //  deliveryStatementRepository.save(deliveryStatement);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
 
     @Override
     public void updateDeliveryStatement(DeliveryStatement deliveryStatement) {
-        deliveryStatementRepository.save(deliveryStatement);
+     //   deliveryStatementRepository.save(deliveryStatement);
     }
 
     @Override
@@ -46,6 +46,6 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
                         + " в " + notification.getDate().getYear() + " году"));
 
         deliveryStatementRow.increaseActualProductQuantity(notification.getDate().getMonth(), notification.getProductQuantity());
-        deliveryStatementRepository.save(deliveryStatement);
+       // deliveryStatementRepository.save(deliveryStatement);
     }
 }

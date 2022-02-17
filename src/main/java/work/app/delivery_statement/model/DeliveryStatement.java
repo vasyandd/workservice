@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Entity
-@Table(name = "delivery_statement")
+//@Entity
+//@Table(name = "delivery_statement")
 public class DeliveryStatement {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String contractNumber;
@@ -24,8 +24,8 @@ public class DeliveryStatement {
 
     private boolean isClosed;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name="delivery_statement_row", joinColumns=@JoinColumn(name="DS_ID"))
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    @CollectionTable(name="delivery_statement_row", joinColumns=@JoinColumn(name="DS_ID"))
     private List<DeliveryStatementRow> rows = new ArrayList<>();
 
     public LocalDate getContractDate() {

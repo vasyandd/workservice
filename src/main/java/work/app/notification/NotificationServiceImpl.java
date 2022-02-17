@@ -15,12 +15,12 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void saveNotification(Notification notification) {
-        notificationRepository.saveNotification(notification);
+     //   notificationRepository.save(notification);
         deliveryStatementService.updateDeliveryStatement(notification);
     }
 
     @Override
     public List<Notification> getAllNotifications() {
-        return notificationRepository.getAllNotifications();
+        return null;
     }
 }

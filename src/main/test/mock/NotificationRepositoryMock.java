@@ -8,20 +8,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NotificationRepositoryMock implements NotificationRepository {
+public class NotificationRepositoryMock  {
     private List<Notification> list = new ArrayList<>();
 
-    @Override
+
     public void saveNotification(Notification notification) {
         list.add(notification);
     }
 
-    @Override
+
     public Collection<Notification> getAllNotifications() {
         return list;
     }
 
-    @Override
+
     public List<Notification> getAllNotificationsByContactNumber(String s) {
         return list.stream()
                 .filter(n -> n.getContractNumber().equals(s))
