@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import work.app.view.FXController;
+import work.app.view.MainMenuController;
 
 public class WorkServiceFXApplication extends Application {
 
@@ -26,7 +26,7 @@ public class WorkServiceFXApplication extends Application {
     @Override
     public void start(Stage stage) {
         FxWeaver fxWeaver = applicationContext.getBean(FxWeaver.class);
-        Parent root = fxWeaver.loadView(FXController.class);
+        Parent root = fxWeaver.loadView(MainMenuController.class);
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();

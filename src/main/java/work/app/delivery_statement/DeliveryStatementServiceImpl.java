@@ -1,11 +1,13 @@
 package work.app.delivery_statement;
 
 
+import org.springframework.stereotype.Component;
 import work.app.exception.DeliverStatementNotFoundException;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.model.DeliveryStatementRow;
 import work.app.notification.Notification;
 
+@Component
 public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     private DeliveryStatementRepository deliveryStatementRepository;
 
