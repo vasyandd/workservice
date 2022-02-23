@@ -12,10 +12,7 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     private DeliveryStatementRepository deliveryStatementRepository;
 
 
-    public DeliveryStatementServiceImpl(DeliveryStatementRepository deliveryStatementRepository) {
-        this.deliveryStatementRepository = deliveryStatementRepository;
 
-    }
 
     @Override
     public void saveDeliveryStatement(DeliveryStatement deliveryStatement) {
