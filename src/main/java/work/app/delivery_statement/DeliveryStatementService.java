@@ -10,5 +10,5 @@ public interface DeliveryStatementService {
 
     void updateDeliveryStatement(DeliveryStatement deliveryStatement);
 
-    DeliveryStatement getDeliveryStatementByContract(String contract);
+    DeliveryStatement getDeliveryStatementByContractAndAdditionalAgreement(String contract, String agreement);
 }

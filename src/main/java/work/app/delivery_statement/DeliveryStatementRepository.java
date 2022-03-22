@@ -1,11 +1,12 @@
 package work.app.delivery_statement;
 
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+import work.app.delivery_statement.entity.DeliveryStatementEntity;
 
 import java.util.Optional;
 
-public interface DeliveryStatementRepository extends JpaRepository<DeliveryStatement, Long> {
+public interface DeliveryStatementRepository extends CrudRepository<DeliveryStatementEntity, Long> {
 
-    Optional<DeliveryStatement> findByContractNumber(String contractNumber);
+    Optional<DeliveryStatementEntity> findByContractNumberAndAdditionalAgreement(String contractNumber, String agreement);
 }

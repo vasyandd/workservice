@@ -10,7 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import work.app.delivery_statement.DeliveryStatementService;
-import work.app.delivery_statement.DeliveryStatement;
+import work.app.delivery_statement.model.DeliveryStatement;
 
 import java.math.BigInteger;
 import java.net.URL;
@@ -151,11 +151,11 @@ public class DeliveryStatementFormController implements Initializable {
             shipment.put(Month.NOVEMBER, d.novQuantity);
             shipment.put(Month.DECEMBER, d.decQuantity);
             rows.add(new DeliveryStatement.Row(new BigInteger(d.productPrice.trim()), d.productName.trim(),
-                    d.productQuantity, 0,d.period, shipment, new HashMap<>(), false));
+                    d.productQuantity, 0, shipment, new HashMap<>(), false, d.period));
         }
-        return new DeliveryStatement(contractNumber.getText().trim(),
+        return new DeliveryStatement(null, contractNumber.getText().trim(),
                 contractDate.getValue(),Integer.parseInt(number.getText()),
-                agreementNumber.getText().trim(), rows);
+                agreementNumber.getText().trim(), false, rows);
     }
 
     public void addRowInTable(ActionEvent event) {

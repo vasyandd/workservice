@@ -2,6 +2,8 @@ package work.app.delivery_statement;
 
 
 import org.springframework.stereotype.Component;
+import work.app.delivery_statement.entity.DeliveryStatementEntity;
+import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.exception.DeliverStatementNotFoundException;
 import work.app.notification.Notification;
 
@@ -16,26 +18,28 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     @Override
     public void saveDeliveryStatement(DeliveryStatement deliveryStatement) {
 
-       deliveryStatementRepository.save(deliveryStatement);
+        DeliveryStatementEntity entity = DeliveryStatement.toEntity(deliveryStatement);
+        System.out.println(entity.getRows());
+        deliveryStatementRepository.save(entity);
     }
 
     @Override
-    public DeliveryStatement getDeliveryStatementByContract(String contract) {
-        return deliveryStatementRepository.findByContractNumber(contract)
+    public DeliveryStatement getDeliveryStatementByContractAndAdditionalAgreement(String contract, String agreement) {
+        return DeliveryStatement.toModel(deliveryStatementRepository.findByContractNumberAndAdditionalAgreement(contract, agreement)
                 .orElseThrow(() -> new DeliverStatementNotFoundException(
-                        "Отсутствует ведомость поставки к контракту " + contract));
+                        "Отсутствует ведомость поставки к дополнительному соглашению " + agreement + " к контракту " + contract)));
     }
 
     @Override
     public void updateDeliveryStatement(DeliveryStatement deliveryStatement) {
-        deliveryStatementRepository.save(deliveryStatement);
+        deliveryStatementRepository.save(DeliveryStatement.toEntity(deliveryStatement));
     }
 
     @Override
     public void updateDeliveryStatement(Notification notification) {
-        DeliveryStatement deliveryStatement = getDeliveryStatementByContract(notification.getContractNumber());
-        System.out.println(deliveryStatement.getRows());
-        System.out.println(deliveryStatement);
+        DeliveryStatement deliveryStatement = getDeliveryStatementByContractAndAdditionalAgreement(
+                notification.getContractNumber(), notification.getAdditionalAgreement());
+
         DeliveryStatement.Row deliveryStatementRow = deliveryStatement
                 .getRowByProductAndPeriod(notification.getProductName(), notification.getDate().getYear())
                 .orElseThrow( () -> new DeliverStatementNotFoundException(
@@ -44,7 +48,8 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
                         + " отсутсвует информация об отгурзке изделия " + notification.getProductName()
                         + " в " + notification.getDate().getYear() + " году"));
 
-        deliveryStatement.Row.increaseActualProductQuantity(notification.getDate().getMonth(), notification.getProductQuantity());
-        deliveryStatementRepository.save(deliveryStatement);
+        deliveryStatementRow.increaseActualProductQuantity(notification.getDate().getMonth(), notification.getProductQuantity());
+
+        deliveryStatementRepository.save(DeliveryStatement.toEntity(deliveryStatement));
     }
 }
