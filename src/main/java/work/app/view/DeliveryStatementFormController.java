@@ -1,7 +1,5 @@
 package work.app.view;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,13 +10,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import work.app.delivery_statement.DeliveryStatementService;
-import work.app.delivery_statement.model.DeliveryStatement;
-import work.app.delivery_statement.model.DeliveryStatementRow;
+import work.app.delivery_statement.DeliveryStatement;
 
+import java.math.BigInteger;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ResourceBundle;
+import java.time.Month;
+import java.util.*;
 
 @Component
 @FxmlView("delivery_statement_form.fxml")
@@ -64,44 +61,43 @@ public class DeliveryStatementFormController implements Initializable {
     @FXML
     private TextField decQuantity;
     @FXML
-    private TextField note;
+    private TableView<DeliveryStatementRowFromTableView> table;
     @FXML
-    private TableView<DeliveryStatementTableViewModel> table;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> numberInTable;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> numberInTable;
+    private TableColumn<DeliveryStatementRowFromTableView, String> productNameCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, String> productNameCol;
+    private TableColumn<DeliveryStatementRowFromTableView, String> productPriceCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, String> productPriceCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> periodCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> periodCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> productQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> productQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> janQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> janQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> febQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> febQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> marQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> marQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> aprQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> aprQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> mayQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> mayQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> junQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> junQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> julQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> julQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> augQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> augQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> sepQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> sepQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> octQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> octQuantityCol;
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> novQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> novQuantityCol;
-    @FXML
-    private TableColumn<DeliveryStatementTableViewModel, Integer> decQuantityCol;
-    private ObservableList<DeliveryStatementTableViewModel> rows = FXCollections.observableArrayList();
+    private TableColumn<DeliveryStatementRowFromTableView, Integer> decQuantityCol;
+
+    private final ObservableList<DeliveryStatementRowFromTableView> rows = FXCollections.observableArrayList();
 
 
     private final DeliveryStatementService deliveryStatementService;
@@ -134,18 +130,36 @@ public class DeliveryStatementFormController implements Initializable {
 
     public void saveDeliveryStatement(ActionEvent event) {
         DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
-
-
         deliveryStatementService.saveDeliveryStatement(deliveryStatement);
+        successSave();
     }
 
     private DeliveryStatement getDeliveryStatementFromTableView() {
-        DeliveryStatement deliveryStatement = new DeliveryStatement();
-        return deliveryStatement;
+        List<DeliveryStatement.Row> rows = new ArrayList<>();
+        for (DeliveryStatementRowFromTableView d : table.getItems()) {
+            Map<Month, Integer> shipment = new HashMap<>();
+            shipment.put(Month.JANUARY, d.janQuantity);
+            shipment.put(Month.FEBRUARY, d.febQuantity);
+            shipment.put(Month.MARCH, d.marQuantity);
+            shipment.put(Month.APRIL, d.aprQuantity);
+            shipment.put(Month.MAY, d.mayQuantity);
+            shipment.put(Month.JUNE, d.junQuantity);
+            shipment.put(Month.JULY, d.julQuantity);
+            shipment.put(Month.AUGUST, d.augQuantity);
+            shipment.put(Month.SEPTEMBER, d.sepQuantity);
+            shipment.put(Month.OCTOBER, d.octQuantity);
+            shipment.put(Month.NOVEMBER, d.novQuantity);
+            shipment.put(Month.DECEMBER, d.decQuantity);
+            rows.add(new DeliveryStatement.Row(new BigInteger(d.productPrice.trim()), d.productName.trim(),
+                    d.productQuantity, 0,d.period, shipment, new HashMap<>(), false));
+        }
+        return new DeliveryStatement(contractNumber.getText().trim(),
+                contractDate.getValue(),Integer.parseInt(number.getText()),
+                agreementNumber.getText().trim(), rows);
     }
 
-    public void addRow(ActionEvent event) {
-        rows.add(new DeliveryStatementTableViewModel(1, productName.getText(),
+    public void addRowInTable(ActionEvent event) {
+        rows.add(new DeliveryStatementRowFromTableView(1, productName.getText(),
                 Integer.parseInt(productQuantity.getText()), Integer.parseInt(period.getText()),
                 productPrice.getText(), Integer.parseInt(janQuantity.getText()),
                 Integer.parseInt(febQuantity.getText()), Integer.parseInt(marQuantity.getText()),
@@ -155,6 +169,25 @@ public class DeliveryStatementFormController implements Initializable {
                 Integer.parseInt(octQuantity.getText()), Integer.parseInt(novQuantity.getText()),
                 Integer.parseInt(decQuantity.getText()))
         );
+        clearInputFields();
+    }
+
+    private void clearInputFields() {
+        productPrice.setText("0");
+        productQuantity.setText("0");
+        period.setText("0");
+        janQuantity.setText("0");
+        febQuantity.setText("0");
+        marQuantity.setText("0");
+        aprQuantity.setText("0");
+        mayQuantity.setText("0");
+        junQuantity.setText("0");
+        julQuantity.setText("0");
+        augQuantity.setText("0");
+        sepQuantity.setText("0");
+        octQuantity.setText("0");
+        novQuantity.setText("0");
+        decQuantity.setText("0");
     }
 
     private void successSave() {
@@ -165,7 +198,7 @@ public class DeliveryStatementFormController implements Initializable {
         alert.showAndWait();
     }
 
-    public static class DeliveryStatementTableViewModel {
+    public static class DeliveryStatementRowFromTableView {
         private int numberInTable;
         private String productName;
         private int productQuantity;
@@ -184,11 +217,11 @@ public class DeliveryStatementFormController implements Initializable {
         private int novQuantity;
         private int decQuantity;
 
-        public DeliveryStatementTableViewModel(int numberInTable, String productName, int productQuantity, int period,
-                                               String productPrice, int janQuantity, int febQuantity, int marQuantity,
-                                               int aprQuantity, int mayQuantity, int junQuantity, int julQuantity,
-                                               int augQuantity, int sepQuantity, int octQuantity, int novQuantity,
-                                               int decQuantity) {
+        public DeliveryStatementRowFromTableView(int numberInTable, String productName, int productQuantity, int period,
+                                                 String productPrice, int janQuantity, int febQuantity, int marQuantity,
+                                                 int aprQuantity, int mayQuantity, int junQuantity, int julQuantity,
+                                                 int augQuantity, int sepQuantity, int octQuantity, int novQuantity,
+                                                 int decQuantity) {
             this.numberInTable = numberInTable;
             this.productName = productName;
             this.productQuantity = productQuantity;

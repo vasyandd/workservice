@@ -1,11 +1,11 @@
 package work.app.delivery_statement;
 
 
-import work.app.delivery_statement.model.DeliveryStatement;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface DeliveryStatementRepository {
+public interface DeliveryStatementRepository extends JpaRepository<DeliveryStatement, Long> {
 
-    Optional<DeliveryStatement> findByContract(String contractNumber);
+    Optional<DeliveryStatement> findByContractNumber(String contractNumber);
 }

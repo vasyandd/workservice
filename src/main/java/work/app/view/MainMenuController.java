@@ -19,7 +19,7 @@ import java.net.URL;
 @Component
 @FxmlView("main_menu.fxml")
 public class MainMenuController {
-    private FxWeaver fxWeaver;
+    private final FxWeaver fxWeaver;
 
     public MainMenuController(FxWeaver fxWeaver) {
         this.fxWeaver = fxWeaver;
@@ -31,6 +31,7 @@ public class MainMenuController {
         Node node = (Node) event.getSource();
         Stage thisStage = (Stage) node.getScene().getWindow();
         thisStage.setScene(scene);
+        thisStage.setResizable(false);
         thisStage.show();
     }
 
@@ -40,8 +41,13 @@ public class MainMenuController {
         Node node = (Node) event.getSource();
         Stage thisStage = (Stage) node.getScene().getWindow();
         thisStage.setScene(scene);
+        thisStage.setResizable(false);
+        thisStage.setX(300);
+        thisStage.setY(100);
         thisStage.show();
     }
+
+
 
 
 }

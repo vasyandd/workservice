@@ -2,12 +2,37 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="222.0" prefWidth="279.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="work.app.view.MainMenuController">
+<AnchorPane prefHeight="412.0" prefWidth="506.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="work.app.view.MainMenuController">
    <children>
-      <Button layoutX="22.0" layoutY="161.0" mnemonicParsing="false" text="Посмотреть, что вообще происходит" />
-      <Button layoutX="49.0" layoutY="95.0" mnemonicParsing="false" onAction="#switchSceneToDeliveryStatementForm" text="Ввести ведомость поставки" />
-      <Button layoutX="63.0" layoutY="43.0" mnemonicParsing="false" text="Ввести извещение" />
+      <Button layoutY="275.0" mnemonicParsing="false" prefHeight="139.0" prefWidth="507.0" text="Посмотреть, что вообще происходит" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font size="36.0" />
+         </font></Button>
+      <GridPane layoutX="-1.0" layoutY="2.0" prefHeight="274.0" prefWidth="507.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button mnemonicParsing="false" onAction="#switchSceneToNotificationForm" prefHeight="291.0" prefWidth="358.0" text="Ввести извещение" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#switchSceneToDeliveryStatementForm" prefHeight="299.0" prefWidth="295.0" text="Ввести ведомость поставки" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Button>
+         </children>
+      </GridPane>
    </children>
 </AnchorPane>
