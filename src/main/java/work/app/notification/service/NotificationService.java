@@ -1,5 +1,7 @@
-package work.app.notification;
+package work.app.notification.service;
 
+
+import work.app.notification.model.Notification;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package work.app.delivery_statement;
+package work.app.delivery_statement.repo;
 
 
 import org.springframework.data.repository.CrudRepository;

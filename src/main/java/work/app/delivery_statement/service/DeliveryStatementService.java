@@ -1,7 +1,7 @@
-package work.app.delivery_statement;
+package work.app.delivery_statement.service;
 
 import work.app.delivery_statement.model.DeliveryStatement;
-import work.app.notification.Notification;
+import work.app.notification.model.Notification;
 
 public interface DeliveryStatementService {
     void saveDeliveryStatement(DeliveryStatement deliveryStatement);

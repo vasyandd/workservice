@@ -1,11 +1,11 @@
-package work.app.delivery_statement;
+package work.app.delivery_statement.service;
 
 
 import org.springframework.stereotype.Component;
-import work.app.delivery_statement.entity.DeliveryStatementEntity;
 import work.app.delivery_statement.model.DeliveryStatement;
+import work.app.delivery_statement.repo.DeliveryStatementRepository;
 import work.app.exception.DeliverStatementNotFoundException;
-import work.app.notification.Notification;
+import work.app.notification.model.Notification;
 
 @Component
 public class DeliveryStatementServiceImpl implements DeliveryStatementService{
@@ -17,10 +17,7 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
 
     @Override
     public void saveDeliveryStatement(DeliveryStatement deliveryStatement) {
-
-        DeliveryStatementEntity entity = DeliveryStatement.toEntity(deliveryStatement);
-        System.out.println(entity.getRows());
-        deliveryStatementRepository.save(entity);
+        deliveryStatementRepository.save(DeliveryStatement.toEntity(deliveryStatement));
     }
 
     @Override
@@ -49,7 +46,6 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
                         + " в " + notification.getDate().getYear() + " году"));
 
         deliveryStatementRow.increaseActualProductQuantity(notification.getDate().getMonth(), notification.getProductQuantity());
-
         deliveryStatementRepository.save(DeliveryStatement.toEntity(deliveryStatement));
     }
 }

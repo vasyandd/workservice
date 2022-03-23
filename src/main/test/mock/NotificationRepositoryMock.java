@@ -1,7 +1,6 @@
 package mock;
 
-import work.app.notification.Notification;
-import work.app.notification.NotificationRepository;
+import work.app.notification.model.Notification;
 
 import java.util.ArrayList;
 import java.util.Collection;

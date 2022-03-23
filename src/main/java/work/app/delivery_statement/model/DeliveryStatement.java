@@ -15,12 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @NoArgsConstructor
 @Setter
 @Getter
 @AllArgsConstructor
-public class DeliveryStatement {
+public final class DeliveryStatement {
 
     private Long id;
     private String contractNumber;
@@ -76,11 +77,9 @@ public class DeliveryStatement {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Row {
+    public static final class Row {
         private BigInteger priceForOneProduct;
         private String productName;
-        private int scheduledProductQuantity;
-        private int actualProductQuantity;
         private Map<Month, Integer> scheduledShipment;
         private Map<Month, Integer> actualShipment;
         private boolean isCompleted;
@@ -88,10 +87,17 @@ public class DeliveryStatement {
 
 
 
+        public int actualProductQuantity() {
+            return actualShipment.values().stream().flatMapToInt(IntStream::of).sum();
+        }
+
+        public int scheduledProductQuantity() {
+            return scheduledShipment.values().stream().flatMapToInt(IntStream::of).sum();
+        }
+
         public void increaseActualProductQuantity(Month month, int quantity) {
             actualShipment.merge(month, quantity, Integer::sum);
-            actualProductQuantity += quantity;
-            if (actualProductQuantity == scheduledProductQuantity) isCompleted = true;
+            if (actualProductQuantity() == scheduledProductQuantity()) isCompleted = true;
         }
 
     }

@@ -8,8 +8,8 @@ import javafx.scene.control.TextField;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import work.app.exception.DeliverStatementNotFoundException;
-import work.app.notification.Notification;
-import work.app.notification.NotificationService;
+import work.app.notification.model.Notification;
+import work.app.notification.service.NotificationService;
 
 @Component
 @FxmlView("notification_form.fxml")

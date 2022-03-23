@@ -47,9 +47,8 @@
       </Pane>
       <GridPane alignment="CENTER" hgap="5.0" layoutX="25.0" layoutY="181.0" prefHeight="58.0" prefWidth="882.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="130.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="ALWAYS" maxWidth="165.59998779296876" minWidth="0.0" prefWidth="108.20000610351562" />
-          <ColumnConstraints hgrow="ALWAYS" maxWidth="302.4" minWidth="0.0" prefWidth="84.79999999999998" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="518.4" minWidth="10.0" prefWidth="115.0" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="165.59998779296876" minWidth="0.0" prefWidth="151.99999389648437" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="518.4" minWidth="10.0" prefWidth="129.80000610351564" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="701.6" minWidth="10.0" prefWidth="75.80000000000001" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="556.8000000000001" minWidth="-1.4210854715202004E-14" prefWidth="37.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="556.8000000000001" minWidth="0.0" prefWidth="37.0" />
@@ -70,48 +69,46 @@
         </rowConstraints>
          <children>
             <Label text="Изделие" textAlignment="CENTER" />
-            <TextField fx:id="productName" prefHeight="26.0" prefWidth="86.0" promptText="Залупа" GridPane.rowIndex="1" />
-            <Label alignment="CENTER" contentDisplay="CENTER" text="Цена изделия" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" />
-            <TextField fx:id="productPrice" promptText="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label text="Количество" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" />
-            <TextField fx:id="productQuantity" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="Год поставки" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="3" />
-            <TextField fx:id="period" promptText="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <Label alignment="TOP_CENTER" contentDisplay="CENTER" text="Янв" textAlignment="CENTER" GridPane.columnIndex="4" />
-            <TextField fx:id="janQuantity" promptText="0" text="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Label alignment="CENTER" contentDisplay="CENTER" text="Фев" textAlignment="JUSTIFY" GridPane.columnIndex="5" />
-            <TextField fx:id="febQuantity" prefHeight="26.0" prefWidth="42.0" promptText="0" text="0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-            <Label prefHeight="18.0" prefWidth="91.0" text="Март" textAlignment="CENTER" GridPane.columnIndex="6" />
-            <TextField fx:id="marQuantity" promptText="0" text="0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-            <Label text="Апр" GridPane.columnIndex="7" />
-            <TextField fx:id="aprQuantity" promptText="0" text="0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
-            <Label text="Май" GridPane.columnIndex="8" />
-            <TextField fx:id="mayQuantity" promptText="0" text="0" GridPane.columnIndex="8" GridPane.rowIndex="1" />
-            <Label text="Июнь" GridPane.columnIndex="9" />
-            <TextField fx:id="junQuantity" prefHeight="22.0" prefWidth="38.0" promptText="0" text="0" GridPane.columnIndex="9" GridPane.rowIndex="1" />
-            <Label text="Июль" GridPane.columnIndex="10" />
-            <TextField fx:id="julQuantity" promptText="0" text="0" GridPane.columnIndex="10" GridPane.rowIndex="1" />
-            <Label text="Авг" GridPane.columnIndex="11" />
-            <TextField fx:id="augQuantity" promptText="0" text="0" GridPane.columnIndex="11" GridPane.rowIndex="1" />
-            <TextField fx:id="sepQuantity" promptText="0" text="0" GridPane.columnIndex="12" GridPane.rowIndex="1" />
-            <TextField fx:id="octQuantity" promptText="0" text="0" GridPane.columnIndex="13" GridPane.rowIndex="1" />
-            <TextField fx:id="novQuantity" promptText="0" text="0" GridPane.columnIndex="14" GridPane.rowIndex="1" />
-            <TextField fx:id="decQuantity" alignment="TOP_LEFT" prefHeight="26.0" prefWidth="81.0" promptText="0" text="0" GridPane.columnIndex="15" GridPane.rowIndex="1" />
-            <Label text="Сент" GridPane.columnIndex="12" />
-            <Label text="Окт" GridPane.columnIndex="13" />
-            <Label text="Нояб" GridPane.columnIndex="14" />
-            <Label text="Дек" GridPane.columnIndex="15" />
+            <TextField fx:id="productName" prefHeight="26.0" prefWidth="150.0" promptText="Залупа" GridPane.rowIndex="1" />
+            <Label alignment="CENTER" contentDisplay="CENTER" text="Цена изделия" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" />
+            <TextField fx:id="productPrice" prefHeight="26.0" prefWidth="126.0" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label prefHeight="18.0" prefWidth="78.0" text="Год поставки" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" />
+            <TextField fx:id="period" promptText="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label alignment="TOP_CENTER" contentDisplay="CENTER" text="Янв" textAlignment="CENTER" GridPane.columnIndex="3" />
+            <TextField fx:id="janQuantity" promptText="0" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Label alignment="CENTER" contentDisplay="CENTER" text="Фев" textAlignment="JUSTIFY" GridPane.columnIndex="4" />
+            <TextField fx:id="febQuantity" prefHeight="26.0" prefWidth="42.0" promptText="0" text="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <Label prefHeight="18.0" prefWidth="91.0" text="Март" textAlignment="CENTER" GridPane.columnIndex="5" />
+            <TextField fx:id="marQuantity" promptText="0" text="0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Label text="Апр" GridPane.columnIndex="6" />
+            <TextField fx:id="aprQuantity" promptText="0" text="0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+            <Label text="Май" GridPane.columnIndex="7" />
+            <TextField fx:id="mayQuantity" promptText="0" text="0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+            <Label text="Июнь" GridPane.columnIndex="8" />
+            <TextField fx:id="junQuantity" prefHeight="22.0" prefWidth="38.0" promptText="0" text="0" GridPane.columnIndex="8" GridPane.rowIndex="1" />
+            <Label text="Июль" GridPane.columnIndex="9" />
+            <TextField fx:id="julQuantity" promptText="0" text="0" GridPane.columnIndex="9" GridPane.rowIndex="1" />
+            <Label text="Авг" GridPane.columnIndex="10" />
+            <TextField fx:id="augQuantity" promptText="0" text="0" GridPane.columnIndex="10" GridPane.rowIndex="1" />
+            <TextField fx:id="sepQuantity" promptText="0" text="0" GridPane.columnIndex="11" GridPane.rowIndex="1" />
+            <TextField fx:id="octQuantity" promptText="0" text="0" GridPane.columnIndex="12" GridPane.rowIndex="1" />
+            <TextField fx:id="novQuantity" promptText="0" text="0" GridPane.columnIndex="13" GridPane.rowIndex="1" />
+            <TextField fx:id="decQuantity" alignment="TOP_LEFT" prefHeight="26.0" prefWidth="81.0" promptText="0" text="0" GridPane.columnIndex="14" GridPane.rowIndex="1" />
+            <Label text="Сент" GridPane.columnIndex="11" />
+            <Label text="Окт" GridPane.columnIndex="12" />
+            <Label text="Нояб" GridPane.columnIndex="13" />
+            <Label text="Дек" GridPane.columnIndex="14" />
          </children>
       </GridPane>
       <Line endX="775.0" layoutX="128.0" layoutY="110.0" startX="-100.0" />
-      <TableView fx:id="table" layoutX="40.0" layoutY="252.0" prefHeight="281.0" prefWidth="877.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0">
+      <TableView fx:id="table" layoutX="40.0" layoutY="252.0" prefHeight="282.0" prefWidth="876.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="26.0">
         <columns>
           <TableColumn fx:id="numberInTable" minWidth="-1.0" prefWidth="43.200008392333984" text="№ п/п" />
           <TableColumn fx:id="productNameCol" prefWidth="111.19998168945312" text="Изделие" />
             <TableColumn fx:id="productQuantityCol" prefWidth="88.00001525878906" text="Количество" />
             <TableColumn fx:id="productPriceCol" prefWidth="101.60003662109375" text="Цена изделия" />
             <TableColumn fx:id="periodCol" prefWidth="56.79998779296875" text="Год" />
-            <TableColumn prefWidth="472.0" text="Количество и месяц поставки">
+            <TableColumn prefWidth="478.0" text="Количество и месяц поставки">
                <columns>
                   <TableColumn fx:id="janQuantityCol" prefWidth="41.60003662109375" text="Янв" />
                   <TableColumn fx:id="febQuantityCol" prefWidth="36.0" text="Фев" />

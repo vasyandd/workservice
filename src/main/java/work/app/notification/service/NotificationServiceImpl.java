@@ -1,7 +1,9 @@
-package work.app.notification;
+package work.app.notification.service;
 
 import org.springframework.stereotype.Component;
-import work.app.delivery_statement.DeliveryStatementService;
+import work.app.delivery_statement.service.DeliveryStatementService;
+import work.app.notification.model.Notification;
+import work.app.notification.repo.NotificationRepository;
 
 import java.util.List;
 

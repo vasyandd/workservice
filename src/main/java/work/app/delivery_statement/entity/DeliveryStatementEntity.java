@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "delivery_statement")
-public class DeliveryStatementEntity {
+public final class DeliveryStatementEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +31,5 @@ public class DeliveryStatementEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "rows", joinColumns = {@JoinColumn(name = "ds_id")})
     private List<String> rows = new ArrayList<>();
-
-
 
 }

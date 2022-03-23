@@ -7,10 +7,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import lombok.Getter;
+import lombok.Setter;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
-import work.app.delivery_statement.DeliveryStatementService;
 import work.app.delivery_statement.model.DeliveryStatement;
+import work.app.delivery_statement.service.DeliveryStatementService;
 
 import java.math.BigInteger;
 import java.net.URL;
@@ -34,8 +36,6 @@ public class DeliveryStatementFormController implements Initializable {
     private TextField period;
     @FXML
     private TextField productPrice;
-    @FXML
-    private TextField productQuantity;
     @FXML
     private TextField janQuantity;
     @FXML
@@ -96,11 +96,9 @@ public class DeliveryStatementFormController implements Initializable {
     private TableColumn<DeliveryStatementRowFromTableView, Integer> novQuantityCol;
     @FXML
     private TableColumn<DeliveryStatementRowFromTableView, Integer> decQuantityCol;
-
     private final ObservableList<DeliveryStatementRowFromTableView> rows = FXCollections.observableArrayList();
-
-
     private final DeliveryStatementService deliveryStatementService;
+    private int numberInTableCounter = 1;
 
     public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService) {
         this.deliveryStatementService = deliveryStatementService;
@@ -131,6 +129,7 @@ public class DeliveryStatementFormController implements Initializable {
     public void saveDeliveryStatement(ActionEvent event) {
         DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
         deliveryStatementService.saveDeliveryStatement(deliveryStatement);
+        numberInTableCounter = 1;
         successSave();
     }
 
@@ -151,30 +150,28 @@ public class DeliveryStatementFormController implements Initializable {
             shipment.put(Month.NOVEMBER, d.novQuantity);
             shipment.put(Month.DECEMBER, d.decQuantity);
             rows.add(new DeliveryStatement.Row(new BigInteger(d.productPrice.trim()), d.productName.trim(),
-                    d.productQuantity, 0, shipment, new HashMap<>(), false, d.period));
+                   shipment, new HashMap<>(), false, d.period));
         }
         return new DeliveryStatement(null, contractNumber.getText().trim(),
-                contractDate.getValue(),Integer.parseInt(number.getText()),
+                contractDate.getValue(), Integer.parseInt(number.getText()),
                 agreementNumber.getText().trim(), false, rows);
     }
 
     public void addRowInTable(ActionEvent event) {
-        rows.add(new DeliveryStatementRowFromTableView(1, productName.getText(),
-                Integer.parseInt(productQuantity.getText()), Integer.parseInt(period.getText()),
-                productPrice.getText(), Integer.parseInt(janQuantity.getText()),
-                Integer.parseInt(febQuantity.getText()), Integer.parseInt(marQuantity.getText()),
-                Integer.parseInt(aprQuantity.getText()), Integer.parseInt(mayQuantity.getText()),
-                Integer.parseInt(junQuantity.getText()), Integer.parseInt(julQuantity.getText()),
-                Integer.parseInt(augQuantity.getText()), Integer.parseInt(sepQuantity.getText()),
-                Integer.parseInt(octQuantity.getText()), Integer.parseInt(novQuantity.getText()),
-                Integer.parseInt(decQuantity.getText()))
+        rows.add(new DeliveryStatementRowFromTableView(numberInTableCounter++, productName.getText(),
+                Integer.parseInt(period.getText()), productPrice.getText(),
+                Integer.parseInt(janQuantity.getText()), Integer.parseInt(febQuantity.getText()),
+                Integer.parseInt(marQuantity.getText()), Integer.parseInt(aprQuantity.getText()),
+                Integer.parseInt(mayQuantity.getText()), Integer.parseInt(junQuantity.getText()),
+                Integer.parseInt(julQuantity.getText()), Integer.parseInt(augQuantity.getText()),
+                Integer.parseInt(sepQuantity.getText()), Integer.parseInt(octQuantity.getText()),
+                Integer.parseInt(novQuantity.getText()), Integer.parseInt(decQuantity.getText()))
         );
         clearInputFields();
     }
 
     private void clearInputFields() {
         productPrice.setText("0");
-        productQuantity.setText("0");
         period.setText("0");
         janQuantity.setText("0");
         febQuantity.setText("0");
@@ -198,7 +195,10 @@ public class DeliveryStatementFormController implements Initializable {
         alert.showAndWait();
     }
 
-    public static class DeliveryStatementRowFromTableView {
+
+    @Getter
+    @Setter
+    private static class DeliveryStatementRowFromTableView {
         private int numberInTable;
         private String productName;
         private int productQuantity;
@@ -217,14 +217,13 @@ public class DeliveryStatementFormController implements Initializable {
         private int novQuantity;
         private int decQuantity;
 
-        public DeliveryStatementRowFromTableView(int numberInTable, String productName, int productQuantity, int period,
+        public DeliveryStatementRowFromTableView(int numberInTable, String productName, int period,
                                                  String productPrice, int janQuantity, int febQuantity, int marQuantity,
                                                  int aprQuantity, int mayQuantity, int junQuantity, int julQuantity,
                                                  int augQuantity, int sepQuantity, int octQuantity, int novQuantity,
                                                  int decQuantity) {
             this.numberInTable = numberInTable;
             this.productName = productName;
-            this.productQuantity = productQuantity;
             this.period = period;
             this.productPrice = productPrice;
             this.janQuantity = janQuantity;
@@ -239,142 +238,8 @@ public class DeliveryStatementFormController implements Initializable {
             this.octQuantity = octQuantity;
             this.novQuantity = novQuantity;
             this.decQuantity = decQuantity;
-        }
-
-        public int getNumberInTable() {
-            return numberInTable;
-        }
-
-        public void setNumberInTable(int numberInTable) {
-            this.numberInTable = numberInTable;
-        }
-
-        public String getProductName() {
-            return productName;
-        }
-
-        public void setProductName(String productName) {
-            this.productName = productName;
-        }
-
-        public int getProductQuantity() {
-            return productQuantity;
-        }
-
-        public void setProductQuantity(int productQuantity) {
-            this.productQuantity = productQuantity;
-        }
-
-        public int getPeriod() {
-            return period;
-        }
-
-        public void setPeriod(int period) {
-            this.period = period;
-        }
-
-        public String getProductPrice() {
-            return productPrice;
-        }
-
-        public void setProductPrice(String productPrice) {
-            this.productPrice = productPrice;
-        }
-
-        public int getJanQuantity() {
-            return janQuantity;
-        }
-
-        public void setJanQuantity(int janQuantity) {
-            this.janQuantity = janQuantity;
-        }
-
-        public int getFebQuantity() {
-            return febQuantity;
-        }
-
-        public void setFebQuantity(int febQuantity) {
-            this.febQuantity = febQuantity;
-        }
-
-        public int getMarQuantity() {
-            return marQuantity;
-        }
-
-        public void setMarQuantity(int marQuantity) {
-            this.marQuantity = marQuantity;
-        }
-
-        public int getAprQuantity() {
-            return aprQuantity;
-        }
-
-        public void setAprQuantity(int aprQuantity) {
-            this.aprQuantity = aprQuantity;
-        }
-
-        public int getMayQuantity() {
-            return mayQuantity;
-        }
-
-        public void setMayQuantity(int mayQuantity) {
-            this.mayQuantity = mayQuantity;
-        }
-
-        public int getJunQuantity() {
-            return junQuantity;
-        }
-
-        public void setJunQuantity(int junQuantity) {
-            this.junQuantity = junQuantity;
-        }
-
-        public int getJulQuantity() {
-            return julQuantity;
-        }
-
-        public void setJulQuantity(int julQuantity) {
-            this.julQuantity = julQuantity;
-        }
-
-        public int getAugQuantity() {
-            return augQuantity;
-        }
-
-        public void setAugQuantity(int augQuantity) {
-            this.augQuantity = augQuantity;
-        }
-
-        public int getSepQuantity() {
-            return sepQuantity;
-        }
-
-        public void setSepQuantity(int sepQuantity) {
-            this.sepQuantity = sepQuantity;
-        }
-
-        public int getOctQuantity() {
-            return octQuantity;
-        }
-
-        public void setOctQuantity(int octQuantity) {
-            this.octQuantity = octQuantity;
-        }
-
-        public int getNovQuantity() {
-            return novQuantity;
-        }
-
-        public void setNovQuantity(int novQuantity) {
-            this.novQuantity = novQuantity;
-        }
-
-        public int getDecQuantity() {
-            return decQuantity;
-        }
-
-        public void setDecQuantity(int decQuantity) {
-            this.decQuantity = decQuantity;
+            this.productQuantity = janQuantity + febQuantity + marQuantity + aprQuantity + mayQuantity + junQuantity
+                    + julQuantity + augQuantity + sepQuantity + octQuantity + novQuantity + decQuantity;
         }
     }
 }

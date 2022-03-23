@@ -1,4 +1,4 @@
-package work.app.notification;
+package work.app.notification.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
