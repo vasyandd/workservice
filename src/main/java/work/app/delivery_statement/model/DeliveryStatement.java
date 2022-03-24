@@ -38,9 +38,12 @@ public final class DeliveryStatement {
                 .findFirst();
     }
 
+    public void isClosedCheck() {
+        isClosed = rows.stream().allMatch(Row::isCompleted);
+    }
+
     public static DeliveryStatementEntity toEntity(DeliveryStatement deliveryStatement){
         ObjectMapper mapper = new ObjectMapper();
-
         List<String> rows = deliveryStatement.getRows().stream()
                 .map(r -> {
                     try {
@@ -50,7 +53,6 @@ public final class DeliveryStatement {
                     }
                 })
                 .collect(Collectors.toList());
-
         return new DeliveryStatementEntity(deliveryStatement.id, deliveryStatement.contractNumber,
                 deliveryStatement.contractDate, deliveryStatement.number, deliveryStatement.additionalAgreement,
                 deliveryStatement.isClosed, rows);
@@ -58,7 +60,6 @@ public final class DeliveryStatement {
 
     public static DeliveryStatement toModel(DeliveryStatementEntity entity) {
         ObjectMapper mapper = new ObjectMapper();
-
         List<DeliveryStatement.Row> rows = entity.getRows().stream()
                 .map(r -> {
                     try {
@@ -68,7 +69,6 @@ public final class DeliveryStatement {
                                 "ведомости поставки из JSON в объект");
                     }
                 }).collect(Collectors.toList());
-
         return new DeliveryStatement(entity.getId(), entity.getContractNumber(), entity.getContractDate(),
                 entity.getNumber(), entity.getAdditionalAgreement(), entity.isClosed(), rows);
     }
