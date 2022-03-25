@@ -1,5 +1,6 @@
 package work.app.view;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -25,6 +26,8 @@ import java.util.*;
 @Component
 @FxmlView("delivery_statement_form.fxml")
 public class DeliveryStatementFormController implements Initializable {
+    @FXML
+    private Button deleteRowButton;
     @FXML
     private TextField number;
     @FXML
@@ -110,6 +113,31 @@ public class DeliveryStatementFormController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         table.setItems(rows);
+        table.setOnMouseClicked(mouseEvent -> setInputFieldsFromRow());
+        deleteRowButton.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
+        setCellValueFactory();
+    }
+
+    private void setInputFieldsFromRow(){
+        DeliveryStatementRowFromTableView model = table.getSelectionModel().getSelectedItem();
+        productName.setText(model.productName);
+        productPrice.setText(model.productPrice);
+        period.setText(String.valueOf(model.period));
+        janQuantity.setText(String.valueOf(model.janQuantity));
+        febQuantity.setText(String.valueOf(model.febQuantity));
+        marQuantity.setText(String.valueOf(model.marQuantity));
+        aprQuantity.setText(String.valueOf(model.aprQuantity));
+        mayQuantity.setText(String.valueOf(model.mayQuantity));
+        junQuantity.setText(String.valueOf(model.junQuantity));
+        julQuantity.setText(String.valueOf(model.julQuantity));
+        augQuantity.setText(String.valueOf(model.augQuantity));
+        sepQuantity.setText(String.valueOf(model.sepQuantity));
+        octQuantity.setText(String.valueOf(model.octQuantity));
+        novQuantity.setText(String.valueOf(model.novQuantity));
+        decQuantity.setText(String.valueOf(model.decQuantity));
+    }
+
+    private void setCellValueFactory() {
         numberInTable.setCellValueFactory(new PropertyValueFactory<>("numberInTable"));
         productNameCol.setCellValueFactory(new PropertyValueFactory<>("productName"));
         productPriceCol.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
@@ -133,7 +161,7 @@ public class DeliveryStatementFormController implements Initializable {
         DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
         deliveryStatementService.saveDeliveryStatement(deliveryStatement);
         numberInTableCounter = 1;
-        viewSuccessSaveWindow("Ведомость поставки сохранена!");
+        InformationWindow.viewSuccessSaveWindow("Ведомость поставки сохранена!");
     }
 
     private DeliveryStatement getDeliveryStatementFromTableView() {
@@ -166,8 +194,12 @@ public class DeliveryStatementFormController implements Initializable {
             rows.add(row);
             clearInputFields();
         } else {
-            viewInputDataNotValidWindow("Ввел некорректные данные, попробуй еще");
+            InformationWindow.viewInputDataNotValidWindow("Ввел некорректные данные, попробуй еще");
         }
+    }
+
+    public void deleteRowInTable(ActionEvent event) {
+        table.getItems().removeAll(table.getSelectionModel().getSelectedItems());
     }
 
 
@@ -188,7 +220,6 @@ public class DeliveryStatementFormController implements Initializable {
 
     private void clearInputFields() {
         productPrice.setText("0");
-        period.setText("0");
         janQuantity.setText("0");
         febQuantity.setText("0");
         marQuantity.setText("0");
@@ -203,21 +234,7 @@ public class DeliveryStatementFormController implements Initializable {
         decQuantity.setText("0");
     }
 
-    private void viewSuccessSaveWindow(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 
-    private void viewInputDataNotValidWindow(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка ввода");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 
 
     @Getter
@@ -243,12 +260,16 @@ public class DeliveryStatementFormController implements Initializable {
         
 
         IntegerProperty productQuantityProperty() {
-            return new SimpleIntegerProperty(janQuantity + febQuantity + marQuantity + aprQuantity + mayQuantity + junQuantity
-                   + julQuantity + augQuantity + sepQuantity + octQuantity + novQuantity + decQuantity);
+            return new SimpleIntegerProperty(janQuantity + febQuantity + marQuantity + aprQuantity + mayQuantity
+                    + junQuantity + julQuantity + augQuantity + sepQuantity + octQuantity + novQuantity + decQuantity);
         }
 
         public boolean isValid() {
-            return true;
+         return janQuantity >= 0 && febQuantity >= 0 && marQuantity >= 0 && aprQuantity >= 0
+                 && mayQuantity >= 0 && junQuantity >= 0 && julQuantity >= 0 && augQuantity >= 0
+                 && sepQuantity >= 0 && octQuantity >= 0 && novQuantity >= 0 && decQuantity >= 0
+                 && period > 2000 && period < 2100;
+
         }
     }
 }

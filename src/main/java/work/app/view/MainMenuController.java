@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.fxml.*;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -13,7 +12,6 @@ import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URL;
 
 
 @Component

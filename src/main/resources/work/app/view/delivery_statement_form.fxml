@@ -127,5 +127,6 @@
         </columns>
       </TableView>
       <Button layoutX="25.0" layoutY="210.0" mnemonicParsing="false" onAction="#addRowInTable" prefHeight="26.0" prefWidth="193.0" text="Добавить" />
+      <Button fx:id="deleteRowButton" layoutX="122.0" layoutY="542.0" mnemonicParsing="false" onAction="#deleteRowInTable" text="Удалить строку" />
    </children>
 </AnchorPane>
