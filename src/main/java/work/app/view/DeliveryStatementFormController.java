@@ -13,6 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import work.app.delivery_statement.model.DeliveryStatement;
@@ -26,6 +27,9 @@ import java.util.*;
 @Component
 @FxmlView("delivery_statement_form.fxml")
 public class DeliveryStatementFormController implements Initializable {
+    private FxWeaver fxWeaver;
+    private final ObservableList<DeliveryStatementRowFromTableView> rows = FXCollections.observableArrayList();
+    private final DeliveryStatementService deliveryStatementService;
     @FXML
     private Button deleteRowButton;
     @FXML
@@ -69,8 +73,6 @@ public class DeliveryStatementFormController implements Initializable {
     @FXML
     private TableView<DeliveryStatementRowFromTableView> table;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> numberInTable;
-    @FXML
     private TableColumn<DeliveryStatementRowFromTableView, String> productNameCol;
     @FXML
     private TableColumn<DeliveryStatementRowFromTableView, String> productPriceCol;
@@ -102,12 +104,10 @@ public class DeliveryStatementFormController implements Initializable {
     private TableColumn<DeliveryStatementRowFromTableView, Integer> novQuantityCol;
     @FXML
     private TableColumn<DeliveryStatementRowFromTableView, Integer> decQuantityCol;
-    private final ObservableList<DeliveryStatementRowFromTableView> rows = FXCollections.observableArrayList();
-    private final DeliveryStatementService deliveryStatementService;
-    private int numberInTableCounter = 1;
 
-    public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService) {
+    public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, FxWeaver fxWeaver) {
         this.deliveryStatementService = deliveryStatementService;
+        this.fxWeaver = fxWeaver;
     }
 
     @Override
@@ -138,7 +138,6 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
     private void setCellValueFactory() {
-        numberInTable.setCellValueFactory(new PropertyValueFactory<>("numberInTable"));
         productNameCol.setCellValueFactory(new PropertyValueFactory<>("productName"));
         productPriceCol.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         productQuantityCol.setCellValueFactory(cellData -> cellData.getValue().productQuantityProperty().asObject());
@@ -158,10 +157,19 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
     public void saveDeliveryStatement(ActionEvent event) {
-        DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
-        deliveryStatementService.saveDeliveryStatement(deliveryStatement);
-        numberInTableCounter = 1;
-        InformationWindow.viewSuccessSaveWindow("Ведомость поставки сохранена!");
+            DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
+            if (Objects.nonNull(deliveryStatement)) {
+                deliveryStatementService.saveDeliveryStatement(deliveryStatement);
+                InformationWindow.viewSuccessSaveWindow("Ведомость поставки сохранена!");
+                switchToMainController();
+            } else {
+                InformationWindow.viewInputDataNotValidWindow("Некорректно ввел шапку. " +
+                        "Возможно, номер доп соглашения или ведомости");
+            }
+    }
+
+    private void switchToMainController() {
+
     }
 
     private DeliveryStatement getDeliveryStatementFromTableView() {
@@ -183,9 +191,13 @@ public class DeliveryStatementFormController implements Initializable {
             rows.add(new DeliveryStatement.Row(new BigInteger(d.productPrice.trim()), d.productName.trim(),
                    shipment, new HashMap<>(), false, d.period));
         }
-        return new DeliveryStatement(null, contractNumber.getText().trim(),
-                contractDate.getValue(), Integer.parseInt(number.getText()),
-                agreementNumber.getText().trim(), false, rows);
+        try {
+            return new DeliveryStatement(null, contractNumber.getText().trim(),
+                    contractDate.getValue(), Integer.parseInt(number.getText().trim()),
+                    Integer.parseInt(agreementNumber.getText().trim()), false, rows);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     public void addRowInTable(ActionEvent event) {
@@ -205,7 +217,7 @@ public class DeliveryStatementFormController implements Initializable {
 
     private DeliveryStatementRowFromTableView mapInputDataToDeliveryStatementRowFromTableView() {
         try {
-            return new DeliveryStatementRowFromTableView(numberInTableCounter++, productName.getText(),
+            return new DeliveryStatementRowFromTableView(productName.getText(),
                     Integer.parseInt(period.getText()), productPrice.getText(),
                     Integer.parseInt(janQuantity.getText()), Integer.parseInt(febQuantity.getText()),
                     Integer.parseInt(marQuantity.getText()), Integer.parseInt(aprQuantity.getText()),
@@ -241,7 +253,6 @@ public class DeliveryStatementFormController implements Initializable {
     @Setter
     @AllArgsConstructor
     public static class DeliveryStatementRowFromTableView {
-        private int numberInTable;
         private String productName;
         private int period;
         private String productPrice;
@@ -269,7 +280,6 @@ public class DeliveryStatementFormController implements Initializable {
                  && mayQuantity >= 0 && junQuantity >= 0 && julQuantity >= 0 && augQuantity >= 0
                  && sepQuantity >= 0 && octQuantity >= 0 && novQuantity >= 0 && decQuantity >= 0
                  && period > 2000 && period < 2100;
-
         }
     }
 }

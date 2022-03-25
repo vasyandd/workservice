@@ -27,18 +27,17 @@ public final class DeliveryStatement {
     private String contractNumber;
     private LocalDate contractDate;
     private Integer number;
-    private String additionalAgreement;
+    private Integer additionalAgreement;
     private boolean isClosed;
     private List<DeliveryStatement.Row> rows;
 
     public Optional<DeliveryStatement.Row> getRowByProductAndPeriod(String productName, int year) {
         return rows.stream()
                 .filter(ds -> ds.getPeriod() == year && ds.getProductName().equals(productName))
-                //only one row may be with these product and period
                 .findFirst();
     }
 
-    public void isClosedCheck() {
+    public void checkIsClosed() {
         isClosed = rows.stream().allMatch(Row::isCompleted);
     }
 

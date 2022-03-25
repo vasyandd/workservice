@@ -23,7 +23,7 @@ public final class DeliveryStatementEntity {
     private String contractNumber;
     private LocalDate contractDate;
     private Integer number;
-    private String additionalAgreement;
+    private Integer additionalAgreement;
     private boolean isClosed;
     @Column(length = 500)
 

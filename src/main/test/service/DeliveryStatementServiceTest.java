@@ -39,11 +39,11 @@ import java.util.List;
     final static DeliveryStatement.Row KORPUS2_ROW_2023 = new DeliveryStatement.Row(new BigInteger("22222222"), KORPUS2,
             new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(), false, 2023);
     final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5 = new DeliveryStatement(1L, CONTRACT12345678, LocalDate.of(2022, 1, 1),
-            5, "5", false, List.of(KORPUS1_ROW_2022, KORPUS1_ROW_2023, KORPUS2_ROW_2022, KORPUS2_ROW_2023));
+            5, 5, false, List.of(KORPUS1_ROW_2022, KORPUS1_ROW_2023, KORPUS2_ROW_2022, KORPUS2_ROW_2023));
     final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT = new DeliveryStatement(1L, CONTRACT12345678, LocalDate.of(2022, 1, 1),
-            5, "", false, List.of(KORPUS1_ROW_2022, KORPUS1_ROW_2023, KORPUS2_ROW_2022, KORPUS2_ROW_2023));
+            5, null, false, List.of(KORPUS1_ROW_2022, KORPUS1_ROW_2023, KORPUS2_ROW_2022, KORPUS2_ROW_2023));
      final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5_WITH_ONE_ROW = new DeliveryStatement(1L, CONTRACT12345678, LocalDate.of(2022, 1, 1),
-             5, "5", false, List.of(KORPUS1_ROW_2022));
+             5, 5, false, List.of(KORPUS1_ROW_2022));
 
     @AfterEach
     void clearRepo(){
