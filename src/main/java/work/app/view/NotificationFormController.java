@@ -2,7 +2,6 @@ package work.app.view;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import net.rgielen.fxweaver.core.FxmlView;
@@ -10,11 +9,14 @@ import org.springframework.stereotype.Component;
 import work.app.exception.DeliverStatementNotFoundException;
 import work.app.notification.model.Notification;
 import work.app.notification.service.NotificationService;
+import work.app.view.util.InformationWindow;
+import work.app.view.util.SceneSwitcher;
 
 @Component
 @FxmlView("notification_form.fxml")
 public class NotificationFormController {
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
+    private final SceneSwitcher switcher;
     @FXML
     private TextField number;
     @FXML
@@ -27,38 +29,28 @@ public class NotificationFormController {
     private TextField productQuantity;
     @FXML
     private TextField productName;
+    @FXML
+    private TextField productNumber;
 
-    public NotificationFormController(NotificationService notificationService) {
+    public NotificationFormController(NotificationService notificationService, SceneSwitcher switcher) {
         this.notificationService = notificationService;
+        this.switcher = switcher;
     }
 
     public void saveNotification(ActionEvent event) {
         Notification notification = new Notification(Integer.parseInt(number.getText().trim()),
                 date.getValue(), productName.getText().trim(), Integer.parseInt(productQuantity.getText().trim()),
-                contractNumber.getText().trim(), agreement.getText().trim());
+                contractNumber.getText().trim(), agreement.getText().trim(), productNumber.getText().trim());
         try {
             notificationService.saveNotification(notification);
-            successSave();
+            InformationWindow.viewSuccessSaveWindow("Извещение сохранено!");
+            switcher.switchSceneTo(MainMenuController.class, event);
         } catch (DeliverStatementNotFoundException ex) {
-            failSave(ex);
+           InformationWindow.viewInputDataNotValidWindow(ex.getMessage());
         }
 
     }
 
-    private void failSave(DeliverStatementNotFoundException exception) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
-        alert.setHeaderText(null);
-        alert.setContentText(exception.getMessage());
-        alert.showAndWait();
-    }
 
-    private void successSave() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
-        alert.setHeaderText(null);
-        alert.setContentText("Извещение сохранено!");
-        alert.showAndWait();
-    }
 
 }

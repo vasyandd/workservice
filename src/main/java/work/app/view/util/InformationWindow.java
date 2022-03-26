@@ -1,4 +1,4 @@
-package work.app.view;
+package work.app.view.util;
 
 import javafx.scene.control.Alert;
 

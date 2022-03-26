@@ -13,23 +13,30 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.service.DeliveryStatementService;
+import work.app.view.util.InformationWindow;
+import work.app.view.util.ListenerInstaller;
+import work.app.view.util.SceneSwitcher;
 
 import java.math.BigInteger;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
 @Component
 @FxmlView("delivery_statement_form.fxml")
 public class DeliveryStatementFormController implements Initializable {
-    private FxWeaver fxWeaver;
     private final ObservableList<DeliveryStatementRowFromTableView> rows = FXCollections.observableArrayList();
     private final DeliveryStatementService deliveryStatementService;
+    private final SceneSwitcher switcher;
+    private final ListenerInstaller listenerInstaller;
+
+
+    // FXML fields
     @FXML
     private Button deleteRowButton;
     @FXML
@@ -105,36 +112,63 @@ public class DeliveryStatementFormController implements Initializable {
     @FXML
     private TableColumn<DeliveryStatementRowFromTableView, Integer> decQuantityCol;
 
-    public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, FxWeaver fxWeaver) {
+    public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, SceneSwitcher switcher, ListenerInstaller listenerInstaller) {
         this.deliveryStatementService = deliveryStatementService;
-        this.fxWeaver = fxWeaver;
+        this.switcher = switcher;
+        this.listenerInstaller = listenerInstaller;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        table.setItems(rows);
-        table.setOnMouseClicked(mouseEvent -> setInputFieldsFromRow());
-        deleteRowButton.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
-        setCellValueFactory();
+        setFieldsOptions();
+        setTableOptions();
+
     }
 
-    private void setInputFieldsFromRow(){
-        DeliveryStatementRowFromTableView model = table.getSelectionModel().getSelectedItem();
-        productName.setText(model.productName);
-        productPrice.setText(model.productPrice);
-        period.setText(String.valueOf(model.period));
-        janQuantity.setText(String.valueOf(model.janQuantity));
-        febQuantity.setText(String.valueOf(model.febQuantity));
-        marQuantity.setText(String.valueOf(model.marQuantity));
-        aprQuantity.setText(String.valueOf(model.aprQuantity));
-        mayQuantity.setText(String.valueOf(model.mayQuantity));
-        junQuantity.setText(String.valueOf(model.junQuantity));
-        julQuantity.setText(String.valueOf(model.julQuantity));
-        augQuantity.setText(String.valueOf(model.augQuantity));
-        sepQuantity.setText(String.valueOf(model.sepQuantity));
-        octQuantity.setText(String.valueOf(model.octQuantity));
-        novQuantity.setText(String.valueOf(model.novQuantity));
-        decQuantity.setText(String.valueOf(model.decQuantity));
+    private void setFieldsOptions() {
+        period.setText(String.valueOf(LocalDate.now().getYear()));
+        listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_NOT_NEGATIVE_INTEGER_CHECK, janQuantity, febQuantity, marQuantity,
+                aprQuantity, mayQuantity, junQuantity, julQuantity, augQuantity,
+                sepQuantity, octQuantity, novQuantity, decQuantity);
+        listenerInstaller.addDigitValidatorFor(productPrice);
+        listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_POSITIVE_INTEGER_OR_NULL, number, agreementNumber);
+        listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_YEAR_CHECK, period);
+        deleteRowButton.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
+    }
+
+//    private void addDigitValidatorFor(TextField...fields) {
+//        for (TextField field : fields) {
+//            field.textProperty().addListener((observable, oldValue, newValue) -> {
+//                if (!newValue.matches("\\d*") ) {
+//                    field.setStyle(BAD_COLOR);
+//                } else {
+//                    field.setStyle(null);
+//                }
+//            });
+//        }
+//    }
+
+    private void setTableOptions() {
+        table.setItems(rows);
+        table.setOnMouseClicked(mouseEvent -> {
+            DeliveryStatementRowFromTableView model = table.getSelectionModel().getSelectedItem();
+            productName.setText(model.productName);
+            productPrice.setText(model.productPrice);
+            period.setText(String.valueOf(model.period));
+            janQuantity.setText(String.valueOf(model.janQuantity));
+            febQuantity.setText(String.valueOf(model.febQuantity));
+            marQuantity.setText(String.valueOf(model.marQuantity));
+            aprQuantity.setText(String.valueOf(model.aprQuantity));
+            mayQuantity.setText(String.valueOf(model.mayQuantity));
+            junQuantity.setText(String.valueOf(model.junQuantity));
+            julQuantity.setText(String.valueOf(model.julQuantity));
+            augQuantity.setText(String.valueOf(model.augQuantity));
+            sepQuantity.setText(String.valueOf(model.sepQuantity));
+            octQuantity.setText(String.valueOf(model.octQuantity));
+            novQuantity.setText(String.valueOf(model.novQuantity));
+            decQuantity.setText(String.valueOf(model.decQuantity));
+        });
+        setCellValueFactory();
     }
 
     private void setCellValueFactory() {
@@ -161,15 +195,11 @@ public class DeliveryStatementFormController implements Initializable {
             if (Objects.nonNull(deliveryStatement)) {
                 deliveryStatementService.saveDeliveryStatement(deliveryStatement);
                 InformationWindow.viewSuccessSaveWindow("Ведомость поставки сохранена!");
-                switchToMainController();
+                switcher.switchSceneTo(MainMenuController.class, event);
             } else {
                 InformationWindow.viewInputDataNotValidWindow("Некорректно ввел шапку. " +
                         "Возможно, номер доп соглашения или ведомости");
             }
-    }
-
-    private void switchToMainController() {
-
     }
 
     private DeliveryStatement getDeliveryStatementFromTableView() {
@@ -245,9 +275,6 @@ public class DeliveryStatementFormController implements Initializable {
         novQuantity.setText("0");
         decQuantity.setText("0");
     }
-
-
-
 
     @Getter
     @Setter

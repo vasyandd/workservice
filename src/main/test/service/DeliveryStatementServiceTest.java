@@ -25,11 +25,11 @@ import java.util.List;
     final static String KORPUS2 = "KORPUS2";
     final static String CONTRACT12345678 = "12345678";
     final static Notification CLASSIC_NOTIFICATION_ON_KORPUS1_2022 = new Notification(45, LocalDate.of(2022, Month.APRIL, 14),
-            "KORPUS1", 4, CONTRACT12345678, "5");
+            "KORPUS1", 4, CONTRACT12345678, "5", "");
     final static Notification CLASSIC_NOTIFICATION_ON_KORPUS1_2022_WITHOUT_ADDITIONAL_AGREEMENT = new Notification(45, LocalDate.of(2022, Month.APRIL, 14),
-            "KORPUS1", 4, CONTRACT12345678, "");
+            "KORPUS1", 4, CONTRACT12345678, "", "");
     final static Notification CLASSIC_NOTIFICATION_ON_KORPUS1_2029 = new Notification(45, LocalDate.of(2029, Month.APRIL, 14),
-            "KORPUS1", 4, CONTRACT12345678, "5");
+            "KORPUS1", 4, CONTRACT12345678, "5", "");
     final static DeliveryStatement.Row KORPUS1_ROW_2022 = new DeliveryStatement.Row(new BigInteger("111111111"), KORPUS1,
             new HashMap<Month, Integer>() {{put(Month.APRIL, 4);}}, new HashMap<>(), false, 2022);
     final static DeliveryStatement.Row KORPUS1_ROW_2023 = new DeliveryStatement.Row(new BigInteger("22222222"), KORPUS1,

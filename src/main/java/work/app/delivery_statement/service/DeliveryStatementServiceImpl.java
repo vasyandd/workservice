@@ -28,11 +28,6 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     }
 
     @Override
-    public void updateDeliveryStatement(DeliveryStatement deliveryStatement) {
-        deliveryStatementRepository.save(DeliveryStatement.toEntity(deliveryStatement));
-    }
-
-    @Override
     public void updateDeliveryStatement(Notification notification) {
         DeliveryStatement deliveryStatement = getDeliveryStatementByContractAndAdditionalAgreement(
                 notification.getContractNumber(), notification.getAdditionalAgreement());

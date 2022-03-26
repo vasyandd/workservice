@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -30,7 +31,7 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="agreementNumber" layoutX="462.0" layoutY="51.0" prefHeight="26.0" prefWidth="74.0" promptText="0" />
+            <TextField fx:id="agreementNumber" layoutX="462.0" layoutY="51.0" prefHeight="26.0" prefWidth="74.0" />
             <Label layoutX="14.0" layoutY="87.0" text="К ДОГОВОРУ № ">
                <font>
                   <Font size="18.0" />
@@ -71,9 +72,9 @@
             <Label text="Изделие" textAlignment="CENTER" />
             <TextField fx:id="productName" prefHeight="26.0" prefWidth="150.0" promptText="Залупа" GridPane.rowIndex="1" />
             <Label alignment="CENTER" contentDisplay="CENTER" text="Цена изделия" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" />
-            <TextField fx:id="productPrice" prefHeight="26.0" prefWidth="126.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="productPrice" prefHeight="26.0" prefWidth="126.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label prefHeight="18.0" prefWidth="78.0" text="Год поставки" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" />
-            <TextField fx:id="period" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="period" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <Label alignment="TOP_CENTER" contentDisplay="CENTER" text="Янв" textAlignment="CENTER" GridPane.columnIndex="3" />
             <TextField fx:id="janQuantity" promptText="0" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <Label alignment="CENTER" contentDisplay="CENTER" text="Фев" textAlignment="JUSTIFY" GridPane.columnIndex="4" />
@@ -128,4 +129,7 @@
       <Button layoutX="25.0" layoutY="210.0" mnemonicParsing="false" onAction="#addRowInTable" prefHeight="26.0" prefWidth="193.0" text="Добавить" />
       <Button fx:id="deleteRowButton" layoutX="122.0" layoutY="542.0" mnemonicParsing="false" onAction="#deleteRowInTable" text="Удалить строку" />
    </children>
+   <effect>
+      <InnerShadow />
+   </effect>
 </AnchorPane>

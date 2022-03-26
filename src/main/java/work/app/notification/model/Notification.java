@@ -22,14 +22,16 @@ public class Notification {
     private String productName;
     @Column(nullable = false, name = "product_quantity")
     private Integer productQuantity;
+    private String productNumber;
     private String contractNumber;
     private String additionalAgreement;
 
 
     public Notification(Integer number, LocalDate date,
                         String productName, Integer productQuantity,
-                        String contractNumber, String agreement) {
+                        String contractNumber, String agreement, String productNumber) {
         this.number = number;
+        this.productNumber = productNumber;
         this.date = date;
         this.productName = productName;
         this.productQuantity = productQuantity;

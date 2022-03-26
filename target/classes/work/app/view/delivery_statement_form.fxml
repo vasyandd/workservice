@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -30,7 +31,7 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="agreementNumber" layoutX="462.0" layoutY="51.0" prefHeight="26.0" prefWidth="74.0" promptText="0" />
+            <TextField fx:id="agreementNumber" layoutX="462.0" layoutY="51.0" prefHeight="26.0" prefWidth="74.0" />
             <Label layoutX="14.0" layoutY="87.0" text="К ДОГОВОРУ № ">
                <font>
                   <Font size="18.0" />
@@ -71,9 +72,9 @@
             <Label text="Изделие" textAlignment="CENTER" />
             <TextField fx:id="productName" prefHeight="26.0" prefWidth="150.0" promptText="Залупа" GridPane.rowIndex="1" />
             <Label alignment="CENTER" contentDisplay="CENTER" text="Цена изделия" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" />
-            <TextField fx:id="productPrice" prefHeight="26.0" prefWidth="126.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="productPrice" prefHeight="26.0" prefWidth="126.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label prefHeight="18.0" prefWidth="78.0" text="Год поставки" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" />
-            <TextField fx:id="period" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="period" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <Label alignment="TOP_CENTER" contentDisplay="CENTER" text="Янв" textAlignment="CENTER" GridPane.columnIndex="3" />
             <TextField fx:id="janQuantity" promptText="0" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <Label alignment="CENTER" contentDisplay="CENTER" text="Фев" textAlignment="JUSTIFY" GridPane.columnIndex="4" />
@@ -101,14 +102,13 @@
          </children>
       </GridPane>
       <Line endX="775.0" layoutX="128.0" layoutY="110.0" startX="-100.0" />
-      <TableView fx:id="table" layoutX="40.0" layoutY="252.0" prefHeight="282.0" prefWidth="876.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="26.0">
+      <TableView fx:id="table" layoutX="40.0" layoutY="252.0" prefHeight="282.0" prefWidth="876.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="22.0">
         <columns>
-          <TableColumn fx:id="numberInTable" minWidth="-1.0" prefWidth="43.200008392333984" text="№ п/п" />
-          <TableColumn fx:id="productNameCol" prefWidth="111.19998168945312" text="Изделие" />
-            <TableColumn fx:id="productQuantityCol" prefWidth="88.00001525878906" text="Количество" />
-            <TableColumn fx:id="productPriceCol" prefWidth="101.60003662109375" text="Цена изделия" />
-            <TableColumn fx:id="periodCol" prefWidth="56.79998779296875" text="Год" />
-            <TableColumn prefWidth="478.0" text="Количество и месяц поставки">
+          <TableColumn fx:id="productNameCol" prefWidth="147.9999656677246" text="Изделие" />
+            <TableColumn fx:id="productQuantityCol" prefWidth="84.80006408691406" text="Количество" />
+            <TableColumn fx:id="productPriceCol" prefWidth="112.79998779296875" text="Цена изделия" />
+            <TableColumn fx:id="periodCol" prefWidth="59.20001220703125" text="Год" />
+            <TableColumn maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="472.0" text="Количество и месяц поставки">
                <columns>
                   <TableColumn fx:id="janQuantityCol" prefWidth="41.60003662109375" text="Янв" />
                   <TableColumn fx:id="febQuantityCol" prefWidth="36.0" text="Фев" />
@@ -116,12 +116,12 @@
                   <TableColumn fx:id="aprQuantityCol" prefWidth="36.79998779296875" text="Апр" />
                   <TableColumn fx:id="mayQuantityCol" prefWidth="39.20001220703125" text="Май" />
                   <TableColumn fx:id="junQuantityCol" prefWidth="40.79998779296875" text="Июнь" />
-                  <TableColumn fx:id="julQuantityCol" prefWidth="43.20001220703125" text="Июль" />
-                  <TableColumn fx:id="augQuantityCol" prefWidth="41.60003662109375" text="Авг" />
-                  <TableColumn fx:id="sepQuantityCol" prefWidth="37.60009765625" text="Сент" />
-                  <TableColumn fx:id="octQuantityCol" prefWidth="33.60009765625" text="Окт" />
-                  <TableColumn fx:id="novQuantityCol" prefWidth="36.0" text="Нояб" />
-                  <TableColumn fx:id="decQuantityCol" prefWidth="41.5999755859375" text="Дек" />
+                  <TableColumn fx:id="julQuantityCol" prefWidth="40.800048828125" text="Июль" />
+                  <TableColumn fx:id="augQuantityCol" prefWidth="40.0001220703125" text="Авг" />
+                  <TableColumn fx:id="sepQuantityCol" minWidth="-1.0" prefWidth="41.60009765625" text="Сент" />
+                  <TableColumn fx:id="octQuantityCol" prefWidth="32.7999267578125" text="Окт" />
+                  <TableColumn fx:id="novQuantityCol" minWidth="0.0" prefWidth="40.7999267578125" text="Нояб" />
+                  <TableColumn fx:id="decQuantityCol" minWidth="0.0" prefWidth="37.60009765625" text="Дек" />
                </columns>
             </TableColumn>
         </columns>
@@ -129,4 +129,7 @@
       <Button layoutX="25.0" layoutY="210.0" mnemonicParsing="false" onAction="#addRowInTable" prefHeight="26.0" prefWidth="193.0" text="Добавить" />
       <Button fx:id="deleteRowButton" layoutX="122.0" layoutY="542.0" mnemonicParsing="false" onAction="#deleteRowInTable" text="Удалить строку" />
    </children>
+   <effect>
+      <InnerShadow />
+   </effect>
 </AnchorPane>
