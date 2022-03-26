@@ -20,14 +20,16 @@ public final class DeliveryStatementEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String contractNumber;
+    @Column(nullable = false)
     private LocalDate contractDate;
     private Integer number;
     private Integer additionalAgreement;
+    @Column(nullable = false)
     private boolean isClosed;
+
     @Column(length = 500)
-
-
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "rows", joinColumns = {@JoinColumn(name = "ds_id")})
     private List<String> rows = new ArrayList<>();

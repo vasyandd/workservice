@@ -16,12 +16,16 @@ public class ListenerInstaller {
             return false;
         }
     };
+    public final static Predicate<TextField> IS_POSITIVE_INTEGER = IS_NOT_NEGATIVE_INTEGER_CHECK
+            .and(textField -> !textField.getText().trim().equals("0"));
     public final static Predicate<TextField> IS_YEAR_CHECK = IS_NOT_NEGATIVE_INTEGER_CHECK.and(textField -> {
        int number = Integer.parseInt(textField.getText().trim());
        return number >= 2000 && number < 2100;
     });
-    public final static Predicate<TextField> IS_NOT_ZERO_CHECK = textField -> !textField.getText().trim().equals("0");
-    public final static Predicate<TextField> IS_POSITIVE_INTEGER_OR_NULL = IS_NOT_NEGATIVE_INTEGER_CHECK.or(textField -> textField.getText().trim().isEmpty());
+    public final static Predicate<TextField> IS_EMPTY_CHECK = (textField -> textField.getText().trim().isEmpty());
+    public final static Predicate<TextField> IS_POSITIVE_INTEGER_OR_EMPTY_CHECK = IS_EMPTY_CHECK
+            .or(IS_POSITIVE_INTEGER);
+
 
 
     public void addDigitValidatorFor(TextField...fields) {

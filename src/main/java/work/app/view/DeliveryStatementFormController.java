@@ -34,8 +34,6 @@ public class DeliveryStatementFormController implements Initializable {
     private final DeliveryStatementService deliveryStatementService;
     private final SceneSwitcher switcher;
     private final ListenerInstaller listenerInstaller;
-
-
     // FXML fields
     @FXML
     private Button deleteRowButton;
@@ -131,22 +129,10 @@ public class DeliveryStatementFormController implements Initializable {
                 aprQuantity, mayQuantity, junQuantity, julQuantity, augQuantity,
                 sepQuantity, octQuantity, novQuantity, decQuantity);
         listenerInstaller.addDigitValidatorFor(productPrice);
-        listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_POSITIVE_INTEGER_OR_NULL, number, agreementNumber);
+        listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_POSITIVE_INTEGER_OR_EMPTY_CHECK, number, agreementNumber);
         listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_YEAR_CHECK, period);
         deleteRowButton.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
     }
-
-//    private void addDigitValidatorFor(TextField...fields) {
-//        for (TextField field : fields) {
-//            field.textProperty().addListener((observable, oldValue, newValue) -> {
-//                if (!newValue.matches("\\d*") ) {
-//                    field.setStyle(BAD_COLOR);
-//                } else {
-//                    field.setStyle(null);
-//                }
-//            });
-//        }
-//    }
 
     private void setTableOptions() {
         table.setItems(rows);
@@ -192,14 +178,9 @@ public class DeliveryStatementFormController implements Initializable {
 
     public void saveDeliveryStatement(ActionEvent event) {
             DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
-            if (Objects.nonNull(deliveryStatement)) {
-                deliveryStatementService.saveDeliveryStatement(deliveryStatement);
-                InformationWindow.viewSuccessSaveWindow("Ведомость поставки сохранена!");
-                switcher.switchSceneTo(MainMenuController.class, event);
-            } else {
-                InformationWindow.viewInputDataNotValidWindow("Некорректно ввел шапку. " +
-                        "Возможно, номер доп соглашения или ведомости");
-            }
+            deliveryStatementService.saveDeliveryStatement(deliveryStatement);
+            InformationWindow.viewSuccessSaveWindow("Ведомость поставки сохранена!");
+            switcher.switchSceneTo(MainMenuController.class, event);
     }
 
     private DeliveryStatement getDeliveryStatementFromTableView() {
@@ -221,23 +202,33 @@ public class DeliveryStatementFormController implements Initializable {
             rows.add(new DeliveryStatement.Row(new BigInteger(d.productPrice.trim()), d.productName.trim(),
                    shipment, new HashMap<>(), false, d.period));
         }
-        try {
-            return new DeliveryStatement(null, contractNumber.getText().trim(),
-                    contractDate.getValue(), Integer.parseInt(number.getText().trim()),
-                    Integer.parseInt(agreementNumber.getText().trim()), false, rows);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        Integer currentNumber = number.getText().trim().isEmpty() ? null : Integer.parseInt(number.getText().trim());
+        Integer currentAgreementNumber = agreementNumber.getText().trim().isEmpty() ? null : Integer.parseInt(agreementNumber.getText().trim());
+        return new DeliveryStatement(null, contractNumber.getText().trim(), contractDate.getValue(),
+                currentNumber, currentAgreementNumber, false, rows);
     }
 
     public void addRowInTable(ActionEvent event) {
-        DeliveryStatementRowFromTableView row = mapInputDataToDeliveryStatementRowFromTableView();
-        if (Objects.nonNull(row) && row.isValid()) {
+        if (absentBadColor()) {
+            DeliveryStatementRowFromTableView row = mapInputDataToTableData();
             rows.add(row);
             clearInputFields();
         } else {
-            InformationWindow.viewInputDataNotValidWindow("Ввел некорректные данные, попробуй еще");
+            InformationWindow.viewInputDataNotValidWindow("Что-то введено некорректно");
         }
+    }
+
+    private boolean absentBadColor() {
+        return Objects.isNull(number.getStyle()) && Objects.isNull(contractNumber.getStyle())
+                && Objects.isNull(agreementNumber.getStyle()) && Objects.isNull(contractDate.getStyle())
+                && Objects.isNull(productName.getStyle()) && Objects.isNull(productPrice.getStyle())
+                && Objects.isNull(period.getStyle()) && Objects.isNull(janQuantity.getStyle())
+                && Objects.isNull(febQuantity.getStyle()) && Objects.isNull(marQuantity.getStyle())
+                && Objects.isNull(aprQuantity.getStyle()) && Objects.isNull(mayQuantity.getStyle())
+                && Objects.isNull(junQuantity.getStyle()) && Objects.isNull(julQuantity.getStyle())
+                && Objects.isNull(augQuantity.getStyle()) && Objects.isNull(sepQuantity.getStyle())
+                && Objects.isNull(octQuantity.getStyle()) && Objects.isNull(novQuantity.getStyle())
+                && Objects.isNull(decQuantity.getStyle());
     }
 
     public void deleteRowInTable(ActionEvent event) {
@@ -245,8 +236,7 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
 
-    private DeliveryStatementRowFromTableView mapInputDataToDeliveryStatementRowFromTableView() {
-        try {
+    private DeliveryStatementRowFromTableView mapInputDataToTableData() {
             return new DeliveryStatementRowFromTableView(productName.getText(),
                     Integer.parseInt(period.getText()), productPrice.getText(),
                     Integer.parseInt(janQuantity.getText()), Integer.parseInt(febQuantity.getText()),
@@ -255,9 +245,6 @@ public class DeliveryStatementFormController implements Initializable {
                     Integer.parseInt(julQuantity.getText()), Integer.parseInt(augQuantity.getText()),
                     Integer.parseInt(sepQuantity.getText()), Integer.parseInt(octQuantity.getText()),
                     Integer.parseInt(novQuantity.getText()), Integer.parseInt(decQuantity.getText()));
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     private void clearInputFields() {
@@ -302,11 +289,5 @@ public class DeliveryStatementFormController implements Initializable {
                     + junQuantity + julQuantity + augQuantity + sepQuantity + octQuantity + novQuantity + decQuantity);
         }
 
-        public boolean isValid() {
-         return janQuantity >= 0 && febQuantity >= 0 && marQuantity >= 0 && aprQuantity >= 0
-                 && mayQuantity >= 0 && junQuantity >= 0 && julQuantity >= 0 && augQuantity >= 0
-                 && sepQuantity >= 0 && octQuantity >= 0 && novQuantity >= 0 && decQuantity >= 0
-                 && period > 2000 && period < 2100;
-        }
     }
 }

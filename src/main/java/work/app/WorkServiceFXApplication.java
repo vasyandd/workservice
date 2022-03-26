@@ -28,8 +28,6 @@ public class WorkServiceFXApplication extends Application {
     public void start(Stage stage) {
         FxWeaver fxWeaver = applicationContext.getBean(FxWeaver.class);
         Parent root = fxWeaver.loadView(MainMenuController.class);
-//        Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
-//        StyleManager.getInstance().addUserAgentStylesheet(getClass().getResource(STYLESHEET_PATH).toExternalForm());
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
