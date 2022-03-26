@@ -1,0 +1,7 @@
+.bad{
+    -fx-background-color: red;
+}
+
+.good{
+    -fx-background-color: greenyellow;
+}
