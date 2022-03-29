@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 
 @Component
 public class ListenerInstaller {
-    private final static String BAD_COLOR = "-fx-background-color: red;";
+    public final static String BAD_COLOR = "-fx-background-color: red;";
     public final static Predicate<TextField> IS_NOT_NEGATIVE_INTEGER_CHECK = textField -> {
         try {
             int number = Integer.parseInt(textField.getText().trim());
@@ -16,6 +16,7 @@ public class ListenerInstaller {
             return false;
         }
     };
+    public final static Predicate<TextField> IS_NOT_EMPTY = textField -> !textField.getText().trim().isEmpty();
     public final static Predicate<TextField> IS_POSITIVE_INTEGER = IS_NOT_NEGATIVE_INTEGER_CHECK
             .and(textField -> !textField.getText().trim().equals("0"));
     public final static Predicate<TextField> IS_YEAR_CHECK = IS_NOT_NEGATIVE_INTEGER_CHECK.and(textField -> {
@@ -30,6 +31,18 @@ public class ListenerInstaller {
 
     public void addDigitValidatorFor(TextField...fields) {
         addDigitValidatorFor((textField) -> true, fields);
+    }
+
+    public void addValidatorFor(Predicate<TextField> predicate, TextField...textFields) {
+        for (TextField field : textFields) {
+            field.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (predicate.test(field)) {
+                    field.setStyle(null);
+                } else {
+                    field.setStyle(BAD_COLOR);
+                }
+            });
+        }
     }
 
     public void addDigitValidatorFor(Predicate<TextField> predicate, TextField...fields) {
@@ -47,4 +60,5 @@ public class ListenerInstaller {
     private boolean isDigit(String field) {
         return field.matches("\\d*");
     }
+
 }

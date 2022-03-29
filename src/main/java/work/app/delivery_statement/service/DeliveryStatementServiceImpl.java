@@ -2,6 +2,7 @@ package work.app.delivery_statement.service;
 
 
 import org.springframework.stereotype.Component;
+import work.app.delivery_statement.model.Contract;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.repo.DeliveryStatementRepository;
 import work.app.exception.DeliverStatementNotFoundException;
@@ -21,22 +22,21 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     }
 
     @Override
-    public DeliveryStatement getDeliveryStatementByContractAndAdditionalAgreement(String contract, String agreement) {
-        return DeliveryStatement.toModel(deliveryStatementRepository.findByContractNumberAndAdditionalAgreement(contract, agreement)
+    public DeliveryStatement getDeliveryStatementByContract(Contract contract) {
+        return DeliveryStatement.toModel(deliveryStatementRepository.findByContract(contract)
                 .orElseThrow(() -> new DeliverStatementNotFoundException(
-                        "Отсутствует ведомость поставки к дополнительному соглашению " + agreement + " к контракту " + contract)));
+                        "Отсутствует ведомость поставки к нотракту " + contract)));
     }
 
     @Override
     public void updateDeliveryStatement(Notification notification) {
-        DeliveryStatement deliveryStatement = getDeliveryStatementByContractAndAdditionalAgreement(
-                notification.getContractNumber(), notification.getAdditionalAgreement());
+        DeliveryStatement deliveryStatement = getDeliveryStatementByContract(notification.getContract());
 
         DeliveryStatement.Row deliveryStatementRow = deliveryStatement
                 .getRowByProductAndPeriod(notification.getProductName(), notification.getDate().getYear())
                 .orElseThrow( () -> new DeliverStatementNotFoundException(
                         "В ведомости поставки № " + deliveryStatement.getNumber()
-                        + " к контракту №" + deliveryStatement.getContractNumber()
+                        + " к контракту " + deliveryStatement.getContract()
                         + " отсутсвует информация об отгурзке изделия " + notification.getProductName()
                         + " в " + notification.getDate().getYear() + " году"));
 

@@ -6,10 +6,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
-import work.app.exception.DeliverStatementNotFoundException;
-import work.app.notification.model.Notification;
 import work.app.notification.service.NotificationService;
-import work.app.view.util.InformationWindow;
 import work.app.view.util.SceneSwitcher;
 
 @Component
@@ -38,16 +35,14 @@ public class NotificationFormController {
     }
 
     public void saveNotification(ActionEvent event) {
-        Notification notification = new Notification(Integer.parseInt(number.getText().trim()),
-                date.getValue(), productName.getText().trim(), Integer.parseInt(productQuantity.getText().trim()),
-                contractNumber.getText().trim(), agreement.getText().trim(), productNumber.getText().trim());
-        try {
-            notificationService.saveNotification(notification);
-            InformationWindow.viewSuccessSaveWindow("Извещение сохранено!");
-            switcher.switchSceneTo(MainMenuController.class, event);
-        } catch (DeliverStatementNotFoundException ex) {
-           InformationWindow.viewInputDataNotValidWindow(ex.getMessage());
-        }
+//
+//        try {
+//            notificationService.saveNotification(notification);
+//            InformationWindow.viewSuccessSaveWindow("Извещение сохранено!");
+//            switcher.switchSceneTo(MainMenuController.class, event);
+//        } catch (DeliverStatementNotFoundException ex) {
+//           InformationWindow.viewInputDataNotValidWindow(ex.getMessage());
+//        }
 
     }
 

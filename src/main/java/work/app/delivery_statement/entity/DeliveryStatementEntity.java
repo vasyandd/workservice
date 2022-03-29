@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import work.app.delivery_statement.model.Contract;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +20,10 @@ public final class DeliveryStatementEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private String contractNumber;
-    @Column(nullable = false)
-    private LocalDate contractDate;
+    @Embedded
+    private Contract contract;
     private Integer number;
-    private Integer additionalAgreement;
+
     @Column(nullable = false)
     private boolean isClosed;
 

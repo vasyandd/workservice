@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import work.app.delivery_statement.entity.DeliveryStatementEntity;
 
+import javax.persistence.Embedded;
 import java.math.BigInteger;
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +24,9 @@ import java.util.stream.IntStream;
 public final class DeliveryStatement {
 
     private Long id;
-    private String contractNumber;
-    private LocalDate contractDate;
     private Integer number;
-    private Integer additionalAgreement;
+    @Embedded
+    private Contract contract;
     private boolean isClosed;
     private List<DeliveryStatement.Row> rows;
 
@@ -52,9 +51,8 @@ public final class DeliveryStatement {
                     }
                 })
                 .collect(Collectors.toList());
-        return new DeliveryStatementEntity(deliveryStatement.id, deliveryStatement.contractNumber,
-                deliveryStatement.contractDate, deliveryStatement.number, deliveryStatement.additionalAgreement,
-                deliveryStatement.isClosed, rows);
+        return new DeliveryStatementEntity(deliveryStatement.id, deliveryStatement.contract,
+                deliveryStatement.number, deliveryStatement.isClosed, rows);
     }
 
     public static DeliveryStatement toModel(DeliveryStatementEntity entity) {
@@ -68,8 +66,8 @@ public final class DeliveryStatement {
                                 "ведомости поставки из JSON в объект");
                     }
                 }).collect(Collectors.toList());
-        return new DeliveryStatement(entity.getId(), entity.getContractNumber(), entity.getContractDate(),
-                entity.getNumber(), entity.getAdditionalAgreement(), entity.isClosed(), rows);
+        return new DeliveryStatement(entity.getId(),
+                entity.getNumber(), entity.getContract(), entity.isClosed(), rows);
     }
 
     @Getter

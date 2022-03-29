@@ -1,13 +1,16 @@
 package work.app.notification.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import work.app.delivery_statement.model.Contract;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -23,20 +26,10 @@ public class Notification {
     @Column(nullable = false, name = "product_quantity")
     private Integer productQuantity;
     private String productNumber;
-    private String contractNumber;
-    private String additionalAgreement;
+    @Embedded
+    private Contract contract;
 
 
-    public Notification(Integer number, LocalDate date,
-                        String productName, Integer productQuantity,
-                        String contractNumber, String agreement, String productNumber) {
-        this.number = number;
-        this.productNumber = productNumber;
-        this.date = date;
-        this.productName = productName;
-        this.productQuantity = productQuantity;
-        this.contractNumber = contractNumber;
-        this.additionalAgreement = agreement;
-    }
+
 
 }

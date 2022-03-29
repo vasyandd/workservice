@@ -3,6 +3,7 @@ package mock;
 
 
 import work.app.delivery_statement.entity.DeliveryStatementEntity;
+import work.app.delivery_statement.model.Contract;
 import work.app.delivery_statement.repo.DeliveryStatementRepository;
 
 import java.util.ArrayList;
@@ -14,9 +15,10 @@ public class DeliveryStatementRepositoryMock implements DeliveryStatementReposit
 
 
     @Override
-    public Optional<DeliveryStatementEntity> findByContractNumberAndAdditionalAgreement(String contractNumber, String agreement) {
+    public Optional<DeliveryStatementEntity> findByContract(Contract contract) {
         for (DeliveryStatementEntity d : database) {
-           if (d.getContractNumber().equals(contractNumber) && d.getAdditionalAgreement().equals(agreement)) {
+           if (d.getContract().getContractNumber().equals(contract.getContractNumber())
+                   && d.getContract().getAdditionalAgreement().equals(contract.getAdditionalAgreement())) {
                return Optional.of(d);
            }
         }

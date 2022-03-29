@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
+import work.app.delivery_statement.model.Contract;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.service.DeliveryStatementService;
 import work.app.view.util.InformationWindow;
@@ -129,6 +130,7 @@ public class DeliveryStatementFormController implements Initializable {
                 aprQuantity, mayQuantity, junQuantity, julQuantity, augQuantity,
                 sepQuantity, octQuantity, novQuantity, decQuantity);
         listenerInstaller.addDigitValidatorFor(productPrice);
+        listenerInstaller.addValidatorFor(ListenerInstaller.IS_NOT_EMPTY, productName, contractNumber);
         listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_POSITIVE_INTEGER_OR_EMPTY_CHECK, number, agreementNumber);
         listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_YEAR_CHECK, period);
         deleteRowButton.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
@@ -177,10 +179,14 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
     public void saveDeliveryStatement(ActionEvent event) {
+        if(absentBadColorForSave()) {
             DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
             deliveryStatementService.saveDeliveryStatement(deliveryStatement);
             InformationWindow.viewSuccessSaveWindow("Ведомость поставки сохранена!");
             switcher.switchSceneTo(MainMenuController.class, event);
+        } else {
+            InformationWindow.viewInputDataNotValidWindow("В шапке что-то выделено красным");
+        }
     }
 
     private DeliveryStatement getDeliveryStatementFromTableView() {
@@ -204,31 +210,27 @@ public class DeliveryStatementFormController implements Initializable {
         }
         Integer currentNumber = number.getText().trim().isEmpty() ? null : Integer.parseInt(number.getText().trim());
         Integer currentAgreementNumber = agreementNumber.getText().trim().isEmpty() ? null : Integer.parseInt(agreementNumber.getText().trim());
-        return new DeliveryStatement(null, contractNumber.getText().trim(), contractDate.getValue(),
-                currentNumber, currentAgreementNumber, false, rows);
+        Contract contract = new Contract(contractNumber.getText().trim(), contractDate.getValue(), currentAgreementNumber);
+        return new DeliveryStatement(null, currentNumber, contract , false, rows);
     }
 
     public void addRowInTable(ActionEvent event) {
-        if (absentBadColor()) {
+        if (absentBadColorForTableData()) {
             DeliveryStatementRowFromTableView row = mapInputDataToTableData();
             rows.add(row);
             clearInputFields();
         } else {
-            InformationWindow.viewInputDataNotValidWindow("Что-то введено некорректно");
+            InformationWindow.viewInputDataNotValidWindow("Что-то все еще выделено красным");
         }
     }
 
-    private boolean absentBadColor() {
+    private boolean absentBadColorForTableData() {
+        return !productName.getStyle().equals(ListenerInstaller.BAD_COLOR);
+    }
+
+    private boolean absentBadColorForSave() {
         return Objects.isNull(number.getStyle()) && Objects.isNull(contractNumber.getStyle())
-                && Objects.isNull(agreementNumber.getStyle()) && Objects.isNull(contractDate.getStyle())
-                && Objects.isNull(productName.getStyle()) && Objects.isNull(productPrice.getStyle())
-                && Objects.isNull(period.getStyle()) && Objects.isNull(janQuantity.getStyle())
-                && Objects.isNull(febQuantity.getStyle()) && Objects.isNull(marQuantity.getStyle())
-                && Objects.isNull(aprQuantity.getStyle()) && Objects.isNull(mayQuantity.getStyle())
-                && Objects.isNull(junQuantity.getStyle()) && Objects.isNull(julQuantity.getStyle())
-                && Objects.isNull(augQuantity.getStyle()) && Objects.isNull(sepQuantity.getStyle())
-                && Objects.isNull(octQuantity.getStyle()) && Objects.isNull(novQuantity.getStyle())
-                && Objects.isNull(decQuantity.getStyle());
+                && Objects.isNull(agreementNumber.getStyle()) && Objects.isNull(contractDate.getStyle());
     }
 
     public void deleteRowInTable(ActionEvent event) {
