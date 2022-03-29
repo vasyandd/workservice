@@ -19,7 +19,7 @@ import work.app.delivery_statement.model.Contract;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.service.DeliveryStatementService;
 import work.app.view.util.InformationWindow;
-import work.app.view.util.ListenerInstaller;
+import work.app.view.util.ValidatorInstaller;
 import work.app.view.util.SceneSwitcher;
 
 import java.math.BigInteger;
@@ -34,7 +34,7 @@ public class DeliveryStatementFormController implements Initializable {
     private final ObservableList<DeliveryStatementRowFromTableView> rows = FXCollections.observableArrayList();
     private final DeliveryStatementService deliveryStatementService;
     private final SceneSwitcher switcher;
-    private final ListenerInstaller listenerInstaller;
+    private final ValidatorInstaller validatorInstaller;
     // FXML fields
     @FXML
     private Button deleteRowButton;
@@ -111,10 +111,10 @@ public class DeliveryStatementFormController implements Initializable {
     @FXML
     private TableColumn<DeliveryStatementRowFromTableView, Integer> decQuantityCol;
 
-    public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, SceneSwitcher switcher, ListenerInstaller listenerInstaller) {
+    public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, SceneSwitcher switcher, ValidatorInstaller validatorInstaller) {
         this.deliveryStatementService = deliveryStatementService;
         this.switcher = switcher;
-        this.listenerInstaller = listenerInstaller;
+        this.validatorInstaller = validatorInstaller;
     }
 
     @Override
@@ -126,13 +126,13 @@ public class DeliveryStatementFormController implements Initializable {
 
     private void setFieldsOptions() {
         period.setText(String.valueOf(LocalDate.now().getYear()));
-        listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_NOT_NEGATIVE_INTEGER_CHECK, janQuantity, febQuantity, marQuantity,
+        validatorInstaller.addValidatorFor(ValidatorInstaller.IS_NOT_NEGATIVE_INTEGER_CHECK, janQuantity, febQuantity, marQuantity,
                 aprQuantity, mayQuantity, junQuantity, julQuantity, augQuantity,
                 sepQuantity, octQuantity, novQuantity, decQuantity);
-        listenerInstaller.addDigitValidatorFor(productPrice);
-        listenerInstaller.addValidatorFor(ListenerInstaller.IS_NOT_EMPTY, productName, contractNumber);
-        listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_POSITIVE_INTEGER_OR_EMPTY_CHECK, number, agreementNumber);
-        listenerInstaller.addDigitValidatorFor(ListenerInstaller.IS_YEAR_CHECK, period);
+        validatorInstaller.addValidatorFor((x) -> true, productPrice);
+        validatorInstaller.addValidatorFor(ValidatorInstaller.IS_NOT_EMPTY, productName, contractNumber);
+        validatorInstaller.addValidatorFor(ValidatorInstaller.IS_POSITIVE_INTEGER_OR_EMPTY_CHECK, number, agreementNumber);
+        validatorInstaller.addValidatorFor(ValidatorInstaller.IS_YEAR_CHECK, period);
         deleteRowButton.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
     }
 
@@ -179,7 +179,7 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
     public void saveDeliveryStatement(ActionEvent event) {
-        if(absentBadColorForSave()) {
+        if(inputDataForSaveIsValid()) {
             DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
             deliveryStatementService.saveDeliveryStatement(deliveryStatement);
             InformationWindow.viewSuccessSaveWindow("Ведомость поставки сохранена!");
@@ -209,13 +209,13 @@ public class DeliveryStatementFormController implements Initializable {
                    shipment, new HashMap<>(), false, d.period));
         }
         Integer currentNumber = number.getText().trim().isEmpty() ? null : Integer.parseInt(number.getText().trim());
-        Integer currentAgreementNumber = agreementNumber.getText().trim().isEmpty() ? null : Integer.parseInt(agreementNumber.getText().trim());
+        Integer currentAgreementNumber = agreementNumber.getText().trim().isEmpty() ? 0 : Integer.parseInt(agreementNumber.getText().trim());
         Contract contract = new Contract(contractNumber.getText().trim(), contractDate.getValue(), currentAgreementNumber);
         return new DeliveryStatement(null, currentNumber, contract , false, rows);
     }
 
     public void addRowInTable(ActionEvent event) {
-        if (absentBadColorForTableData()) {
+        if (inputDataForTableIsValid()) {
             DeliveryStatementRowFromTableView row = mapInputDataToTableData();
             rows.add(row);
             clearInputFields();
@@ -224,13 +224,20 @@ public class DeliveryStatementFormController implements Initializable {
         }
     }
 
-    private boolean absentBadColorForTableData() {
-        return !productName.getStyle().equals(ListenerInstaller.BAD_COLOR);
+    private boolean inputDataForTableIsValid() {
+        return !productName.getStyle().equals(ValidatorInstaller.BAD_COLOR) && !productPrice.getStyle().equals(ValidatorInstaller.BAD_COLOR)
+                && !period.getStyle().equals(ValidatorInstaller.BAD_COLOR) && !janQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR)
+                && !febQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR) && !marQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR)
+                && !aprQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR) && !mayQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR)
+                && !junQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR) && !julQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR)
+                && !augQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR) && !sepQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR)
+                && !octQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR) && !novQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR)
+                && !decQuantity.getStyle().equals(ValidatorInstaller.BAD_COLOR);
     }
 
-    private boolean absentBadColorForSave() {
-        return Objects.isNull(number.getStyle()) && Objects.isNull(contractNumber.getStyle())
-                && Objects.isNull(agreementNumber.getStyle()) && Objects.isNull(contractDate.getStyle());
+    private boolean inputDataForSaveIsValid() {
+        return !contractNumber.getStyle().equals(ValidatorInstaller.BAD_COLOR) && !agreementNumber.getStyle().equals(ValidatorInstaller.BAD_COLOR)
+                && !number.getStyle().equals(ValidatorInstaller.BAD_COLOR);
     }
 
     public void deleteRowInTable(ActionEvent event) {

@@ -6,15 +6,21 @@ import org.springframework.stereotype.Component;
 import java.util.function.Predicate;
 
 @Component
-public class ListenerInstaller {
+public class ValidatorInstaller {
     public final static String BAD_COLOR = "-fx-background-color: red;";
     public final static Predicate<TextField> IS_NOT_NEGATIVE_INTEGER_CHECK = textField -> {
-        try {
-            int number = Integer.parseInt(textField.getText().trim());
-            return number >= 0;
-        } catch (NumberFormatException e) {
-            return false;
+        String number = textField.getText().trim();
+        if (number.matches("\\d*")) {
+            return Integer.parseInt(number) >= 0;
         }
+        return false;
+    };
+    public final static Predicate<TextField> IS_POSITIVE_DIGIT_CHECK = textField -> {
+        String number = textField.getText().trim();
+        if (number.matches("\\d*")) {
+            return Integer.parseInt(number) >= 0;
+        }
+        return false;
     };
     public final static Predicate<TextField> IS_NOT_EMPTY = textField -> !textField.getText().trim().isEmpty();
     public final static Predicate<TextField> IS_POSITIVE_INTEGER = IS_NOT_NEGATIVE_INTEGER_CHECK
@@ -28,11 +34,6 @@ public class ListenerInstaller {
             .or(IS_POSITIVE_INTEGER);
 
 
-
-    public void addDigitValidatorFor(TextField...fields) {
-        addDigitValidatorFor((textField) -> true, fields);
-    }
-
     public void addValidatorFor(Predicate<TextField> predicate, TextField...textFields) {
         for (TextField field : textFields) {
             field.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -45,20 +46,5 @@ public class ListenerInstaller {
         }
     }
 
-    public void addDigitValidatorFor(Predicate<TextField> predicate, TextField...fields) {
-        for (TextField field : fields) {
-            field.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (isDigit(newValue) && predicate.test(field)) {
-                    field.setStyle(null);
-                } else {
-                    field.setStyle(BAD_COLOR);
-                }
-            });
-        }
-    }
-
-    private boolean isDigit(String field) {
-        return field.matches("\\d*");
-    }
 
 }

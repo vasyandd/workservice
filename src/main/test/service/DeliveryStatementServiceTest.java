@@ -55,23 +55,23 @@ import java.util.List;
 
     @Test
     void Should_Update_ActualQuantity_From_DeliveryStatement_When_Classic_Notification_Is_Added() {
-        int quantityKorpus1BeforeUpdate = DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5.getRows().get(0).actualProductQuantity();
+        int quantityKorpus1BeforeUpdate = DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5.getRows().get(0).getActualProductQuantity();
         service.saveDeliveryStatement(DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5);
         service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2022);
         int expectedQuantityKorpus1 = quantityKorpus1BeforeUpdate + CLASSIC_NOTIFICATION_ON_KORPUS1_2022.getProductQuantity();
         int quantityKorpus1AfterUpdate = service.getDeliveryStatementByContract(SIMPLE_CONTRACT)
-                .getRows().get(0).actualProductQuantity();
+                .getRows().get(0).getActualProductQuantity();
         Assertions.assertEquals(expectedQuantityKorpus1,quantityKorpus1AfterUpdate);
     }
 
     @Test
     void Should_Update_ActualQuantity_From_DeliveryStatement_When_Classic_Notification_Without_Additional_Agreement_Is_Added() {
-        int quantityKorpus1BeforeUpdate = DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT.getRows().get(0).actualProductQuantity();
+        int quantityKorpus1BeforeUpdate = DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT.getRows().get(0).getActualProductQuantity();
         service.saveDeliveryStatement(DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT);
         service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2022_WITHOUT_ADDITIONAL_AGREEMENT);
         int expectedQuantityKorpus1 = quantityKorpus1BeforeUpdate + CLASSIC_NOTIFICATION_ON_KORPUS1_2022_WITHOUT_ADDITIONAL_AGREEMENT.getProductQuantity();
         int quantityKorpus1AfterUpdate = service.getDeliveryStatementByContract(SIMPLE_CONTRACT_WITHOUT_ADDITIONAL_AGREEMENT)
-                .getRows().get(0).actualProductQuantity();
+                .getRows().get(0).getActualProductQuantity();
         Assertions.assertEquals(expectedQuantityKorpus1,quantityKorpus1AfterUpdate);
     }
 

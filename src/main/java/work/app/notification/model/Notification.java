@@ -25,7 +25,7 @@ public class Notification {
     private String productName;
     @Column(nullable = false, name = "product_quantity")
     private Integer productQuantity;
-    private String productNumber;
+    private String productNumbers;
     @Embedded
     private Contract contract;
 

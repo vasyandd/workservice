@@ -8,6 +8,10 @@ import work.app.delivery_statement.repo.DeliveryStatementRepository;
 import work.app.exception.DeliverStatementNotFoundException;
 import work.app.notification.model.Notification;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     private DeliveryStatementRepository deliveryStatementRepository;
@@ -43,5 +47,17 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
         deliveryStatementRow.increaseActualProductQuantity(notification.getDate().getMonth(), notification.getProductQuantity());
         deliveryStatement.checkIsClosed();
         deliveryStatementRepository.save(DeliveryStatement.toEntity(deliveryStatement));
+    }
+
+    @Override
+    public List<DeliveryStatement> getAllDeliveryStatements() {
+        List<DeliveryStatement> list = new ArrayList<>();
+        deliveryStatementRepository.findAll().iterator().forEachRemaining((x) -> list.add(DeliveryStatement.toModel(x)));
+        return list;
+    }
+
+    @Override
+    public List<DeliveryStatement> getOpenDeliveryStatements() {
+        return getAllDeliveryStatements().stream().filter(d -> !d.isClosed()).collect(Collectors.toList());
     }
 }
