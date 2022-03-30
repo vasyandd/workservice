@@ -19,6 +19,7 @@ public class Contract {
 
     @Override
     public String toString() {
-        return "№ " + contractNumber + " от " + contractDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) + " д.c. " + additionalAgreement;
+        return "№ " + contractNumber + " от " + contractDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+                + " д.c. " + additionalAgreement;
     }
 }

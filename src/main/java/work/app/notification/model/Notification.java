@@ -8,6 +8,7 @@ import work.app.delivery_statement.model.Contract;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +31,9 @@ public class Notification {
     private Contract contract;
 
 
-
-
+    @Override
+    public String toString() {
+        return productQuantity + " шт. (" + productNumbers + ") в "
+                + date.getMonth() + " изв. № " + number + " от " + date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+    }
 }

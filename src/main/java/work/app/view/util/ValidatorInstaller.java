@@ -10,7 +10,7 @@ public class ValidatorInstaller {
     public final static String BAD_COLOR = "-fx-background-color: red;";
     public final static Predicate<TextField> IS_NOT_NEGATIVE_INTEGER_CHECK = textField -> {
         String number = textField.getText().trim();
-        if (number.matches("\\d*")) {
+        if (number.matches("\\d*") && !number.isEmpty()) {
             return Integer.parseInt(number) >= 0;
         }
         return false;

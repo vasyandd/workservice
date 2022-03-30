@@ -9,7 +9,7 @@
 
 <AnchorPane prefHeight="412.0" prefWidth="506.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="work.app.view.MainMenuController">
    <children>
-      <Button layoutY="275.0" mnemonicParsing="false" prefHeight="139.0" prefWidth="507.0" text="Посмотреть, что вообще происходит" textAlignment="CENTER" wrapText="true">
+      <Button layoutY="275.0" mnemonicParsing="false" onAction="#switchSceneToViewAllInformation" prefHeight="139.0" prefWidth="507.0" text="Посмотреть, что вообще происходит" textAlignment="CENTER" wrapText="true">
          <font>
             <Font size="36.0" />
          </font></Button>

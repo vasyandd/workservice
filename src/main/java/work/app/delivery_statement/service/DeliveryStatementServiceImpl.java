@@ -45,6 +45,7 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
                         + " в " + notification.getDate().getYear() + " году"));
 
         deliveryStatementRow.increaseActualProductQuantity(notification.getDate().getMonth(), notification.getProductQuantity());
+        deliveryStatementRow.addNotificationInfo(notification.toString());
         deliveryStatement.checkIsClosed();
         deliveryStatementRepository.save(DeliveryStatement.toEntity(deliveryStatement));
     }

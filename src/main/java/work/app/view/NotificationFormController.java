@@ -22,7 +22,6 @@ import work.app.view.util.ValidatorInstaller;
 
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @FxmlView("notification_form.fxml")
@@ -43,7 +42,7 @@ public class NotificationFormController implements Initializable {
     ChoiceBox<String> productBox;
     @FXML
     private TextField productNumbers;
-    List<DeliveryStatement> deliveryStatements;
+    List<DeliveryStatement> deliveryStatements = new ArrayList<>();
     ObservableList<Contract> contracts = FXCollections.observableArrayList();
     ObservableList<String> products = FXCollections.observableArrayList();
     Map<Contract, Set<String>> productsByContract = new HashMap<>();
@@ -57,20 +56,15 @@ public class NotificationFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        System.out.println("HELLOO!!");
+        if(!deliveryStatements.isEmpty()) deliveryStatements.clear();
         deliveryStatements = deliveryStatementService.getOpenDeliveryStatements();
-        deliveryStatements.forEach(d -> {
-            productsByContract.put(d.getContract(),
-                    d.getRows().stream()
-                            .filter(r -> !r.isCompleted())
-                            .map(DeliveryStatement.Row::getProductName)
-                            .collect(Collectors.toSet()));
-        });
+        deliveryStatements.forEach(d -> productsByContract.put(d.getContract(), d.getNotDeliveredProducts()));
         contractBox.setItems(contracts);
         productBox.setItems(products);
         contracts.addAll(productsByContract.keySet());
         contractBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             products.clear();
-            System.out.println(observable.getValue());
             products.addAll(productsByContract.get(observable.getValue()));
         });
         validator.addValidatorFor(ValidatorInstaller.IS_POSITIVE_INTEGER, number, productQuantity);
@@ -83,7 +77,8 @@ public class NotificationFormController implements Initializable {
                 Integer.parseInt(productQuantity.getText().trim()), productNumbers.getText().trim(),
                 selectedContract);
         try {
-            notificationService.saveNotification(notification);
+          //  notificationService.saveNotification(notification);
+          //  productsByContract.clear();
             InformationWindow.viewSuccessSaveWindow("Извещение сохранено!");
             switcher.switchSceneTo(MainMenuController.class, event);
         } catch (DeliverStatementNotFoundException ex) {

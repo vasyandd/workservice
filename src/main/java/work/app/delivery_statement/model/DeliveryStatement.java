@@ -15,6 +15,7 @@ import java.time.Month;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,6 +40,14 @@ public final class DeliveryStatement {
 
     public void checkIsClosed() {
         isClosed = rows.stream().allMatch(Row::isCompleted);
+    }
+
+    public Set<String> getAllProducts() {
+        return rows.stream().map(Row::getProductName).collect(Collectors.toSet());
+    }
+
+    public Set<String> getNotDeliveredProducts() {
+        return rows.stream().filter(row -> !row.isCompleted).map(Row::getProductName).collect(Collectors.toSet());
     }
 
     public static DeliveryStatementEntity toEntity(DeliveryStatement deliveryStatement){
@@ -82,7 +91,7 @@ public final class DeliveryStatement {
         private Map<Month, Integer> actualShipment;
         private boolean isCompleted;
         private Integer period;
-
+        private List<String> notifications;
 
         @JsonIgnore
         public int getActualProductQuantity() {
@@ -96,6 +105,15 @@ public final class DeliveryStatement {
         public void increaseActualProductQuantity(Month month, int quantity) {
             actualShipment.merge(month, quantity, Integer::sum);
             if (getActualProductQuantity() == getScheduledProductQuantity()) isCompleted = true;
+        }
+
+        public void addNotificationInfo(String notification) {
+            notifications.add(notification);
+        }
+
+        @JsonIgnore
+        public String getNotificationInfo() {
+           return String.join(", ", notifications);
         }
 
     }

@@ -182,6 +182,7 @@ public class DeliveryStatementFormController implements Initializable {
         if(inputDataForSaveIsValid()) {
             DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
             deliveryStatementService.saveDeliveryStatement(deliveryStatement);
+            table.getItems().clear();
             InformationWindow.viewSuccessSaveWindow("Ведомость поставки сохранена!");
             switcher.switchSceneTo(MainMenuController.class, event);
         } else {
@@ -206,7 +207,7 @@ public class DeliveryStatementFormController implements Initializable {
             shipment.put(Month.NOVEMBER, d.novQuantity);
             shipment.put(Month.DECEMBER, d.decQuantity);
             rows.add(new DeliveryStatement.Row(new BigInteger(d.productPrice.trim()), d.productName.trim(),
-                   shipment, new HashMap<>(), false, d.period));
+                   shipment, new HashMap<>(), false, d.period, new ArrayList<>()));
         }
         Integer currentNumber = number.getText().trim().isEmpty() ? null : Integer.parseInt(number.getText().trim());
         Integer currentAgreementNumber = agreementNumber.getText().trim().isEmpty() ? 0 : Integer.parseInt(agreementNumber.getText().trim());

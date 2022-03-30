@@ -23,7 +23,9 @@ public class MainMenuController {
         switcher.switchSceneTo(DeliveryStatementFormController.class, event);
     }
 
-
+    public void switchSceneToViewAllInformation(ActionEvent event) {
+        switcher.switchSceneTo(ViewAllInformationController.class, event);
+    }
 
 
 }
