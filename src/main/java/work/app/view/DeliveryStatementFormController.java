@@ -19,14 +19,16 @@ import work.app.delivery_statement.model.Contract;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.service.DeliveryStatementService;
 import work.app.view.util.InformationWindow;
-import work.app.view.util.ValidatorInstaller;
 import work.app.view.util.SceneSwitcher;
+import work.app.view.util.ValidatorInstaller;
 
 import java.math.BigInteger;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
+
+import static work.app.view.util.ValidatorInstaller.FieldPredicate.*;
 
 @Component
 @FxmlView("delivery_statement_form.fxml")
@@ -111,7 +113,8 @@ public class DeliveryStatementFormController implements Initializable {
     @FXML
     private TableColumn<DeliveryStatementRowFromTableView, Integer> decQuantityCol;
 
-    public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, SceneSwitcher switcher, ValidatorInstaller validatorInstaller) {
+    public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, SceneSwitcher switcher,
+                                           ValidatorInstaller validatorInstaller) {
         this.deliveryStatementService = deliveryStatementService;
         this.switcher = switcher;
         this.validatorInstaller = validatorInstaller;
@@ -126,13 +129,13 @@ public class DeliveryStatementFormController implements Initializable {
 
     private void setFieldsOptions() {
         period.setText(String.valueOf(LocalDate.now().getYear()));
-        validatorInstaller.addValidatorFor(ValidatorInstaller.IS_NOT_NEGATIVE_INTEGER_CHECK, janQuantity, febQuantity, marQuantity,
+        validatorInstaller.addValidatorFor(NOT_NEGATIVE_INTEGER.predicate(), janQuantity, febQuantity, marQuantity,
                 aprQuantity, mayQuantity, junQuantity, julQuantity, augQuantity,
                 sepQuantity, octQuantity, novQuantity, decQuantity);
-        validatorInstaller.addValidatorFor((x) -> true, productPrice);
-        validatorInstaller.addValidatorFor(ValidatorInstaller.IS_NOT_EMPTY, productName, contractNumber);
-        validatorInstaller.addValidatorFor(ValidatorInstaller.IS_POSITIVE_INTEGER_OR_EMPTY_CHECK, number, agreementNumber);
-        validatorInstaller.addValidatorFor(ValidatorInstaller.IS_YEAR_CHECK, period);
+        validatorInstaller.addValidatorFor(NOT_NEGATIVE_BIG_INTEGER.predicate(), productPrice);
+        validatorInstaller.addValidatorFor(NOT_EMPTY.predicate(), productName, contractNumber);
+        validatorInstaller.addValidatorFor(POSITIVE_INTEGER.predicate().or(EMPTY.predicate()), number, agreementNumber);
+        validatorInstaller.addValidatorFor(YEAR.predicate(), period);
         deleteRowButton.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
     }
 
@@ -210,7 +213,8 @@ public class DeliveryStatementFormController implements Initializable {
                    shipment, new HashMap<>(), false, d.period, new ArrayList<>()));
         }
         Integer currentNumber = number.getText().trim().isEmpty() ? null : Integer.parseInt(number.getText().trim());
-        Integer currentAgreementNumber = agreementNumber.getText().trim().isEmpty() ? 0 : Integer.parseInt(agreementNumber.getText().trim());
+        Integer currentAgreementNumber = agreementNumber.getText().trim().isEmpty()
+                ? 0 : Integer.parseInt(agreementNumber.getText().trim());
         Contract contract = new Contract(contractNumber.getText().trim(), contractDate.getValue(), currentAgreementNumber);
         return new DeliveryStatement(null, currentNumber, contract , false, rows);
     }

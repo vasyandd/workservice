@@ -8,30 +8,45 @@ import java.util.function.Predicate;
 @Component
 public class ValidatorInstaller {
     public final static String BAD_COLOR = "-fx-background-color: red;";
-    public final static Predicate<TextField> IS_NOT_NEGATIVE_INTEGER_CHECK = textField -> {
-        String number = textField.getText().trim();
-        if (number.matches("\\d*") && !number.isEmpty()) {
-            return Integer.parseInt(number) >= 0;
+
+    public enum FieldPredicate {
+        NOT_EMPTY(textField -> !textField.getText().trim().isEmpty()),
+        EMPTY(NOT_EMPTY.predicate.negate()),
+        NOT_ZERO(textField -> textField.getText().trim().equals("0")),
+        ZERO(NOT_ZERO.predicate.negate()),
+        POSITIVE_INTEGER(NOT_EMPTY.predicate
+                .and(textField -> {
+                    try {
+                        int number = Integer.parseInt(textField.getText().trim());
+                        return number > 0;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                })),
+        NOT_NEGATIVE_INTEGER(POSITIVE_INTEGER.predicate.or(ZERO.predicate)),
+        POSITIVE_BIG_INTEGER(NOT_EMPTY.predicate
+                .and(textField -> {
+                    String number = textField.getText().trim();
+                    return number.matches("\\d*") && !number.startsWith("-")
+                            && !number.equals("0");
+                })),
+        NOT_NEGATIVE_BIG_INTEGER(POSITIVE_BIG_INTEGER.predicate.or(ZERO.predicate)),
+        YEAR(POSITIVE_INTEGER.predicate
+                .and(textField -> {
+                    int number = Integer.parseInt(textField.getText().trim());
+                    return number > 2000 && number < 2100;
+                }));
+
+        private Predicate<TextField> predicate;
+
+        FieldPredicate(Predicate<TextField> predicate) {
+            this.predicate = predicate;
         }
-        return false;
-    };
-    public final static Predicate<TextField> IS_POSITIVE_DIGIT_CHECK = textField -> {
-        String number = textField.getText().trim();
-        if (number.matches("\\d*")) {
-            return Integer.parseInt(number) >= 0;
+
+        public Predicate<TextField> predicate() {
+            return predicate;
         }
-        return false;
-    };
-    public final static Predicate<TextField> IS_NOT_EMPTY = textField -> !textField.getText().trim().isEmpty();
-    public final static Predicate<TextField> IS_POSITIVE_INTEGER = IS_NOT_NEGATIVE_INTEGER_CHECK
-            .and(textField -> !textField.getText().trim().equals("0"));
-    public final static Predicate<TextField> IS_YEAR_CHECK = IS_NOT_NEGATIVE_INTEGER_CHECK.and(textField -> {
-       int number = Integer.parseInt(textField.getText().trim());
-       return number >= 2000 && number < 2100;
-    });
-    public final static Predicate<TextField> IS_EMPTY_CHECK = (textField -> textField.getText().trim().isEmpty());
-    public final static Predicate<TextField> IS_POSITIVE_INTEGER_OR_EMPTY_CHECK = IS_EMPTY_CHECK
-            .or(IS_POSITIVE_INTEGER);
+    }
 
 
     public void addValidatorFor(Predicate<TextField> predicate, TextField...textFields) {

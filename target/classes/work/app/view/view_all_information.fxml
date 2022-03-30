@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+
+<AnchorPane prefHeight="572.0" prefWidth="1083.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="work.app.view.ViewAllInformationController">
+   <children>
+      <GridPane gridLinesVisible="true" layoutX="23.0" layoutY="95.0" maxWidth="1.7976931348623157E308" prefHeight="474.0" prefWidth="1042.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="514.6000366210938" minWidth="10.0" prefWidth="284.399951171875" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="825.6000000000001" minWidth="10.0" prefWidth="786.6666442871094" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="232.0000213623047" minHeight="10.0" prefHeight="104.0000213623047" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="372.7999786376953" minHeight="10.0" prefHeight="372.7999786376953" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <GridPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="101.0" prefWidth="236.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="10.0" prefWidth="115.46664733886719" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="150.0" minWidth="10.0" prefWidth="120.53335266113281" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
+              </rowConstraints>
+               <children>
+                  <Button alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#fillContractsList" prefHeight="102.0" prefWidth="147.0" text="Выбрать котнракт" textAlignment="CENTER" wrapText="true" />
+                  <Button alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#fillProductsList" prefHeight="102.0" prefWidth="128.0" text="Выбрать изделие" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+               </children>
+            </GridPane>
+            <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="472.0" prefWidth="783.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+              <columns>
+                <TableColumn prefWidth="75.0" text="C1" />
+                <TableColumn prefWidth="75.0" text="C2" />
+              </columns>
+            </TableView>
+            <ListView fx:id="listOfContractsOrProducts" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>
