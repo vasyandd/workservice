@@ -53,9 +53,9 @@
             </AnchorPane>
             <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="465.0" prefWidth="117.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <TableView fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="466.0" prefWidth="660.0" stylesheets="@styles.css" HBox.hgrow="ALWAYS">
+                  <TableView fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="466.0" prefWidth="660.0" HBox.hgrow="ALWAYS">
                     <columns>
-                      <TableColumn fx:id="productNameCol" prefWidth="190.39999389648438" text="Изделие" />
+                      <TableColumn fx:id="productOrContractCol" prefWidth="190.39999389648438" text="Изделие/Контракт" />
                       <TableColumn fx:id="productPriceCol" prefWidth="102.66665649414062" text="Цена" />
                         <TableColumn minWidth="15.0" prefWidth="104.53335571289062" text="Количество">
                            <columns>

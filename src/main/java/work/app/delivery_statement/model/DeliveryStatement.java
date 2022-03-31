@@ -11,6 +11,7 @@ import work.app.delivery_statement.entity.DeliveryStatementEntity;
 
 import javax.persistence.Embedded;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -118,6 +119,30 @@ public final class DeliveryStatement {
         @JsonIgnore
         public String getNotificationInfo() {
             return String.join(", ", notifications);
+        }
+
+        @JsonIgnore
+        public boolean isLastMonthNow() {
+            if (isCompleted) return false;
+            int currentMonthCode = LocalDate.now().getMonth().getValue();
+            return currentMonthCode == getLastScheduledMonthCode();
+        }
+
+        @JsonIgnore
+        public boolean isExpired() {
+            if (isCompleted) return false;
+            int currentMonthCode = LocalDate.now().getMonth().getValue();
+            return currentMonthCode > getLastScheduledMonthCode();
+        }
+
+        @JsonIgnore
+        private int getLastScheduledMonthCode() {
+            return scheduledShipment.keySet().stream()
+                    .filter(m -> scheduledShipment.get(m) > 0)
+                    .map(Month::getValue)
+                    .flatMapToInt(IntStream::of)
+                    .max()
+                    .getAsInt();
         }
 
         public void increaseActualProductQuantity(Month month, int quantity) {

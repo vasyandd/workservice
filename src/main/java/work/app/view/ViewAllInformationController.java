@@ -8,7 +8,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,22 +15,21 @@ import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.service.DeliveryStatementService;
+import work.app.notification.service.NotificationService;
 
 import java.net.URL;
 import java.time.Month;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 @FxmlView("view_all_information.fxml")
 public class ViewAllInformationController implements Initializable {
-    private DeliveryStatementService deliveryStatementService;
-    private ObservableList<String> products = FXCollections.observableArrayList();
-    private ObservableList<String> contracts = FXCollections.observableArrayList();
-    private ObservableList<MainTableRow> rows = FXCollections.observableArrayList();
+    private final DeliveryStatementService deliveryStatementService;
+    private final NotificationService notificationService;
+    private final ObservableList<String> products = FXCollections.observableArrayList();
+    private final ObservableList<String> contracts = FXCollections.observableArrayList();
+    private final ObservableList<MainTableRow> rows = FXCollections.observableArrayList();
     private boolean contractSelectedInListView;
     @FXML
     private ListView<String> listOfContractsOrProducts;
@@ -40,7 +38,7 @@ public class ViewAllInformationController implements Initializable {
     @FXML
     private Label title;
     @FXML
-    private TableColumn<MainTableRow, String> productNameCol;
+    private TableColumn<MainTableRow, String> productOrContractCol;
     @FXML
     private TableColumn<MainTableRow, String> productPriceCol;
     @FXML
@@ -75,11 +73,12 @@ public class ViewAllInformationController implements Initializable {
     private TableColumn<MainTableRow, Integer> decQuantityCol;
     @FXML
     private TableColumn<MainTableRow, String> noteCol;
-    private final Map<String, DeliveryStatement> deliveryStatementByContract= new HashMap<>();
-    private final Map<String, DeliveryStatement> deliveryStatementByProduct= new HashMap<>();
+    private final Map<String, DeliveryStatement> deliveryStatementCachedByContract = new HashMap<>();
+    private final Map<String, Set<DeliveryStatement>> deliveryStatementsCachedByProduct = new HashMap<>();
 
-    public ViewAllInformationController(DeliveryStatementService deliveryStatementService) {
+    public ViewAllInformationController(DeliveryStatementService deliveryStatementService, NotificationService notificationService) {
         this.deliveryStatementService = deliveryStatementService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -87,29 +86,88 @@ public class ViewAllInformationController implements Initializable {
         table.setItems(rows);
         List<DeliveryStatement> deliveryStatements = deliveryStatementService.getAllDeliveryStatements();
         deliveryStatements.forEach(d -> {
-            products.addAll(d.getAllProducts());
-            contracts.add(d.getContract().toString());
-            deliveryStatementByContract.put(d.getContract().toString(), d);
-            deliveryStatementByProduct.put(d.getAllProducts().toString(), d);
+            deliveryStatementCachedByContract.put(d.getContract().toString(), d);
+            d.getRows().forEach(row -> {
+                deliveryStatementsCachedByProduct
+                .merge(row.getProductName(), new HashSet<>() {{add(d);}}, (set, set2) -> {
+                    set.add(d);
+                    return set;
+                });
+            });
         });
+        products.addAll(deliveryStatementsCachedByProduct.keySet());
+        contracts.addAll(deliveryStatementCachedByContract.keySet());
         listOfContractsOrProducts.getSelectionModel().selectedItemProperty()
                 .addListener(((observableValue, oldValue, newValue) -> {
-                    if (contractSelectedInListView && observableValue.getValue() != null) {
-                        fillTableByContract(observableValue.getValue());
+                    if(observableValue.getValue() != null) {
+                        if (contractSelectedInListView) {
+                            fillTableByContract(observableValue.getValue());
+                        } else {
+                            fillTableByProduct(observableValue.getValue());
+                        }
                     } else {
                         title.setVisible(false);
                         rows.clear();
                     }
                 }));
-        setCellValueFactory();
+        setCellValueFactories();
+        setRowFactories();
     }
 
-    private void setCellValueFactory() {
-        productNameCol.setCellValueFactory(new PropertyValueFactory<>("productName"));
+    private void setRowFactories() {
+        table.setRowFactory(tv -> new TableRow<MainTableRow>() {
+            @Override
+            public void updateItem(MainTableRow item, boolean empty) {
+                super.updateItem(item, empty) ;
+                if (item == null) {
+                    setStyle("");
+                } else if (item.isCompleted) {
+                    setStyle("-fx-background-color: greenyellow;");
+                } else if (item.isExpired) {
+                    setStyle("-fx-background-color: darkred;");
+                } else if(item.isLastMonthNow) {
+                    setStyle("-fx-background-color: cornflowerblue;");
+                }
+                else {
+                    setStyle("");
+                }
+            }
+        });
+    }
+
+    private void fillTableByProduct(String key) {
+        rows.clear();
+        Set<DeliveryStatement> deliveryStatements = deliveryStatementsCachedByProduct.get(key);
+        for (DeliveryStatement d : deliveryStatements) {
+            rows.addAll(d.getRows().stream()
+                    .filter(row -> row.getProductName().equals(key))
+                    .map(row -> {
+                        Map<Month, String> productQuantityByMonth = row.getProductQuantityWithSlash();
+                        return new MainTableRow(d.getContract().toString(), row.getPeriod(),
+                                row.getActualProductQuantity(), row.getScheduledProductQuantity(),
+                                row.getPriceForOneProduct().toString(), productQuantityByMonth.get(Month.JANUARY),
+                                productQuantityByMonth.get(Month.FEBRUARY), productQuantityByMonth.get(Month.MARCH),
+                                productQuantityByMonth.get(Month.APRIL), productQuantityByMonth.get(Month.MAY),
+                                productQuantityByMonth.get(Month.JUNE), productQuantityByMonth.get(Month.JULY),
+                                productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
+                                productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
+                                productQuantityByMonth.get(Month.DECEMBER), row.getNotificationInfo(),
+                                row.isCompleted(), row.isExpired(), row.isLastMonthNow());
+                    })
+                    .collect(Collectors.toList()));
+        }
+        title.setText("Все ведомости поставки по изделию " + key);
+        title.setVisible(true);
+    }
+
+    private void setCellValueFactories() {
+        productOrContractCol.setCellValueFactory(new PropertyValueFactory<>("productOrContract"));
+        productOrContractCol.setSortable(true);
         productPriceCol.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         actualProductQuantityCol.setCellValueFactory(new PropertyValueFactory<>("actualProductQuantity"));
         scheduledProductQuantityCol.setCellValueFactory(new PropertyValueFactory<>("scheduledProductQuantity"));
         periodCol.setCellValueFactory(new PropertyValueFactory<>("period"));
+        periodCol.setSortable(true);
         janQuantityCol.setCellValueFactory(new PropertyValueFactory<>("janQuantity"));
         febQuantityCol.setCellValueFactory(new PropertyValueFactory<>("febQuantity"));
         marQuantityCol.setCellValueFactory(new PropertyValueFactory<>("marQuantity"));
@@ -123,26 +181,27 @@ public class ViewAllInformationController implements Initializable {
         novQuantityCol.setCellValueFactory(new PropertyValueFactory<>("novQuantity"));
         decQuantityCol.setCellValueFactory(new PropertyValueFactory<>("decQuantity"));
         noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
-        noteCol.setCellFactory(new Callback<TableColumn<MainTableRow, String>, TableCell<MainTableRow, String>>() {
+        setWrapFields(noteCol, productOrContractCol);
+    }
 
-            @Override
-            public TableCell<MainTableRow, String> call(
-                    TableColumn<MainTableRow, String> param) {
+    @SafeVarargs
+    private void setWrapFields(TableColumn<MainTableRow, String>...cols) {
+        for (TableColumn<MainTableRow, String> col : cols) {
+            col.setCellFactory(tc -> {
                 TableCell<MainTableRow, String> cell = new TableCell<>();
                 Text text = new Text();
                 cell.setGraphic(text);
                 cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
-                text.wrappingWidthProperty().bind(cell.widthProperty());
+                text.wrappingWidthProperty().bind(noteCol.widthProperty());
                 text.textProperty().bind(cell.itemProperty());
-                return cell ;
-            }
-
-        });
+                return cell;
+            });
+        }
     }
-    
+
     private void fillTableByContract(String key) {
         rows.clear();
-        DeliveryStatement deliveryStatement = deliveryStatementByContract.get(key);
+        DeliveryStatement deliveryStatement = deliveryStatementCachedByContract.get(key);
         rows.addAll(deliveryStatement.getRows().stream()
                 .map(row -> {
                     Map<Month, String> productQuantityByMonth = row.getProductQuantityWithSlash();
@@ -154,7 +213,8 @@ public class ViewAllInformationController implements Initializable {
                         productQuantityByMonth.get(Month.JUNE), productQuantityByMonth.get(Month.JULY),
                         productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
                         productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
-                        productQuantityByMonth.get(Month.DECEMBER), row.getNotificationInfo());
+                        productQuantityByMonth.get(Month.DECEMBER), row.getNotificationInfo(),
+                        row.isCompleted(), row.isExpired(), row.isLastMonthNow());
                 })
                 .collect(Collectors.toList()));
         title.setText(deliveryStatement.toString());
@@ -176,7 +236,7 @@ public class ViewAllInformationController implements Initializable {
     @Getter
     @Setter
     public static class MainTableRow {
-        private String productName;
+        private String productOrContract;
         private int period;
         private int actualProductQuantity;
         private int scheduledProductQuantity;
@@ -194,5 +254,8 @@ public class ViewAllInformationController implements Initializable {
         private String novQuantity;
         private String decQuantity;
         private String note;
+        private boolean isCompleted;
+        private boolean isExpired;
+        private boolean isLastMonthNow;
     }
 }

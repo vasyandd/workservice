@@ -9,6 +9,8 @@ import work.app.delivery_statement.model.Contract;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,7 +35,8 @@ public class Notification {
 
     @Override
     public String toString() {
-        return productQuantity + " шт. (" + productNumbers + ") в "
-                + date.getMonth() + " изв. № " + number + " от " + date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+        return productQuantity + " шт. в "
+                + date.getMonth().getDisplayName(TextStyle.FULL_STANDALONE , new Locale("ru"))
+                + " изв. № " + number + " от " + date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     }
 }
