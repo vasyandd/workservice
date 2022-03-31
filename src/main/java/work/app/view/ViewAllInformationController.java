@@ -84,7 +84,7 @@ public class ViewAllInformationController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         table.setItems(rows);
-        List<DeliveryStatement> deliveryStatements = deliveryStatementService.getAllDeliveryStatements();
+        List<DeliveryStatement> deliveryStatements = deliveryStatementService.getAllDeliveryStatementsWithNotifications();
         deliveryStatements.forEach(d -> {
             deliveryStatementCachedByContract.put(d.getContract().toString(), d);
             d.getRows().forEach(row -> {
@@ -152,7 +152,7 @@ public class ViewAllInformationController implements Initializable {
                                 productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
                                 productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
                                 productQuantityByMonth.get(Month.DECEMBER), row.getNotificationInfo(),
-                                row.isCompleted(), row.isExpired(), row.isLastMonthNow());
+                                row.isClosed(), row.isExpired(), row.isLastMonthNow());
                     })
                     .collect(Collectors.toList()));
         }
@@ -214,7 +214,7 @@ public class ViewAllInformationController implements Initializable {
                         productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
                         productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
                         productQuantityByMonth.get(Month.DECEMBER), row.getNotificationInfo(),
-                        row.isCompleted(), row.isExpired(), row.isLastMonthNow());
+                        row.isClosed(), row.isExpired(), row.isLastMonthNow());
                 })
                 .collect(Collectors.toList()));
         title.setText(deliveryStatement.toString());

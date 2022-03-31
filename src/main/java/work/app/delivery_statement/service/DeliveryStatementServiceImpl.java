@@ -22,14 +22,14 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
 
     @Override
     public void saveDeliveryStatement(DeliveryStatement deliveryStatement) {
-        deliveryStatementRepository.save(DeliveryStatement.toEntity(deliveryStatement));
+        deliveryStatementRepository.save(deliveryStatement);
     }
 
     @Override
     public DeliveryStatement getDeliveryStatementByContract(Contract contract) {
-        return DeliveryStatement.toModel(deliveryStatementRepository.findByContract(contract)
+        return deliveryStatementRepository.findByContract(contract)
                 .orElseThrow(() -> new DeliverStatementNotFoundException(
-                        "Отсутствует ведомость поставки к нотракту " + contract)));
+                        "Отсутствует ведомость поставки к нотракту " + contract));
     }
 
     @Override
@@ -45,20 +45,25 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
                         + " в " + notification.getDate().getYear() + " году"));
 
         deliveryStatementRow.increaseActualProductQuantity(notification.getDate().getMonth(), notification.getProductQuantity());
-        deliveryStatementRow.addNotificationInfo(notification.toString());
-        deliveryStatement.checkIsClosed();
-        deliveryStatementRepository.save(DeliveryStatement.toEntity(deliveryStatement));
+        deliveryStatementRow.addNotification(notification);
+        notification.setRow(deliveryStatementRow);
+        deliveryStatementRepository.save(deliveryStatement);
+    }
+
+    @Override
+    public List<DeliveryStatement> getAllDeliveryStatementsWithNotifications() {
+        return deliveryStatementRepository.findAllWithNotifications();
     }
 
     @Override
     public List<DeliveryStatement> getAllDeliveryStatements() {
         List<DeliveryStatement> list = new ArrayList<>();
-        deliveryStatementRepository.findAll().iterator().forEachRemaining((x) -> list.add(DeliveryStatement.toModel(x)));
+        deliveryStatementRepository.findAll().iterator().forEachRemaining(list::add);
         return list;
     }
 
     @Override
     public List<DeliveryStatement> getOpenDeliveryStatements() {
-        return getAllDeliveryStatements().stream().filter(d -> !d.isClosed()).collect(Collectors.toList());
+        return getAllDeliveryStatementsWithNotifications().stream().filter(d -> !d.isClosed()).collect(Collectors.toList());
     }
 }

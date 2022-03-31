@@ -1,15 +1,14 @@
 package work.app.delivery_statement.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import work.app.delivery_statement.entity.DeliveryStatementEntity;
+import org.hibernate.annotations.Type;
+import work.app.delivery_statement.JsonConverter;
+import work.app.notification.model.Notification;
 
-import javax.persistence.Embedded;
+import javax.persistence.*;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Month;
@@ -18,17 +17,28 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
-@AllArgsConstructor
+@Entity
+@Table(name = "delivery_statement")
 public final class DeliveryStatement {
 
+    @Id
     private Long id;
     private Integer number;
+
     @Embedded
     private Contract contract;
-    private boolean isClosed;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<DeliveryStatement.Row> rows;
+
+    public DeliveryStatement(Integer number, Contract contract, List<Row> rows) {
+        this.number = number;
+        this.contract = contract;
+        this.rows = rows;
+    }
 
     public Optional<DeliveryStatement.Row> getRowByProductAndPeriod(String productName, int year) {
         return rows.stream()
@@ -36,8 +46,9 @@ public final class DeliveryStatement {
                 .findFirst();
     }
 
-    public void checkIsClosed() {
-        isClosed = rows.stream().allMatch(Row::isCompleted);
+    @Transient
+    public boolean isClosed() {
+        return rows.stream().allMatch(Row::isClosed);
     }
 
     public Set<String> getAllProducts() {
@@ -45,37 +56,7 @@ public final class DeliveryStatement {
     }
 
     public Set<String> getNotDeliveredProducts() {
-        return rows.stream().filter(row -> !row.isCompleted).map(Row::getProductName).collect(Collectors.toSet());
-    }
-
-    public static DeliveryStatementEntity toEntity(DeliveryStatement deliveryStatement){
-        ObjectMapper mapper = new ObjectMapper();
-        List<String> rows = deliveryStatement.getRows().stream()
-                .map(r -> {
-                    try {
-                        return mapper.writeValueAsString(r);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException("Что-то пошло не так при маппинге строки из ведомости поставки в String");
-                    }
-                })
-                .collect(Collectors.toList());
-        return new DeliveryStatementEntity(deliveryStatement.id, deliveryStatement.contract,
-                deliveryStatement.number, deliveryStatement.isClosed, rows);
-    }
-
-    public static DeliveryStatement toModel(DeliveryStatementEntity entity) {
-        ObjectMapper mapper = new ObjectMapper();
-        List<DeliveryStatement.Row> rows = entity.getRows().stream()
-                .map(r -> {
-                    try {
-                        return mapper.readValue(r, Row.class);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException("Что-то пошло не так при маппинге строки " +
-                                "ведомости поставки из JSON в объект: " + e.getMessage());
-                    }
-                }).collect(Collectors.toList());
-        return new DeliveryStatement(entity.getId(),
-                entity.getNumber(), entity.getContract(), entity.isClosed(), rows);
+        return rows.stream().filter(row -> !row.isClosed()).map(Row::getProductName).collect(Collectors.toSet());
     }
 
     @Override
@@ -85,27 +66,52 @@ public final class DeliveryStatement {
 
     @Getter
     @Setter
-    @NoArgsConstructor
     @AllArgsConstructor
+    @NoArgsConstructor
+    @Entity
+    @Table(name = "rows")
     public static final class Row {
+
+        @Id
+        private Long id;
         private BigInteger priceForOneProduct;
         private String productName;
-        private Map<Month, Integer> scheduledShipment;
-        private Map<Month, Integer> actualShipment;
-        private boolean isCompleted;
-        private Integer period;
-        private List<String> notifications;
 
-        @JsonIgnore
+        @Convert(converter = JsonConverter.class)
+        private Map<Month, Integer> scheduledShipment;
+
+        @Type(type = "json")
+        @Column(columnDefinition = "jsonb")
+        private Map<Month, Integer> actualShipment;
+
+        private Integer period;
+
+        @ManyToOne
+        @JoinColumn(name = "ds_id")
+        private DeliveryStatement deliveryStatement;
+
+        @OneToMany(fetch = FetchType.LAZY)
+        private List<Notification> notifications;
+
+        public Row(BigInteger priceForOneProduct, String productName, Map<Month, Integer> scheduledShipment,
+                   Map<Month, Integer> actualShipment, Integer period) {
+            this.priceForOneProduct = priceForOneProduct;
+            this.productName = productName;
+            this.scheduledShipment = scheduledShipment;
+            this.actualShipment = actualShipment;
+            this.period = period;
+        }
+
+        @Transient
         public int getActualProductQuantity() {
             return actualShipment.values().stream().flatMapToInt(IntStream::of).sum();
         }
-        @JsonIgnore
+        @Transient
         public int getScheduledProductQuantity() {
             return scheduledShipment.values().stream().flatMapToInt(IntStream::of).sum();
         }
 
-        @JsonIgnore
+        @Transient
         public Map<Month, String> getProductQuantityWithSlash() {
             Map<Month, String> map = new HashMap<>();
             scheduledShipment.keySet()
@@ -116,26 +122,33 @@ public final class DeliveryStatement {
             return map;
         }
 
-        @JsonIgnore
+        @Transient
         public String getNotificationInfo() {
-            return String.join(", ", notifications);
+            return notifications.stream()
+                                .map(Notification::toString)
+                                .collect(Collectors.joining(", "));
         }
 
-        @JsonIgnore
+        @Transient
+        public boolean isClosed() {
+            return getActualProductQuantity() == getScheduledProductQuantity();
+        }
+
+        @Transient
         public boolean isLastMonthNow() {
-            if (isCompleted) return false;
+            if (isClosed()) return false;
             int currentMonthCode = LocalDate.now().getMonth().getValue();
             return currentMonthCode == getLastScheduledMonthCode();
         }
 
-        @JsonIgnore
+        @Transient
         public boolean isExpired() {
-            if (isCompleted) return false;
+            if (isClosed()) return false;
             int currentMonthCode = LocalDate.now().getMonth().getValue();
             return currentMonthCode > getLastScheduledMonthCode();
         }
 
-        @JsonIgnore
+        @Transient
         private int getLastScheduledMonthCode() {
             return scheduledShipment.keySet().stream()
                     .filter(m -> scheduledShipment.get(m) > 0)
@@ -147,10 +160,9 @@ public final class DeliveryStatement {
 
         public void increaseActualProductQuantity(Month month, int quantity) {
             actualShipment.merge(month, quantity, Integer::sum);
-            if (getActualProductQuantity() >= getScheduledProductQuantity()) isCompleted = true;
         }
 
-        public void addNotificationInfo(String notification) {
+        public void addNotification(Notification notification) {
             notifications.add(notification);
         }
 

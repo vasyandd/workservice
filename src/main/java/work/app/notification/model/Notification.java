@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import work.app.delivery_statement.model.Contract;
+import work.app.delivery_statement.model.DeliveryStatement;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -32,6 +33,20 @@ public class Notification {
     @Embedded
     private Contract contract;
 
+    @ManyToOne
+    @JoinColumn(name = "row_id")
+    private DeliveryStatement.Row row;
+
+    public Notification(Long id, Integer number, LocalDate date, String productName,
+                        Integer productQuantity, String productNumbers, Contract contract) {
+        this.id = id;
+        this.number = number;
+        this.date = date;
+        this.productName = productName;
+        this.productQuantity = productQuantity;
+        this.productNumbers = productNumbers;
+        this.contract = contract;
+    }
 
     @Override
     public String toString() {

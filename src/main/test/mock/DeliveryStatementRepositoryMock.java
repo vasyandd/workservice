@@ -1,9 +1,8 @@
 package mock;
 
 
-
-import work.app.delivery_statement.entity.DeliveryStatementEntity;
 import work.app.delivery_statement.model.Contract;
+import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.repo.DeliveryStatementRepository;
 
 import java.util.ArrayList;
@@ -11,12 +10,22 @@ import java.util.List;
 import java.util.Optional;
 
 public class DeliveryStatementRepositoryMock implements DeliveryStatementRepository{
-    private final List<DeliveryStatementEntity> database = new ArrayList<>();
+    private final List<DeliveryStatement> database = new ArrayList<>();
 
 
     @Override
-    public Optional<DeliveryStatementEntity> findByContract(Contract contract) {
-        for (DeliveryStatementEntity d : database) {
+    public List<DeliveryStatement> findAllWithNotifications() {
+        return null;
+    }
+
+    @Override
+    public void delete(DeliveryStatement entity) {
+
+    }
+
+    @Override
+    public Optional<DeliveryStatement> findByContract(Contract contract) {
+        for (DeliveryStatement d : database) {
            if (d.getContract().getContractNumber().equals(contract.getContractNumber())
                    && d.getContract().getAdditionalAgreement().equals(contract.getAdditionalAgreement())) {
                return Optional.of(d);
@@ -26,7 +35,7 @@ public class DeliveryStatementRepositoryMock implements DeliveryStatementReposit
     }
 
     @Override
-    public <S extends DeliveryStatementEntity> S save(S entity) {
+    public <S extends DeliveryStatement> S save(S entity) {
         for (int i = 0; i < database.size(); i++) {
             if (entity.getId().equals(database.get(i).getId())) {
                 database.add(i, entity);
@@ -38,12 +47,12 @@ public class DeliveryStatementRepositoryMock implements DeliveryStatementReposit
     }
 
     @Override
-    public <S extends DeliveryStatementEntity> Iterable<S> saveAll(Iterable<S> entities) {
+    public <S extends DeliveryStatement> Iterable<S> saveAll(Iterable<S> entities) {
         return null;
     }
 
     @Override
-    public Optional<DeliveryStatementEntity> findById(Long aLong) {
+    public Optional<DeliveryStatement> findById(Long aLong) {
         return Optional.of(database.get(aLong.intValue()));
     }
 
@@ -53,12 +62,12 @@ public class DeliveryStatementRepositoryMock implements DeliveryStatementReposit
     }
 
     @Override
-    public Iterable<DeliveryStatementEntity> findAll() {
+    public Iterable<DeliveryStatement> findAll() {
         return null;
     }
 
     @Override
-    public Iterable<DeliveryStatementEntity> findAllById(Iterable<Long> longs) {
+    public Iterable<DeliveryStatement> findAllById(Iterable<Long> longs) {
         return null;
     }
 
@@ -73,17 +82,12 @@ public class DeliveryStatementRepositoryMock implements DeliveryStatementReposit
     }
 
     @Override
-    public void delete(DeliveryStatementEntity entity) {
-
-    }
-
-    @Override
     public void deleteAllById(Iterable<? extends Long> longs) {
 
     }
 
     @Override
-    public void deleteAll(Iterable<? extends DeliveryStatementEntity> entities) {
+    public void deleteAll(Iterable<? extends DeliveryStatement> entities) {
         database.clear();
     }
 
