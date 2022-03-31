@@ -44,7 +44,6 @@ public class NotificationFormController implements Initializable {
     ChoiceBox<String> productBox;
     @FXML
     private TextField productNumbers;
-    List<DeliveryStatement> deliveryStatements;
     ObservableList<Contract> contracts = FXCollections.observableArrayList();
     ObservableList<String> products = FXCollections.observableArrayList();
     Map<Contract, Set<String>> productsByContract = new HashMap<>();
@@ -58,7 +57,7 @@ public class NotificationFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        deliveryStatements = deliveryStatementService.getOpenDeliveryStatements();
+        List<DeliveryStatement> deliveryStatements = deliveryStatementService.getOpenDeliveryStatements();
         deliveryStatements.forEach(d -> productsByContract.put(d.getContract(), d.getNotDeliveredProducts()));
         contractBox.setItems(contracts);
         contracts.addAll(productsByContract.keySet());
@@ -68,11 +67,9 @@ public class NotificationFormController implements Initializable {
             if (!contracts.isEmpty())
             products.addAll(productsByContract.get(observable.getValue()));
         });
-    }
-
-    private void setFieldsOptions() {
         validator.addValidatorFor(POSITIVE_INTEGER.predicate(), number, productQuantity);
     }
+
 
     public void saveNotification(ActionEvent event) {
         Contract selectedContract = contractBox.getValue();
@@ -81,7 +78,7 @@ public class NotificationFormController implements Initializable {
                 Integer.parseInt(productQuantity.getText().trim()), productNumbers.getText().trim(),
                 selectedContract);
         try {
-          //  notificationService.saveNotification(notification);
+            notificationService.saveNotification(notification);
             InformationWindow.viewSuccessSaveWindow("Извещение сохранено!");
             contracts.clear();
             switcher.switchSceneTo(MainMenuController.class, event);

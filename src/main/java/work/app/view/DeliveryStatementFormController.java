@@ -33,7 +33,7 @@ import static work.app.view.util.ValidatorInstaller.FieldPredicate.*;
 @Component
 @FxmlView("delivery_statement_form.fxml")
 public class DeliveryStatementFormController implements Initializable {
-    private final ObservableList<DeliveryStatementRowFromTableView> rows = FXCollections.observableArrayList();
+    private final ObservableList<TableRowInDeliveryStatementForm> rows = FXCollections.observableArrayList();
     private final DeliveryStatementService deliveryStatementService;
     private final SceneSwitcher switcher;
     private final ValidatorInstaller validatorInstaller;
@@ -79,39 +79,39 @@ public class DeliveryStatementFormController implements Initializable {
     @FXML
     private TextField decQuantity;
     @FXML
-    private TableView<DeliveryStatementRowFromTableView> table;
+    private TableView<TableRowInDeliveryStatementForm> table;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, String> productNameCol;
+    private TableColumn<TableRowInDeliveryStatementForm, String> productNameCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, String> productPriceCol;
+    private TableColumn<TableRowInDeliveryStatementForm, String> productPriceCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> periodCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> periodCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> productQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> productQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> janQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> janQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> febQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> febQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> marQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> marQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> aprQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> aprQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> mayQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> mayQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> junQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> junQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> julQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> julQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> augQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> augQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> sepQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> sepQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> octQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> octQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> novQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> novQuantityCol;
     @FXML
-    private TableColumn<DeliveryStatementRowFromTableView, Integer> decQuantityCol;
+    private TableColumn<TableRowInDeliveryStatementForm, Integer> decQuantityCol;
 
     public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, SceneSwitcher switcher,
                                            ValidatorInstaller validatorInstaller) {
@@ -142,7 +142,7 @@ public class DeliveryStatementFormController implements Initializable {
     private void setTableOptions() {
         table.setItems(rows);
         table.setOnMouseClicked(mouseEvent -> {
-            DeliveryStatementRowFromTableView model = table.getSelectionModel().getSelectedItem();
+            TableRowInDeliveryStatementForm model = table.getSelectionModel().getSelectedItem();
             productName.setText(model.productName);
             productPrice.setText(model.productPrice);
             period.setText(String.valueOf(model.period));
@@ -195,7 +195,7 @@ public class DeliveryStatementFormController implements Initializable {
 
     private DeliveryStatement getDeliveryStatementFromTableView() {
         List<DeliveryStatement.Row> rows = new ArrayList<>();
-        for (DeliveryStatementRowFromTableView d : table.getItems()) {
+        for (TableRowInDeliveryStatementForm d : table.getItems()) {
             Map<Month, Integer> shipment = new HashMap<>();
             shipment.put(Month.JANUARY, d.janQuantity);
             shipment.put(Month.FEBRUARY, d.febQuantity);
@@ -221,7 +221,7 @@ public class DeliveryStatementFormController implements Initializable {
 
     public void addRowInTable(ActionEvent event) {
         if (inputDataForTableIsValid()) {
-            DeliveryStatementRowFromTableView row = mapInputDataToTableData();
+            TableRowInDeliveryStatementForm row = mapInputDataToTable();
             rows.add(row);
             clearInputFields();
         } else {
@@ -250,8 +250,8 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
 
-    private DeliveryStatementRowFromTableView mapInputDataToTableData() {
-            return new DeliveryStatementRowFromTableView(productName.getText(),
+    private TableRowInDeliveryStatementForm mapInputDataToTable() {
+            return new TableRowInDeliveryStatementForm(productName.getText(),
                     Integer.parseInt(period.getText()), productPrice.getText(),
                     Integer.parseInt(janQuantity.getText()), Integer.parseInt(febQuantity.getText()),
                     Integer.parseInt(marQuantity.getText()), Integer.parseInt(aprQuantity.getText()),
@@ -280,7 +280,7 @@ public class DeliveryStatementFormController implements Initializable {
     @Getter
     @Setter
     @AllArgsConstructor
-    public static class DeliveryStatementRowFromTableView {
+    public static class TableRowInDeliveryStatementForm {
         private String productName;
         private int period;
         private String productPrice;

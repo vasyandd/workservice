@@ -12,10 +12,7 @@ import work.app.delivery_statement.entity.DeliveryStatementEntity;
 import javax.persistence.Embedded;
 import java.math.BigInteger;
 import java.time.Month;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -80,6 +77,11 @@ public final class DeliveryStatement {
                 entity.getNumber(), entity.getContract(), entity.isClosed(), rows);
     }
 
+    @Override
+    public String toString() {
+        return "Ведомость поставки № " + number + " по контракту " + contract.toString();
+    }
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -102,18 +104,29 @@ public final class DeliveryStatement {
             return scheduledShipment.values().stream().flatMapToInt(IntStream::of).sum();
         }
 
-        public void increaseActualProductQuantity(Month month, int quantity) {
-            actualShipment.merge(month, quantity, Integer::sum);
-            if (getActualProductQuantity() == getScheduledProductQuantity()) isCompleted = true;
-        }
-
-        public void addNotificationInfo(String notification) {
-            notifications.add(notification);
+        @JsonIgnore
+        public Map<Month, String> getProductQuantityWithSlash() {
+            Map<Month, String> map = new HashMap<>();
+            scheduledShipment.keySet()
+                    .forEach(k -> {
+                        Integer actualQuantity = actualShipment.get(k);
+                        map.put(k, scheduledShipment.get(k) + "/" + (actualQuantity == null ? 0 : actualQuantity));
+                    });
+            return map;
         }
 
         @JsonIgnore
         public String getNotificationInfo() {
-           return String.join(", ", notifications);
+            return String.join(", ", notifications);
+        }
+
+        public void increaseActualProductQuantity(Month month, int quantity) {
+            actualShipment.merge(month, quantity, Integer::sum);
+            if (getActualProductQuantity() >= getScheduledProductQuantity()) isCompleted = true;
+        }
+
+        public void addNotificationInfo(String notification) {
+            notifications.add(notification);
         }
 
     }

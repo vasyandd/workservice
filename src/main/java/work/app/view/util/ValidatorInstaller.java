@@ -12,7 +12,7 @@ public class ValidatorInstaller {
     public enum FieldPredicate {
         NOT_EMPTY(textField -> !textField.getText().trim().isEmpty()),
         EMPTY(NOT_EMPTY.predicate.negate()),
-        NOT_ZERO(textField -> textField.getText().trim().equals("0")),
+        NOT_ZERO(textField -> !textField.getText().trim().equals("0")),
         ZERO(NOT_ZERO.predicate.negate()),
         POSITIVE_INTEGER(NOT_EMPTY.predicate
                 .and(textField -> {
