@@ -1,15 +1,11 @@
 package service;
 
 import mock.DeliveryStatementRepositoryMock;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import work.app.delivery_statement.model.Contract;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.repo.DeliveryStatementRepository;
 import work.app.delivery_statement.service.DeliveryStatementService;
 import work.app.delivery_statement.service.DeliveryStatementServiceImpl;
-import work.app.exception.DeliverStatementNotFoundException;
 import work.app.notification.model.Notification;
 
 import java.math.BigInteger;
@@ -48,60 +44,60 @@ import java.util.List;
      final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5_WITH_ONE_ROW = new DeliveryStatement(1L, 45,
              SIMPLE_CONTRACT, List.of(KORPUS1_ROW_2022));
 
-    @AfterEach
-    void clearRepo(){
-        repository.deleteAll();
-    }
-
-    @Test
-    void Should_Update_ActualQuantity_From_DeliveryStatement_When_Classic_Notification_Is_Added() {
-        int quantityKorpus1BeforeUpdate = DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5.getRows().get(0).getActualProductQuantity();
-        service.saveDeliveryStatement(DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5);
-        service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2022);
-        int expectedQuantityKorpus1 = quantityKorpus1BeforeUpdate + CLASSIC_NOTIFICATION_ON_KORPUS1_2022.getProductQuantity();
-        int quantityKorpus1AfterUpdate = service.getDeliveryStatementByContract(SIMPLE_CONTRACT)
-                .getRows().get(0).getActualProductQuantity();
-        Assertions.assertEquals(expectedQuantityKorpus1,quantityKorpus1AfterUpdate);
-    }
-
-    @Test
-    void Should_Update_ActualQuantity_From_DeliveryStatement_When_Classic_Notification_Without_Additional_Agreement_Is_Added() {
-        int quantityKorpus1BeforeUpdate = DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT.getRows().get(0).getActualProductQuantity();
-        service.saveDeliveryStatement(DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT);
-        service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2022_WITHOUT_ADDITIONAL_AGREEMENT);
-        int expectedQuantityKorpus1 = quantityKorpus1BeforeUpdate + CLASSIC_NOTIFICATION_ON_KORPUS1_2022_WITHOUT_ADDITIONAL_AGREEMENT.getProductQuantity();
-        int quantityKorpus1AfterUpdate = service.getDeliveryStatementByContract(SIMPLE_CONTRACT_WITHOUT_ADDITIONAL_AGREEMENT)
-                .getRows().get(0).getActualProductQuantity();
-        Assertions.assertEquals(expectedQuantityKorpus1,quantityKorpus1AfterUpdate);
-    }
-
-    @Test
-    void Should_DeliveryStatement_Is_Closed_When_Classic_Notification_Is_Added_And_All_Rows_Are_Completed() {
-        boolean isClosedBeforeUpdate = DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5_WITH_ONE_ROW.isClosed();
-        service.saveDeliveryStatement(DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5_WITH_ONE_ROW);
-        service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2022);
-        boolean isClosedAfterUpdate = service.getDeliveryStatementByContract(SIMPLE_CONTRACT)
-                .isClosed();
-        Assertions.assertNotEquals(isClosedBeforeUpdate,isClosedAfterUpdate);
-        Assertions.assertTrue(isClosedAfterUpdate);
-    }
-
-    @Test
-    void Should_DeliveryStatementNotFoundException_With_Message_When_Classic_Notification_Is_Added_On_NonExistent_Contract() {
-        String expectedMessage = "Отсутствует ведомость поставки к нотракту № 123456 от 2021.06.23 д.c. 5";
-        DeliverStatementNotFoundException exception = Assertions.assertThrows(DeliverStatementNotFoundException.class,
-                () -> service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2022));
-        Assertions.assertEquals(expectedMessage, exception.getMessage());
-    }
-
-    @Test
-    void Should_DeliveryStatementNotFoundException_With_Message_When_Classic_Notification_Is_Added_On_NonExistent_Period() {
-        String expectedMessage = "В ведомости поставки № 5 к контракту № 123456 от 2021.06.23 д.c. 5 отсутсвует информация об отгурзке изделия KORPUS1 в 2029 году";
-        service.saveDeliveryStatement(DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5);
-        DeliverStatementNotFoundException exception = Assertions.assertThrows(DeliverStatementNotFoundException.class,
-                () -> service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2029));
-       Assertions.assertEquals(expectedMessage, exception.getMessage());
-    }
+//    @AfterEach
+//    void clearRepo(){
+//        repository.deleteAll();
+//    }
+//
+//    @Test
+//    void Should_Update_ActualQuantity_From_DeliveryStatement_When_Classic_Notification_Is_Added() {
+//        int quantityKorpus1BeforeUpdate = DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5.getRows().get(0).getActualProductQuantity();
+//        service.saveDeliveryStatement(DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5);
+//        service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2022);
+//        int expectedQuantityKorpus1 = quantityKorpus1BeforeUpdate + CLASSIC_NOTIFICATION_ON_KORPUS1_2022.getProductQuantity();
+//        int quantityKorpus1AfterUpdate = service.getDeliveryStatementByContract(SIMPLE_CONTRACT)
+//                .getRows().get(0).getActualProductQuantity();
+//        Assertions.assertEquals(expectedQuantityKorpus1,quantityKorpus1AfterUpdate);
+//    }
+//
+//    @Test
+//    void Should_Update_ActualQuantity_From_DeliveryStatement_When_Classic_Notification_Without_Additional_Agreement_Is_Added() {
+//        int quantityKorpus1BeforeUpdate = DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT.getRows().get(0).getActualProductQuantity();
+//        service.saveDeliveryStatement(DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT);
+//        service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2022_WITHOUT_ADDITIONAL_AGREEMENT);
+//        int expectedQuantityKorpus1 = quantityKorpus1BeforeUpdate + CLASSIC_NOTIFICATION_ON_KORPUS1_2022_WITHOUT_ADDITIONAL_AGREEMENT.getProductQuantity();
+//        int quantityKorpus1AfterUpdate = service.getDeliveryStatementByContract(SIMPLE_CONTRACT_WITHOUT_ADDITIONAL_AGREEMENT)
+//                .getRows().get(0).getActualProductQuantity();
+//        Assertions.assertEquals(expectedQuantityKorpus1,quantityKorpus1AfterUpdate);
+//    }
+//
+//    @Test
+//    void Should_DeliveryStatement_Is_Closed_When_Classic_Notification_Is_Added_And_All_Rows_Are_Completed() {
+//        boolean isClosedBeforeUpdate = DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5_WITH_ONE_ROW.isClosed();
+//        service.saveDeliveryStatement(DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5_WITH_ONE_ROW);
+//        service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2022);
+//        boolean isClosedAfterUpdate = service.getDeliveryStatementByContract(SIMPLE_CONTRACT)
+//                .isClosed();
+//        Assertions.assertNotEquals(isClosedBeforeUpdate,isClosedAfterUpdate);
+//        Assertions.assertTrue(isClosedAfterUpdate);
+//    }
+//
+//    @Test
+//    void Should_DeliveryStatementNotFoundException_With_Message_When_Classic_Notification_Is_Added_On_NonExistent_Contract() {
+//        String expectedMessage = "Отсутствует ведомость поставки к нотракту № 123456 от 2021.06.23 д.c. 5";
+//        DeliverStatementNotFoundException exception = Assertions.assertThrows(DeliverStatementNotFoundException.class,
+//                () -> service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2022));
+//        Assertions.assertEquals(expectedMessage, exception.getMessage());
+//    }
+//
+//    @Test
+//    void Should_DeliveryStatementNotFoundException_With_Message_When_Classic_Notification_Is_Added_On_NonExistent_Period() {
+//        String expectedMessage = "В ведомости поставки № 5 к контракту № 123456 от 2021.06.23 д.c. 5 отсутсвует информация об отгурзке изделия KORPUS1 в 2029 году";
+//        service.saveDeliveryStatement(DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5);
+//        DeliverStatementNotFoundException exception = Assertions.assertThrows(DeliverStatementNotFoundException.class,
+//                () -> service.updateDeliveryStatement(CLASSIC_NOTIFICATION_ON_KORPUS1_2029));
+//       Assertions.assertEquals(expectedMessage, exception.getMessage());
+//    }
 
 
 }
