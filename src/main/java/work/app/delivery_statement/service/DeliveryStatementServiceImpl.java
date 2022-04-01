@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static work.app.delivery_statement.model.DeliveryStatement.*;
+
 @Component
 public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     private DeliveryStatementRepository deliveryStatementRepository;
@@ -22,6 +24,7 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
 
     @Override
     public void saveDeliveryStatement(DeliveryStatement deliveryStatement) {
+        deliveryStatement.getRows().forEach(x -> x.setDeliveryStatement(deliveryStatement));
         deliveryStatementRepository.save(deliveryStatement);
     }
 
@@ -36,7 +39,7 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
     public void updateDeliveryStatement(Notification notification) {
         DeliveryStatement deliveryStatement = getDeliveryStatementByContract(notification.getContract());
 
-        DeliveryStatement.Row deliveryStatementRow = deliveryStatement
+        Row deliveryStatementRow = deliveryStatement
                 .getRowByProductAndPeriod(notification.getProductName(), notification.getDate().getYear())
                 .orElseThrow( () -> new DeliverStatementNotFoundException(
                         "В ведомости поставки № " + deliveryStatement.getNumber()
@@ -45,14 +48,13 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
                         + " в " + notification.getDate().getYear() + " году"));
 
         deliveryStatementRow.increaseActualProductQuantity(notification.getDate().getMonth(), notification.getProductQuantity());
-        deliveryStatementRow.addNotification(notification);
-        notification.setRow(deliveryStatementRow);
+        notification.setRowInDeliveryStatement(deliveryStatementRow);
         deliveryStatementRepository.save(deliveryStatement);
     }
 
     @Override
     public List<DeliveryStatement> getAllDeliveryStatementsWithNotifications() {
-        return deliveryStatementRepository.findAllWithNotifications();
+        return null;
     }
 
     @Override
@@ -64,6 +66,6 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService{
 
     @Override
     public List<DeliveryStatement> getOpenDeliveryStatements() {
-        return getAllDeliveryStatementsWithNotifications().stream().filter(d -> !d.isClosed()).collect(Collectors.toList());
+        return getAllDeliveryStatements().stream().filter(d -> !d.isClosed()).collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package work.app.notification.service;
 
 import org.springframework.stereotype.Component;
+import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.service.DeliveryStatementService;
 import work.app.notification.model.Notification;
 import work.app.notification.repo.NotificationRepository;
@@ -21,6 +22,11 @@ public class NotificationServiceImpl implements NotificationService {
     public void saveNotification(Notification notification) {
         deliveryStatementService.updateDeliveryStatement(notification);
         notificationRepository.save(notification);
+    }
+
+    @Override
+    public List<Notification> getNotificationsByDeliveryStatementRow(DeliveryStatement.Row row) {
+        return notificationRepository.findAllByRowInDeliveryStatement(row);
     }
 
     @Override

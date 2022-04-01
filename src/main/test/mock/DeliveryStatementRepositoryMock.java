@@ -13,10 +13,7 @@ public class DeliveryStatementRepositoryMock implements DeliveryStatementReposit
     private final List<DeliveryStatement> database = new ArrayList<>();
 
 
-    @Override
-    public List<DeliveryStatement> findAllWithNotifications() {
-        return null;
-    }
+
 
     @Override
     public void delete(DeliveryStatement entity) {

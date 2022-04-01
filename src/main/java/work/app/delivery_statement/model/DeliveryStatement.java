@@ -1,12 +1,9 @@
 package work.app.delivery_statement.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
+import lombok.*;
 import org.hibernate.annotations.Type;
-import work.app.delivery_statement.JsonConverter;
-import work.app.notification.model.Notification;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.math.BigInteger;
@@ -21,17 +18,20 @@ import java.util.stream.IntStream;
 @Setter
 @Getter
 @Entity
-@Table(name = "delivery_statement")
+@Table(name = "delivery_statements")
 public final class DeliveryStatement {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer number;
 
     @Embedded
     private Contract contract;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL, mappedBy = "deliveryStatement",
+            orphanRemoval = true)
     private List<DeliveryStatement.Row> rows;
 
     public DeliveryStatement(Integer number, Contract contract, List<Row> rows) {
@@ -66,32 +66,30 @@ public final class DeliveryStatement {
 
     @Getter
     @Setter
+    @EqualsAndHashCode
     @AllArgsConstructor
     @NoArgsConstructor
     @Entity
-    @Table(name = "rows")
+    @Table(name = "delivery_statement_rows")
+    @TypeDef(name = "json", typeClass = JsonStringType.class)
     public static final class Row {
 
         @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
         private BigInteger priceForOneProduct;
         private String productName;
-
-        @Convert(converter = JsonConverter.class)
-        private Map<Month, Integer> scheduledShipment;
-
         @Type(type = "json")
-        @Column(columnDefinition = "jsonb")
+        @Column(columnDefinition = "character varying")
+        private Map<Month, Integer> scheduledShipment;
+        @Type(type = "json")
+        @Column(columnDefinition = "character varying")
         private Map<Month, Integer> actualShipment;
-
         private Integer period;
-
-        @ManyToOne
-        @JoinColumn(name = "ds_id")
+        @ManyToOne(cascade = CascadeType.ALL)
+        @JoinColumn(name = "ds_id", nullable = false, updatable = false)
         private DeliveryStatement deliveryStatement;
 
-        @OneToMany(fetch = FetchType.LAZY)
-        private List<Notification> notifications;
 
         public Row(BigInteger priceForOneProduct, String productName, Map<Month, Integer> scheduledShipment,
                    Map<Month, Integer> actualShipment, Integer period) {
@@ -120,13 +118,6 @@ public final class DeliveryStatement {
                         map.put(k, scheduledShipment.get(k) + "/" + (actualQuantity == null ? 0 : actualQuantity));
                     });
             return map;
-        }
-
-        @Transient
-        public String getNotificationInfo() {
-            return notifications.stream()
-                                .map(Notification::toString)
-                                .collect(Collectors.joining(", "));
         }
 
         @Transient
@@ -162,9 +153,6 @@ public final class DeliveryStatement {
             actualShipment.merge(month, quantity, Integer::sum);
         }
 
-        public void addNotification(Notification notification) {
-            notifications.add(notification);
-        }
 
     }
 }

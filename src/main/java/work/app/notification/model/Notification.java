@@ -11,7 +11,9 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,7 +37,7 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "row_id")
-    private DeliveryStatement.Row row;
+    private DeliveryStatement.Row rowInDeliveryStatement;
 
     public Notification(Long id, Integer number, LocalDate date, String productName,
                         Integer productQuantity, String productNumbers, Contract contract) {
@@ -48,10 +50,16 @@ public class Notification {
         this.contract = contract;
     }
 
+    public static String mapListNotificationsToString(List<Notification> notifications) {
+        return notifications.stream()
+                            .map(Notification::toString)
+                            .collect(Collectors.joining(", "));
+    }
+
     @Override
     public String toString() {
-        return productQuantity + " шт. в "
+        return productQuantity + " шт. ("
                 + date.getMonth().getDisplayName(TextStyle.FULL_STANDALONE , new Locale("ru"))
-                + " изв. № " + number + " от " + date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+                + ") изв. № " + number + " от " + date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     }
 }

@@ -15,7 +15,6 @@ import work.app.notification.model.Notification;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,13 +34,13 @@ import java.util.List;
     final static Notification CLASSIC_NOTIFICATION_ON_KORPUS1_2029 = new Notification(1L, 45, LocalDate.of(2029, Month.APRIL, 14),
             "KORPUS1", 4, KORPUS1, SIMPLE_CONTRACT);
     final static DeliveryStatement.Row KORPUS1_ROW_2022 = new DeliveryStatement.Row(1L, new BigInteger("111111111"), KORPUS1,
-            new HashMap<Month, Integer>() {{put(Month.APRIL, 4);}}, new HashMap<>(), 2022,null, new ArrayList<>());
+            new HashMap<Month, Integer>() {{put(Month.APRIL, 4);}}, new HashMap<>(), 2022,null);
     final static DeliveryStatement.Row KORPUS1_ROW_2023 = new DeliveryStatement.Row(2L,new BigInteger("22222222"), KORPUS1,
-            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(),  2023,null,new ArrayList<>());
+            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(),  2023,null);
     final static DeliveryStatement.Row KORPUS2_ROW_2022 = new DeliveryStatement.Row(3L,new BigInteger("22222222"), KORPUS2,
-            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(), 2022,null,new ArrayList<>());
+            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(), 2022,null);
     final static DeliveryStatement.Row KORPUS2_ROW_2023 = new DeliveryStatement.Row(4L,new BigInteger("22222222"), KORPUS2,
-            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(), 2023,null,new ArrayList<>());
+            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(), 2023,null);
     final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5 = new DeliveryStatement(1L,5,
             SIMPLE_CONTRACT, List.of(KORPUS1_ROW_2022, KORPUS1_ROW_2023, KORPUS2_ROW_2022, KORPUS2_ROW_2023));
     final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT = new DeliveryStatement(1L,5,

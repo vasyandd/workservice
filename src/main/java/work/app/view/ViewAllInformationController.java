@@ -15,6 +15,7 @@ import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import work.app.delivery_statement.model.DeliveryStatement;
 import work.app.delivery_statement.service.DeliveryStatementService;
+import work.app.notification.model.Notification;
 import work.app.notification.service.NotificationService;
 
 import java.net.URL;
@@ -75,6 +76,7 @@ public class ViewAllInformationController implements Initializable {
     private TableColumn<MainTableRow, String> noteCol;
     private final Map<String, DeliveryStatement> deliveryStatementCachedByContract = new HashMap<>();
     private final Map<String, Set<DeliveryStatement>> deliveryStatementsCachedByProduct = new HashMap<>();
+    private final Map<DeliveryStatement.Row, String> notificationsCachedByDeliveryStatementRow = new HashMap<>();
 
     public ViewAllInformationController(DeliveryStatementService deliveryStatementService, NotificationService notificationService) {
         this.deliveryStatementService = deliveryStatementService;
@@ -84,10 +86,12 @@ public class ViewAllInformationController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         table.setItems(rows);
-        List<DeliveryStatement> deliveryStatements = deliveryStatementService.getAllDeliveryStatementsWithNotifications();
+        List<DeliveryStatement> deliveryStatements = deliveryStatementService.getAllDeliveryStatements();
         deliveryStatements.forEach(d -> {
             deliveryStatementCachedByContract.put(d.getContract().toString(), d);
             d.getRows().forEach(row -> {
+                notificationsCachedByDeliveryStatementRow.put(row,
+                    Notification.mapListNotificationsToString(notificationService.getNotificationsByDeliveryStatementRow(row)));
                 deliveryStatementsCachedByProduct
                 .merge(row.getProductName(), new HashSet<>() {{add(d);}}, (set, set2) -> {
                     set.add(d);
@@ -151,7 +155,7 @@ public class ViewAllInformationController implements Initializable {
                                 productQuantityByMonth.get(Month.JUNE), productQuantityByMonth.get(Month.JULY),
                                 productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
                                 productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
-                                productQuantityByMonth.get(Month.DECEMBER), row.getNotificationInfo(),
+                                productQuantityByMonth.get(Month.DECEMBER), notificationsCachedByDeliveryStatementRow.get(row),
                                 row.isClosed(), row.isExpired(), row.isLastMonthNow());
                     })
                     .collect(Collectors.toList()));
@@ -213,7 +217,7 @@ public class ViewAllInformationController implements Initializable {
                         productQuantityByMonth.get(Month.JUNE), productQuantityByMonth.get(Month.JULY),
                         productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
                         productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
-                        productQuantityByMonth.get(Month.DECEMBER), row.getNotificationInfo(),
+                        productQuantityByMonth.get(Month.DECEMBER), notificationsCachedByDeliveryStatementRow.get(row),
                         row.isClosed(), row.isExpired(), row.isLastMonthNow());
                 })
                 .collect(Collectors.toList()));
