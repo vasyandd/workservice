@@ -32,5 +32,16 @@ public final class DeliveryStatements {
                 .collect(HashMap::new, (map, row) ->
                         map.put(row, row.getNotifications()), HashMap::putAll);
     }
+
+    public static Map<Contract, Set<String>> structureProductsByContractForPeriod(List<DeliveryStatement> deliveryStatements, int period) {
+        Map <Contract, Set<String>> result = new HashMap<>();
+        for (DeliveryStatement ds : deliveryStatements) {
+            Set<String> products = ds.getNotDeliveredProductsForPeriod(period);
+            if (!products.isEmpty()) {
+                result.put(ds.getContract(), products);
+            }
+        }
+        return result;
+    }
 }
 

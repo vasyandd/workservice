@@ -48,8 +48,12 @@ public final class DeliveryStatement {
         return rows.stream().allMatch(Row::isClosed);
     }
 
-    public Set<String> getNotDeliveredProducts() {
-        return rows.stream().filter(row -> !row.isClosed()).map(Row::getProductName).collect(Collectors.toSet());
+    public Set<String> getNotDeliveredProductsForPeriod(int period) {
+        return rows.stream()
+                .filter(row -> !row.isClosed())
+                .filter(row -> row.getPeriod().equals(period))
+                .map(Row::getProductName)
+                .collect(Collectors.toSet());
     }
 
     @Override
