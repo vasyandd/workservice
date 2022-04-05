@@ -1,48 +1,34 @@
 package service;
 
-import mock.DeliveryStatementRepositoryMock;
-import work.app.delivery_statement.model.Contract;
-import work.app.delivery_statement.model.DeliveryStatement;
-import work.app.delivery_statement.repo.DeliveryStatementRepository;
-import work.app.delivery_statement.service.DeliveryStatementService;
-import work.app.delivery_statement.service.DeliveryStatementServiceImpl;
-import work.app.notification.model.Notification;
+class DeliveryStatementServiceTest {
+//    final DeliveryStatementRepository repository = new DeliveryStatementRepositoryMock();
+//    final DeliveryStatementService service = new DeliveryStatementServiceImpl(repository);
+//    // Test data
+//    final static String KORPUS1 = "KORPUS1";
+//    final static String KORPUS2 = "KORPUS2";
+//    final static Contract SIMPLE_CONTRACT = new Contract("123456", LocalDate.of(2021, 6, 23), 5);
+//    final static Contract SIMPLE_CONTRACT_WITHOUT_ADDITIONAL_AGREEMENT = new Contract("123456", LocalDate.of(2021, 6, 23), 0);
 
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.HashMap;
-import java.util.List;
-
- class DeliveryStatementServiceTest {
-    final DeliveryStatementRepository repository = new DeliveryStatementRepositoryMock();
-    final DeliveryStatementService service = new DeliveryStatementServiceImpl(repository);
-    // Test data
-    final static String KORPUS1 = "KORPUS1";
-    final static String KORPUS2 = "KORPUS2";
-    final static Contract SIMPLE_CONTRACT = new Contract("123456", LocalDate.of(2021, 6, 23), 5);
-    final static Contract SIMPLE_CONTRACT_WITHOUT_ADDITIONAL_AGREEMENT = new Contract("123456", LocalDate.of(2021, 6, 23), 0);
-
-    final static Notification CLASSIC_NOTIFICATION_ON_KORPUS1_2022 = new Notification(1L, 45, LocalDate.of(2022, Month.APRIL, 14),
-            "KORPUS1", 4, KORPUS1, SIMPLE_CONTRACT);
-    final static Notification CLASSIC_NOTIFICATION_ON_KORPUS1_2022_WITHOUT_ADDITIONAL_AGREEMENT = new Notification(1L, 45, LocalDate.of(2022, Month.APRIL, 14),
-            "KORPUS1", 4, KORPUS1, SIMPLE_CONTRACT_WITHOUT_ADDITIONAL_AGREEMENT);
-    final static Notification CLASSIC_NOTIFICATION_ON_KORPUS1_2029 = new Notification(1L, 45, LocalDate.of(2029, Month.APRIL, 14),
-            "KORPUS1", 4, KORPUS1, SIMPLE_CONTRACT);
-    final static DeliveryStatement.Row KORPUS1_ROW_2022 = new DeliveryStatement.Row(1L, new BigInteger("111111111"), KORPUS1,
-            new HashMap<Month, Integer>() {{put(Month.APRIL, 4);}}, new HashMap<>(), 2022,null);
-    final static DeliveryStatement.Row KORPUS1_ROW_2023 = new DeliveryStatement.Row(2L,new BigInteger("22222222"), KORPUS1,
-            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(),  2023,null);
-    final static DeliveryStatement.Row KORPUS2_ROW_2022 = new DeliveryStatement.Row(3L,new BigInteger("22222222"), KORPUS2,
-            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(), 2022,null);
-    final static DeliveryStatement.Row KORPUS2_ROW_2023 = new DeliveryStatement.Row(4L,new BigInteger("22222222"), KORPUS2,
-            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(), 2023,null);
-    final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5 = new DeliveryStatement(1L,5,
-            SIMPLE_CONTRACT, List.of(KORPUS1_ROW_2022, KORPUS1_ROW_2023, KORPUS2_ROW_2022, KORPUS2_ROW_2023));
-    final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT = new DeliveryStatement(1L,5,
-            SIMPLE_CONTRACT_WITHOUT_ADDITIONAL_AGREEMENT, List.of(KORPUS1_ROW_2022, KORPUS1_ROW_2023, KORPUS2_ROW_2022, KORPUS2_ROW_2023));
-     final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5_WITH_ONE_ROW = new DeliveryStatement(1L, 45,
-             SIMPLE_CONTRACT, List.of(KORPUS1_ROW_2022));
+//    final static Notification CLASSIC_NOTIFICATION_ON_KORPUS1_2022 = new Notification(1L, 45, LocalDate.of(2022, Month.APRIL, 14),
+//            "KORPUS1", 4, KORPUS1, SIMPLE_CONTRACT);
+//    final static Notification CLASSIC_NOTIFICATION_ON_KORPUS1_2022_WITHOUT_ADDITIONAL_AGREEMENT = new Notification(1L, 45, LocalDate.of(2022, Month.APRIL, 14),
+//            "KORPUS1", 4, KORPUS1, SIMPLE_CONTRACT_WITHOUT_ADDITIONAL_AGREEMENT);
+//    final static Notification CLASSIC_NOTIFICATION_ON_KORPUS1_2029 = new Notification(1L, 45, LocalDate.of(2029, Month.APRIL, 14),
+//            "KORPUS1", 4, KORPUS1, SIMPLE_CONTRACT);
+//    final static DeliveryStatement.Row KORPUS1_ROW_2022 = new DeliveryStatement.Row(1L, new BigInteger("111111111"), KORPUS1,
+//            new HashMap<Month, Integer>() {{put(Month.APRIL, 4);}}, new HashMap<>(), 2022,null);
+//    final static DeliveryStatement.Row KORPUS1_ROW_2023 = new DeliveryStatement.Row(2L,new BigInteger("22222222"), KORPUS1,
+//            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(),  2023,null);
+//    final static DeliveryStatement.Row KORPUS2_ROW_2022 = new DeliveryStatement.Row(3L,new BigInteger("22222222"), KORPUS2,
+//            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(), 2022,null);
+//    final static DeliveryStatement.Row KORPUS2_ROW_2023 = new DeliveryStatement.Row(4L,new BigInteger("22222222"), KORPUS2,
+//            new HashMap<Month, Integer>() {{put(Month.APRIL, 15); put(Month.AUGUST, 16);}}, new HashMap<>(), 2023,null);
+//    final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5 = new DeliveryStatement(1L,5,
+//            SIMPLE_CONTRACT, List.of(KORPUS1_ROW_2022, KORPUS1_ROW_2023, KORPUS2_ROW_2022, KORPUS2_ROW_2023));
+//    final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_WITHOUT_ADDITIONAL_AGREEMENT = new DeliveryStatement(1L,5,
+//            SIMPLE_CONTRACT_WITHOUT_ADDITIONAL_AGREEMENT, List.of(KORPUS1_ROW_2022, KORPUS1_ROW_2023, KORPUS2_ROW_2022, KORPUS2_ROW_2023));
+//     final static DeliveryStatement DELIVERY_STATEMENT_ON_CONTRACT12345678_AGREEMENT5_WITH_ONE_ROW = new DeliveryStatement(1L, 45,
+//             SIMPLE_CONTRACT, List.of(KORPUS1_ROW_2022));
 
 //    @AfterEach
 //    void clearRepo(){

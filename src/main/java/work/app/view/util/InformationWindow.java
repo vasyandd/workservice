@@ -3,6 +3,8 @@ package work.app.view.util;
 import javafx.scene.control.Alert;
 
 public class InformationWindow {
+    private InformationWindow(){}
+
     public static void viewSuccessSaveWindow(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");

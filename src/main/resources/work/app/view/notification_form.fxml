@@ -25,20 +25,23 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="Номер" />
             <Label text="Изделие" GridPane.rowIndex="3" />
             <Label text="Дата" GridPane.rowIndex="1" />
-            <Label text="Количество" GridPane.rowIndex="5" />
+            <Label text="Количество" GridPane.rowIndex="6" />
             <TextField fx:id="number" promptText="0" GridPane.columnIndex="1" />
-            <DatePicker fx:id="date" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="productQuantity" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Label text="Номера изделий" GridPane.rowIndex="4" />
-            <TextField fx:id="productNumbers" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <DatePicker fx:id="date" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="productQuantity" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label text="Номера изделий" GridPane.rowIndex="5" />
+            <TextField fx:id="productNumbers" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <ChoiceBox fx:id="productBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <ChoiceBox fx:id="contractBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Контракт" GridPane.rowIndex="2" />
+            <Label fx:id="invisibleInfoLabel" text="По этому контракту осталось поставить " visible="false" wrapText="true" GridPane.rowIndex="4" />
+            <Label fx:id="invisibleProductQuantityLabel" text="Label" textFill="#e40b0b" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
          </children>
       </GridPane>
    </children>
