@@ -10,7 +10,6 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @NoArgsConstructor
@@ -48,12 +47,14 @@ public final class DeliveryStatement {
         return rows.stream().allMatch(Row::isClosed);
     }
 
-    public Set<String> getNotDeliveredProductsForPeriod(int period) {
+    public Map<Integer, Set<Row>> getNotDeliveredProductsByPeriod() {
         return rows.stream()
                 .filter(row -> !row.isClosed())
-                .filter(row -> row.getPeriod().equals(period))
-                .map(Row::getProductName)
-                .collect(Collectors.toSet());
+                .collect(HashMap::new, (map, row) ->
+                        map.merge(row.getPeriod(), new HashSet<>(), (set1, set2) -> {
+                            set1.add(row);
+                            return set1;
+                        }), HashMap::putAll);
     }
 
     @Override

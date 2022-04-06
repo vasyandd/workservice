@@ -14,10 +14,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.rgielen.fxweaver.core.FxmlView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import work.app.repository.DeliveryStatementRepository;
+import work.app.service.DeliveryStatementService;
 import work.app.service.model.Contract;
 import work.app.service.model.DeliveryStatement;
-import work.app.service.DeliveryStatementService;
 import work.app.view.util.InformationWindow;
 import work.app.view.util.SceneSwitcher;
 import work.app.view.util.Validator;
@@ -111,6 +113,7 @@ public class DeliveryStatementFormController implements Initializable {
     private TableColumn<TableRowInDeliveryStatementForm, Integer> novQuantityCol;
     @FXML
     private TableColumn<TableRowInDeliveryStatementForm, Integer> decQuantityCol;
+
 
     public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, SceneSwitcher switcher) {
         this.deliveryStatementService = deliveryStatementService;

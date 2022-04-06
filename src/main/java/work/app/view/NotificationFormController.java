@@ -23,8 +23,8 @@ import work.app.view.util.SceneSwitcher;
 import work.app.view.util.Validator;
 
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static work.app.view.util.Validator.FieldPredicate.POSITIVE_INTEGER;
 
@@ -41,9 +41,9 @@ public class NotificationFormController implements Initializable {
     @FXML
     private TextField productQuantity;
     @FXML
-    ChoiceBox<Contract> contractBox;
+    private ChoiceBox<Contract> contractBox;
     @FXML
-    ChoiceBox<String> productBox;
+    private ChoiceBox<String> productBox;
     @FXML
     private TextField productNumbers;
     @FXML
@@ -51,9 +51,11 @@ public class NotificationFormController implements Initializable {
     @FXML
     private Label invisibleProductQuantityLabel;
 
-    ObservableList<Contract> contracts = FXCollections.observableArrayList();
-    ObservableList<String> products = FXCollections.observableArrayList();
-    Map<Contract, Set<String>> productsByContract = new HashMap<>();
+    private ObservableList<Contract> contracts = FXCollections.observableArrayList();
+    private ObservableList<String> products = FXCollections.observableArrayList();
+    private Map<Contract, Map<Integer, Set<DeliveryStatement.Row>>> productsByContractByPeriod;
+    private Map<Contract, Set<DeliveryStatement.Row>> productsByContract = new HashMap<>();
+    private Map<String, Integer> productShipment = new HashMap<>();
 
     public NotificationFormController(NotificationService notificationService, SceneSwitcher switcher, DeliveryStatementService deliveryStatementService) {
         this.notificationService = notificationService;
@@ -63,32 +65,45 @@ public class NotificationFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        setChoiceBoxOptions();
         List<DeliveryStatement> deliveryStatements = deliveryStatementService.getOpenDeliveryStatements();
+        productsByContractByPeriod = DeliveryStatements.structureProductsByContractForPeriod(deliveryStatements);
+        contracts.addAll(deliveryStatements.stream().map(DeliveryStatement::getContract).collect(Collectors.toList()));
         date.getEditor().textProperty().addListener(((observableValue, newValue, oldValue) -> {
-            LocalDate date2 = date.getValue();
-            productsByContract = DeliveryStatements.structureProductsByContractForPeriod(deliveryStatements, date2.getYear());
-            contracts.clear();
-            contracts.addAll(productsByContract.keySet());
+            products.clear();
         }));
+        Validator.addValidatorFor(POSITIVE_INTEGER.predicate(), number, productQuantity);
+    }
+
+    private void setChoiceBoxOptions() {
         contractBox.setItems(contracts);
         productBox.setItems(products);
         contractBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            products.clear();
-            if (!contracts.isEmpty())
-                products.addAll(productsByContract.get(observable.getValue()));
+            System.out.println("huycontr");
+            if (!contracts.isEmpty() && date.getValue() != null) {
+                products.clear();
+                Contract contract = observable.getValue();
+                Integer period = date.getValue().getYear();
+                productShipment.clear();
+                products.addAll(productsByContractByPeriod.get(contract).get(period).stream()
+                        .peek(row -> productShipment.put(row.getProductName(),
+                                row.getScheduledProductQuantity() - row.getActualProductQuantity()))
+                        .map(DeliveryStatement.Row::getProductName)
+                        .collect(Collectors.toList()));
+            }
         });
         productBox.getSelectionModel().selectedItemProperty().addListener(((observableValue, newValue, oldValue) -> {
-            if (!observableValue.getValue().isEmpty()) {
+            String selectedProduct = observableValue.getValue();
+            if (selectedProduct != null) {
                 invisibleInfoLabel.setVisible(true);
-                invisibleProductQuantityLabel.setText("sadasdasdas");
+                int shipment = productShipment.get(selectedProduct);
+                invisibleProductQuantityLabel.setText(shipment + " шт. " + selectedProduct);
                 invisibleProductQuantityLabel.setVisible(true);
-            }
-            else {
+            } else {
                 invisibleInfoLabel.setVisible(false);
                 invisibleProductQuantityLabel.setVisible(false);
             }
         }));
-        Validator.addValidatorFor(POSITIVE_INTEGER.predicate(), number, productQuantity);
     }
 
 

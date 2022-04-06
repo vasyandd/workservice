@@ -13,6 +13,7 @@ import work.app.view.MainMenuController;
 public class WorkServiceFXApplication extends Application {
 
     private ConfigurableApplicationContext applicationContext;
+
     private final static String STYLESHEET_PATH = "view/styles.css";
 
     @Override

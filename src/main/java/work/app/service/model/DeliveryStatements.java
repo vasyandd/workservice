@@ -33,13 +33,11 @@ public final class DeliveryStatements {
                         map.put(row, row.getNotifications()), HashMap::putAll);
     }
 
-    public static Map<Contract, Set<String>> structureProductsByContractForPeriod(List<DeliveryStatement> deliveryStatements, int period) {
-        Map <Contract, Set<String>> result = new HashMap<>();
+    public static Map<Contract, Map<Integer, Set<DeliveryStatement.Row>>> structureProductsByContractForPeriod(List<DeliveryStatement> deliveryStatements) {
+        Map<Contract, Map<Integer, Set<DeliveryStatement.Row>>> result = new HashMap<>();
         for (DeliveryStatement ds : deliveryStatements) {
-            Set<String> products = ds.getNotDeliveredProductsForPeriod(period);
-            if (!products.isEmpty()) {
-                result.put(ds.getContract(), products);
-            }
+            Map<Integer, Set<DeliveryStatement.Row>> products = ds.getNotDeliveredProductsByPeriod();
+            result.put(ds.getContract(), products);
         }
         return result;
     }
