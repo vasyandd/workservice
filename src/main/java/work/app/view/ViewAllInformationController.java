@@ -14,9 +14,8 @@ import lombok.Setter;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import work.app.service.DeliveryStatementService;
-import work.app.service.NotificationService;
 import work.app.service.model.DeliveryStatement;
-import work.app.service.model.DeliveryStatements;
+import work.app.service.DeliveryStatements;
 import work.app.service.model.Notification;
 
 import java.net.URL;
@@ -28,11 +27,34 @@ import java.util.stream.Collectors;
 @FxmlView("view_all_information.fxml")
 public class ViewAllInformationController implements Initializable {
     private final DeliveryStatementService deliveryStatementService;
-    private final NotificationService notificationService;
     private final ObservableList<String> products = FXCollections.observableArrayList();
     private final ObservableList<String> contracts = FXCollections.observableArrayList();
     private final ObservableList<MainTableRow> rows = FXCollections.observableArrayList();
+    private Map<String, DeliveryStatement> deliveryStatementsByContract;
+    private Map<String, Set<DeliveryStatement>> deliveryStatementsByProduct;
+    private final Map<DeliveryStatement.Row, List<Notification>> notificationsByDeliveryStatement = new HashMap<>();
+
+    private enum Color {
+        COMPLETED("-fx-background-color: #3b8618;"),
+        EXPIRED("-fx-background-color: #bb3f3f;"),
+        LAST_MONTH("-fx-background-color: #8d5025;");
+
+        private final String style;
+
+        Color(String style) {
+            this.style = style;
+        }
+
+    }
+
     private boolean contractSelectedInListView;
+
+    @FXML
+    private CheckBox viewCompletedRows;
+    @FXML
+    private CheckBox viewExpiredRows;
+    @FXML
+    private CheckBox viewLastMonthRows;
     @FXML
     private ListView<String> listOfContractsOrProducts;
     @FXML
@@ -75,13 +97,10 @@ public class ViewAllInformationController implements Initializable {
     private TableColumn<MainTableRow, Integer> decQuantityCol;
     @FXML
     private TableColumn<MainTableRow, String> noteCol;
-    private Map<String, DeliveryStatement> deliveryStatementsByContract;
-    private Map<String, Set<DeliveryStatement>> deliveryStatementsByProduct;
-    private Map<DeliveryStatement.Row, List<Notification>> notificationsByDeliveryStatement = new HashMap<>();
 
-    public ViewAllInformationController(DeliveryStatementService deliveryStatementService, NotificationService notificationService) {
+
+    public ViewAllInformationController(DeliveryStatementService deliveryStatementService) {
         this.deliveryStatementService = deliveryStatementService;
-        this.notificationService = notificationService;
     }
 
     @Override
@@ -98,6 +117,7 @@ public class ViewAllInformationController implements Initializable {
         listOfContractsOrProducts.getSelectionModel().selectedItemProperty()
                 .addListener(((observableValue, oldValue, newValue) -> {
                     if (observableValue.getValue() != null) {
+                        setSelectedForCheckBoxFields(false, viewCompletedRows, viewLastMonthRows, viewExpiredRows);
                         if (contractSelectedInListView) {
                             fillTableByContract(observableValue.getValue());
                         } else {
@@ -108,8 +128,61 @@ public class ViewAllInformationController implements Initializable {
                         rows.clear();
                     }
                 }));
+        viewCompletedRows.selectedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (observableValue.getValue().booleanValue()) {
+                setSelectedForCheckBoxFields(false, viewExpiredRows, viewLastMonthRows);
+                table.getItems().removeIf(row -> !row.isCompleted);
+            } else {
+                String selectedItem = listOfContractsOrProducts.getSelectionModel().selectedItemProperty().get();
+                if (contractSelectedInListView) {
+                    fillTableByContract(selectedItem);
+                } else {
+                    fillTableByProduct(selectedItem);
+                }
+            }
+        }));
+        viewExpiredRows.selectedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (observableValue.getValue().booleanValue()) {
+                setSelectedForCheckBoxFields(false, viewCompletedRows, viewLastMonthRows);
+                table.getItems().removeIf(row -> !row.isExpired);
+            } else {
+                String selectedItem = listOfContractsOrProducts.getSelectionModel().selectedItemProperty().get();
+                if (contractSelectedInListView) {
+                    fillTableByContract(selectedItem);
+                } else {
+                    fillTableByProduct(selectedItem);
+                }
+            }
+        }));
+        viewLastMonthRows.selectedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (observableValue.getValue().booleanValue()) {
+                setSelectedForCheckBoxFields(false, viewExpiredRows, viewCompletedRows);
+                table.getItems().removeIf(row -> !row.isLastMonthNow);
+            } else {
+                String selectedItem = listOfContractsOrProducts.getSelectionModel().selectedItemProperty().get();
+                if (contractSelectedInListView) {
+                    fillTableByContract(selectedItem);
+                } else {
+                    fillTableByProduct(selectedItem);
+                }
+            }
+        }));
         setCellValueFactories();
         setRowFactories();
+    }
+
+    private void setVisibleForFields(boolean isVisible, CheckBox... fields) {
+        for (CheckBox f : fields) {
+            f.setVisible(isVisible);
+        }
+    }
+
+    ;
+
+    private void setSelectedForCheckBoxFields(boolean isSelected, CheckBox... fields) {
+        for (CheckBox f : fields) {
+            f.setSelected(isSelected);
+        }
     }
 
     private void fetchInformationForMainTable() {
@@ -121,18 +194,18 @@ public class ViewAllInformationController implements Initializable {
     }
 
     private void setRowFactories() {
-        table.setRowFactory(tv -> new TableRow<MainTableRow>() {
+        table.setRowFactory(tv -> new TableRow<>() {
             @Override
             public void updateItem(MainTableRow item, boolean empty) {
                 super.updateItem(item, empty);
                 if (item == null) {
                     setStyle("");
                 } else if (item.isCompleted) {
-                    setStyle("-fx-background-color: greenyellow;");
+                    setStyle(Color.COMPLETED.style);
                 } else if (item.isExpired) {
-                    setStyle("-fx-background-color: darkred;");
+                    setStyle(Color.EXPIRED.style);
                 } else if (item.isLastMonthNow) {
-                    setStyle("-fx-background-color: cornflowerblue;");
+                    setStyle(Color.LAST_MONTH.style);
                 } else {
                     setStyle("");
                 }
@@ -164,6 +237,7 @@ public class ViewAllInformationController implements Initializable {
         }
         title.setText("Все ведомости поставки по изделию " + key);
         title.setVisible(true);
+        setVisibleForFields(true, viewCompletedRows, viewLastMonthRows, viewExpiredRows);
     }
 
     private void setCellValueFactories() {
@@ -226,15 +300,18 @@ public class ViewAllInformationController implements Initializable {
                 .collect(Collectors.toList()));
         title.setText(deliveryStatement.toString());
         title.setVisible(true);
+        setVisibleForFields(true, viewCompletedRows, viewLastMonthRows, viewExpiredRows);
     }
 
 
     public void fillProductsList(ActionEvent event) {
+        setVisibleForFields(false, viewExpiredRows, viewLastMonthRows, viewCompletedRows);
         contractSelectedInListView = false;
         listOfContractsOrProducts.setItems(products);
     }
 
     public void fillContractsList(ActionEvent event) {
+        setVisibleForFields(false, viewExpiredRows, viewLastMonthRows, viewCompletedRows);
         contractSelectedInListView = true;
         listOfContractsOrProducts.setItems(contracts);
     }

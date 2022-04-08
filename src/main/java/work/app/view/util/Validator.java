@@ -8,7 +8,8 @@ import java.util.function.Predicate;
 public class Validator {
 
     private Validator(){}
-    public final static String BAD_COLOR = "-fx-background-color: red;";
+    private final static String BAD_COLOR = "-fx-background-color: red;";
+
 
     public static void addValidatorFor(Predicate<TextField> predicate, TextField...textFields) {
         for (TextField field : textFields) {
@@ -20,6 +21,13 @@ public class Validator {
                 }
             });
         }
+    }
+
+    public static boolean fieldsAreValid(TextField...fields) {
+        for (TextField field : fields) {
+            if (field.getStyle().equals(Validator.BAD_COLOR)) return false;
+        }
+        return true;
     }
 
     public enum FieldPredicate {
@@ -50,7 +58,7 @@ public class Validator {
                     return number > 2000 && number < 2100;
                 }));
 
-        private Predicate<TextField> predicate;
+        private final Predicate<TextField> predicate;
 
         FieldPredicate(Predicate<TextField> predicate) {
             this.predicate = predicate;

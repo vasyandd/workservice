@@ -11,12 +11,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
-import work.app.exception.DeliverStatementNotFoundException;
 import work.app.service.DeliveryStatementService;
 import work.app.service.NotificationService;
 import work.app.service.model.Contract;
 import work.app.service.model.DeliveryStatement;
-import work.app.service.model.DeliveryStatements;
+import work.app.service.DeliveryStatements;
 import work.app.service.model.Notification;
 import work.app.view.util.InformationWindow;
 import work.app.view.util.SceneSwitcher;
@@ -26,6 +25,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static work.app.view.util.Validator.FieldPredicate.NOT_EMPTY;
 import static work.app.view.util.Validator.FieldPredicate.POSITIVE_INTEGER;
 
 @Component
@@ -53,7 +53,7 @@ public class NotificationFormController implements Initializable {
 
     private ObservableList<Contract> contracts = FXCollections.observableArrayList();
     private ObservableList<String> products = FXCollections.observableArrayList();
-    private Map<Contract, Map<Integer, Set<DeliveryStatement.Row>>> productsByContractByPeriod;
+    private Map<Contract, Map<Integer, Set<DeliveryStatement.Row>>> productsByContractForPeriod;
     private Map<Contract, Set<DeliveryStatement.Row>> productsByContract = new HashMap<>();
     private Map<String, Integer> productShipment = new HashMap<>();
 
@@ -65,17 +65,10 @@ public class NotificationFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setChoiceBoxOptions();
-        List<DeliveryStatement> deliveryStatements = deliveryStatementService.getOpenDeliveryStatements();
-        productsByContractByPeriod = DeliveryStatements.structureProductsByContractForPeriod(deliveryStatements);
-        contracts.addAll(deliveryStatements.stream().map(DeliveryStatement::getContract).collect(Collectors.toList()));
-        date.getEditor().textProperty().addListener(((observableValue, newValue, oldValue) -> {
-            products.clear();
-        }));
-        Validator.addValidatorFor(POSITIVE_INTEGER.predicate(), number, productQuantity);
+        setFieldsOptions();
     }
 
-    private void setChoiceBoxOptions() {
+    private void setFieldsOptions() {
         contractBox.setItems(contracts);
         productBox.setItems(products);
         contractBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -85,7 +78,7 @@ public class NotificationFormController implements Initializable {
                 Contract contract = observable.getValue();
                 Integer period = date.getValue().getYear();
                 productShipment.clear();
-                products.addAll(productsByContractByPeriod.get(contract).get(period).stream()
+                products.addAll(productsByContractForPeriod.get(contract).get(period).stream()
                         .peek(row -> productShipment.put(row.getProductName(),
                                 row.getScheduledProductQuantity() - row.getActualProductQuantity()))
                         .map(DeliveryStatement.Row::getProductName)
@@ -104,22 +97,29 @@ public class NotificationFormController implements Initializable {
                 invisibleProductQuantityLabel.setVisible(false);
             }
         }));
+        List<DeliveryStatement> deliveryStatements = deliveryStatementService.getOpenDeliveryStatements();
+        productsByContractForPeriod = DeliveryStatements.structureProductsByContractForPeriod(deliveryStatements);
+        contracts.addAll(deliveryStatements.stream().map(DeliveryStatement::getContract).collect(Collectors.toList()));
+        date.getEditor().textProperty().addListener(((observableValue, newValue, oldValue) -> products.clear()));
+        Validator.addValidatorFor(POSITIVE_INTEGER.predicate(), number, productQuantity);
+        Validator.addValidatorFor(NOT_EMPTY.predicate(), date.getEditor());
     }
 
 
     public void saveNotification(ActionEvent event) {
-        Contract selectedContract = contractBox.getValue();
-        Notification notification = new Notification(Integer.parseInt(number.getText()),
-                date.getValue(), productBox.getSelectionModel().getSelectedItem(),
-                Integer.parseInt(productQuantity.getText().trim()), productNumbers.getText().trim(),
-                selectedContract);
-        try {
+        if (Validator.fieldsAreValid(number, date.getEditor(), productQuantity)) {
+            Contract selectedContract = contractBox.getValue();
+            Notification notification = new Notification(Integer.parseInt(number.getText()),
+                    date.getValue(), productBox.getSelectionModel().getSelectedItem(),
+                    Integer.parseInt(productQuantity.getText().trim()), productNumbers.getText().trim(),
+                    selectedContract);
             notificationService.saveNotification(notification);
-            InformationWindow.viewSuccessSaveWindow("Извещение сохранено!");
+
             contracts.clear();
             switcher.switchSceneTo(MainMenuController.class, event);
-        } catch (DeliverStatementNotFoundException ex) {
-            InformationWindow.viewInputDataNotValidWindow(ex.getMessage());
+        }
+        else {
+            InformationWindow.viewInputDataNotValidWindow("Что-то до сих пор выделено красным!");
         }
 
     }

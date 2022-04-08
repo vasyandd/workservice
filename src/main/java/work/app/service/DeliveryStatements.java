@@ -1,5 +1,9 @@
-package work.app.service.model;
+package work.app.service;
 
+
+import work.app.service.model.Contract;
+import work.app.service.model.DeliveryStatement;
+import work.app.service.model.Notification;
 
 import java.util.*;
 

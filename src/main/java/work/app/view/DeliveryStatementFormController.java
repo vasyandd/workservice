@@ -14,9 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.rgielen.fxweaver.core.FxmlView;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import work.app.repository.DeliveryStatementRepository;
 import work.app.service.DeliveryStatementService;
 import work.app.service.model.Contract;
 import work.app.service.model.DeliveryStatement;
@@ -182,7 +180,7 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
     public void saveDeliveryStatement(ActionEvent event) {
-        if(inputDataForSaveIsValid()) {
+        if (Validator.fieldsAreValid(contractNumber, agreementNumber, number)) {
             DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
             deliveryStatementService.saveDeliveryStatement(deliveryStatement);
             table.getItems().clear();
@@ -210,17 +208,19 @@ public class DeliveryStatementFormController implements Initializable {
             shipment.put(Month.NOVEMBER, d.novQuantity);
             shipment.put(Month.DECEMBER, d.decQuantity);
             rows.add(new DeliveryStatement.Row(new BigInteger(d.productPrice.trim()), d.productName.trim(),
-                   shipment, d.period));
+                    shipment, d.period));
         }
         Integer currentNumber = number.getText().trim().isEmpty() ? null : Integer.parseInt(number.getText().trim());
         Integer currentAgreementNumber = agreementNumber.getText().trim().isEmpty()
                 ? 0 : Integer.parseInt(agreementNumber.getText().trim());
         Contract contract = new Contract(contractNumber.getText().trim(), contractDate.getValue(), currentAgreementNumber);
-        return new DeliveryStatement(currentNumber, contract , rows);
+        return new DeliveryStatement(currentNumber, contract, rows);
     }
 
     public void addRowInTable(ActionEvent event) {
-        if (inputDataForTableIsValid()) {
+        if (Validator.fieldsAreValid(productName, productPrice, period, janQuantity, febQuantity,
+                marQuantity, mayQuantity, junQuantity, julQuantity, augQuantity, sepQuantity,
+                octQuantity, novQuantity, decQuantity)) {
             TableRowInDeliveryStatementForm row = mapInputDataToTable();
             rows.add(row);
             clearInputFields();
@@ -229,21 +229,6 @@ public class DeliveryStatementFormController implements Initializable {
         }
     }
 
-    private boolean inputDataForTableIsValid() {
-        return !productName.getStyle().equals(Validator.BAD_COLOR) && !productPrice.getStyle().equals(Validator.BAD_COLOR)
-                && !period.getStyle().equals(Validator.BAD_COLOR) && !janQuantity.getStyle().equals(Validator.BAD_COLOR)
-                && !febQuantity.getStyle().equals(Validator.BAD_COLOR) && !marQuantity.getStyle().equals(Validator.BAD_COLOR)
-                && !aprQuantity.getStyle().equals(Validator.BAD_COLOR) && !mayQuantity.getStyle().equals(Validator.BAD_COLOR)
-                && !junQuantity.getStyle().equals(Validator.BAD_COLOR) && !julQuantity.getStyle().equals(Validator.BAD_COLOR)
-                && !augQuantity.getStyle().equals(Validator.BAD_COLOR) && !sepQuantity.getStyle().equals(Validator.BAD_COLOR)
-                && !octQuantity.getStyle().equals(Validator.BAD_COLOR) && !novQuantity.getStyle().equals(Validator.BAD_COLOR)
-                && !decQuantity.getStyle().equals(Validator.BAD_COLOR);
-    }
-
-    private boolean inputDataForSaveIsValid() {
-        return !contractNumber.getStyle().equals(Validator.BAD_COLOR) && !agreementNumber.getStyle().equals(Validator.BAD_COLOR)
-                && !number.getStyle().equals(Validator.BAD_COLOR);
-    }
 
     public void deleteRowInTable(ActionEvent event) {
         table.getItems().removeAll(table.getSelectionModel().getSelectedItems());
@@ -251,14 +236,14 @@ public class DeliveryStatementFormController implements Initializable {
 
 
     private TableRowInDeliveryStatementForm mapInputDataToTable() {
-            return new TableRowInDeliveryStatementForm(productName.getText(),
-                    Integer.parseInt(period.getText()), productPrice.getText(),
-                    Integer.parseInt(janQuantity.getText()), Integer.parseInt(febQuantity.getText()),
-                    Integer.parseInt(marQuantity.getText()), Integer.parseInt(aprQuantity.getText()),
-                    Integer.parseInt(mayQuantity.getText()), Integer.parseInt(junQuantity.getText()),
-                    Integer.parseInt(julQuantity.getText()), Integer.parseInt(augQuantity.getText()),
-                    Integer.parseInt(sepQuantity.getText()), Integer.parseInt(octQuantity.getText()),
-                    Integer.parseInt(novQuantity.getText()), Integer.parseInt(decQuantity.getText()));
+        return new TableRowInDeliveryStatementForm(productName.getText(),
+                Integer.parseInt(period.getText()), productPrice.getText(),
+                Integer.parseInt(janQuantity.getText()), Integer.parseInt(febQuantity.getText()),
+                Integer.parseInt(marQuantity.getText()), Integer.parseInt(aprQuantity.getText()),
+                Integer.parseInt(mayQuantity.getText()), Integer.parseInt(junQuantity.getText()),
+                Integer.parseInt(julQuantity.getText()), Integer.parseInt(augQuantity.getText()),
+                Integer.parseInt(sepQuantity.getText()), Integer.parseInt(octQuantity.getText()),
+                Integer.parseInt(novQuantity.getText()), Integer.parseInt(decQuantity.getText()));
     }
 
     private void clearInputFields() {
