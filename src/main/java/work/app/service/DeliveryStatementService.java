@@ -18,4 +18,6 @@ public interface DeliveryStatementService {
 
     DeliveryStatement getDeliveryStatementsByContract(Contract contract);
 
+    void deleteAll();
+
 }

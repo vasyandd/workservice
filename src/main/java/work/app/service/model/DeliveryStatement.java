@@ -26,7 +26,7 @@ public final class DeliveryStatement {
     private Integer number;
     private Contract contract;
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true,
-    mappedBy = "deliveryStatement", cascade = CascadeType.ALL)
+            mappedBy = "deliveryStatement", cascade = CascadeType.ALL)
     private List<DeliveryStatement.Row> rows = new ArrayList<>();
 
     public DeliveryStatement(Integer number, Contract contract, List<Row> rows) {
@@ -51,15 +51,18 @@ public final class DeliveryStatement {
         return rows.stream()
                 .filter(row -> !row.isClosed())
                 .collect(HashMap::new, (map, row) ->
-                        map.merge(row.getPeriod(), new HashSet<>(), (set1, set2) -> {
-                            set1.add(row);
-                            return set1;
-                        }), HashMap::putAll);
+                        map.merge(row.getPeriod(), new HashSet<>() {{
+                                    add(row);
+                                }},
+                                (set1, set2) -> {
+                                    set1.add(row);
+                                    return set1;
+                                }), HashMap::putAll);
     }
 
     @Override
     public String toString() {
-        return "Ведомость поставки № " + number + " по контракту " + contract.toString();
+        return "Ведомость поставки" + (number != null ? " № " + number : "") + " по контракту " + contract.toString();
     }
 
     @Getter
@@ -87,7 +90,7 @@ public final class DeliveryStatement {
         @ManyToOne(cascade = CascadeType.ALL)
         @JoinColumn(name = "ds_id")
         private DeliveryStatement deliveryStatement;
-        @OneToMany(fetch = FetchType.EAGER, mappedBy = "deliveryStatementRow")
+        @OneToMany(fetch = FetchType.EAGER, mappedBy = "deliveryStatementRow", orphanRemoval = true)
         private List<Notification> notifications = new ArrayList<>();
 
         public Row(BigInteger priceForOneProduct, String productName, Map<Month, Integer> scheduledShipment, Integer period) {

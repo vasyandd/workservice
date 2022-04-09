@@ -208,7 +208,6 @@ public class ViewAllInformationController implements Initializable {
                 } else if (item.isCompleted) {
                     getStyleClass().removeAll(Color.EXPIRED.style, Color.LAST_MONTH.style);
                     getStyleClass().add(Color.COMPLETED.style);
-                   // setStyle(Color.COMPLETED.style);
                 } else if (item.isExpired) {
                     getStyleClass().removeAll(Color.COMPLETED.style, Color.LAST_MONTH.style);
                     getStyleClass().add(Color.EXPIRED.style);

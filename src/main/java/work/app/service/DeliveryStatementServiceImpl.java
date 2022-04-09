@@ -33,7 +33,10 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService {
         return deliveryStatementRepository.findByContract(contract);
     }
 
-
+    @Override
+    public void deleteAll() {
+        deliveryStatementRepository.deleteAll();
+    }
 
     @Override
     public void updateDeliveryStatement(Notification notification) {

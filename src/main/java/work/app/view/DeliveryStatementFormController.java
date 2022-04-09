@@ -212,7 +212,7 @@ public class DeliveryStatementFormController implements Initializable {
         }
         Integer currentNumber = number.getText().trim().isEmpty() ? null : Integer.parseInt(number.getText().trim());
         Integer currentAgreementNumber = agreementNumber.getText().trim().isEmpty()
-                ? 0 : Integer.parseInt(agreementNumber.getText().trim());
+                ? null : Integer.parseInt(agreementNumber.getText().trim());
         Contract contract = new Contract(contractNumber.getText().trim(), contractDate.getValue(), currentAgreementNumber);
         return new DeliveryStatement(currentNumber, contract, rows);
     }
