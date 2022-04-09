@@ -12,21 +12,21 @@ import javafx.scene.control.TextField;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import work.app.service.DeliveryStatementService;
+import work.app.service.DeliveryStatements;
 import work.app.service.NotificationService;
 import work.app.service.model.Contract;
 import work.app.service.model.DeliveryStatement;
-import work.app.service.DeliveryStatements;
 import work.app.service.model.Notification;
 import work.app.view.util.InformationWindow;
 import work.app.view.util.SceneSwitcher;
-import work.app.view.util.Validator;
+import work.app.view.util.TextFieldValidator;
 
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static work.app.view.util.Validator.FieldPredicate.NOT_EMPTY;
-import static work.app.view.util.Validator.FieldPredicate.POSITIVE_INTEGER;
+import static work.app.view.util.TextFieldValidator.FieldPredicate.NOT_EMPTY;
+import static work.app.view.util.TextFieldValidator.FieldPredicate.POSITIVE_INTEGER;
 
 @Component
 @FxmlView("notification_form.fxml")
@@ -69,10 +69,19 @@ public class NotificationFormController implements Initializable {
     }
 
     private void setFieldsOptions() {
+        List<DeliveryStatement> deliveryStatements = deliveryStatementService.getOpenDeliveryStatements();
+        productsByContractForPeriod = DeliveryStatements.structureProductsByContractForPeriod(deliveryStatements);
+        contracts.addAll(deliveryStatements.stream().map(DeliveryStatement::getContract).collect(Collectors.toList()));
+        date.getEditor().textProperty().addListener(((observableValue, newValue, oldValue) -> products.clear()));
         contractBox.setItems(contracts);
         productBox.setItems(products);
+        addListenerForChoiceBoxFields();
+        TextFieldValidator.addValidatorFor(POSITIVE_INTEGER.predicate(), number, productQuantity);
+        TextFieldValidator.addValidatorFor(NOT_EMPTY.predicate(), date.getEditor());
+    }
+
+    private void addListenerForChoiceBoxFields(){
         contractBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("huycontr");
             if (!contracts.isEmpty() && date.getValue() != null) {
                 products.clear();
                 Contract contract = observable.getValue();
@@ -97,28 +106,19 @@ public class NotificationFormController implements Initializable {
                 invisibleProductQuantityLabel.setVisible(false);
             }
         }));
-        List<DeliveryStatement> deliveryStatements = deliveryStatementService.getOpenDeliveryStatements();
-        productsByContractForPeriod = DeliveryStatements.structureProductsByContractForPeriod(deliveryStatements);
-        contracts.addAll(deliveryStatements.stream().map(DeliveryStatement::getContract).collect(Collectors.toList()));
-        date.getEditor().textProperty().addListener(((observableValue, newValue, oldValue) -> products.clear()));
-        Validator.addValidatorFor(POSITIVE_INTEGER.predicate(), number, productQuantity);
-        Validator.addValidatorFor(NOT_EMPTY.predicate(), date.getEditor());
     }
 
-
     public void saveNotification(ActionEvent event) {
-        if (Validator.fieldsAreValid(number, date.getEditor(), productQuantity)) {
+        if (TextFieldValidator.fieldsAreValid(number, date.getEditor(), productQuantity)) {
             Contract selectedContract = contractBox.getValue();
             Notification notification = new Notification(Integer.parseInt(number.getText()),
                     date.getValue(), productBox.getSelectionModel().getSelectedItem(),
                     Integer.parseInt(productQuantity.getText().trim()), productNumbers.getText().trim(),
                     selectedContract);
             notificationService.saveNotification(notification);
-
             contracts.clear();
             switcher.switchSceneTo(MainMenuController.class, event);
-        }
-        else {
+        } else {
             InformationWindow.viewInputDataNotValidWindow("Что-то до сих пор выделено красным!");
         }
 

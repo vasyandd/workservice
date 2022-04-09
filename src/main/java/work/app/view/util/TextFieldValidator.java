@@ -5,9 +5,9 @@ import javafx.scene.control.TextField;
 import java.util.function.Predicate;
 
 
-public class Validator {
+public class TextFieldValidator {
 
-    private Validator(){}
+    private TextFieldValidator(){}
     private final static String BAD_COLOR = "-fx-background-color: red;";
 
 
@@ -25,7 +25,7 @@ public class Validator {
 
     public static boolean fieldsAreValid(TextField...fields) {
         for (TextField field : fields) {
-            if (field.getStyle().equals(Validator.BAD_COLOR)) return false;
+            if (field.getStyle().equals(TextFieldValidator.BAD_COLOR)) return false;
         }
         return true;
     }

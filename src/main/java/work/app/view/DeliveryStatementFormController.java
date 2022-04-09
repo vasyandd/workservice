@@ -20,7 +20,7 @@ import work.app.service.model.Contract;
 import work.app.service.model.DeliveryStatement;
 import work.app.view.util.InformationWindow;
 import work.app.view.util.SceneSwitcher;
-import work.app.view.util.Validator;
+import work.app.view.util.TextFieldValidator;
 
 import java.math.BigInteger;
 import java.net.URL;
@@ -28,7 +28,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
-import static work.app.view.util.Validator.FieldPredicate.*;
+import static work.app.view.util.TextFieldValidator.FieldPredicate.*;
 
 @Component
 @FxmlView("delivery_statement_form.fxml")
@@ -127,13 +127,13 @@ public class DeliveryStatementFormController implements Initializable {
 
     private void setFieldsOptions() {
         period.setText(String.valueOf(LocalDate.now().getYear()));
-        Validator.addValidatorFor(NOT_NEGATIVE_INTEGER.predicate(), janQuantity, febQuantity, marQuantity,
+        TextFieldValidator.addValidatorFor(NOT_NEGATIVE_INTEGER.predicate(), janQuantity, febQuantity, marQuantity,
                 aprQuantity, mayQuantity, junQuantity, julQuantity, augQuantity,
                 sepQuantity, octQuantity, novQuantity, decQuantity);
-        Validator.addValidatorFor(NOT_NEGATIVE_BIG_INTEGER.predicate(), productPrice);
-        Validator.addValidatorFor(NOT_EMPTY.predicate(), productName, contractNumber);
-        Validator.addValidatorFor(POSITIVE_INTEGER.predicate().or(EMPTY.predicate()), number, agreementNumber);
-        Validator.addValidatorFor(YEAR.predicate(), period);
+        TextFieldValidator.addValidatorFor(NOT_NEGATIVE_BIG_INTEGER.predicate(), productPrice);
+        TextFieldValidator.addValidatorFor(NOT_EMPTY.predicate(), productName, contractNumber);
+        TextFieldValidator.addValidatorFor(POSITIVE_INTEGER.predicate().or(EMPTY.predicate()), number, agreementNumber);
+        TextFieldValidator.addValidatorFor(YEAR.predicate(), period);
         deleteRowButton.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
     }
 
@@ -180,7 +180,7 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
     public void saveDeliveryStatement(ActionEvent event) {
-        if (Validator.fieldsAreValid(contractNumber, agreementNumber, number)) {
+        if (TextFieldValidator.fieldsAreValid(contractNumber, agreementNumber, number)) {
             DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
             deliveryStatementService.saveDeliveryStatement(deliveryStatement);
             table.getItems().clear();
@@ -218,7 +218,7 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
     public void addRowInTable(ActionEvent event) {
-        if (Validator.fieldsAreValid(productName, productPrice, period, janQuantity, febQuantity,
+        if (TextFieldValidator.fieldsAreValid(productName, productPrice, period, janQuantity, febQuantity,
                 marQuantity, mayQuantity, junQuantity, julQuantity, augQuantity, sepQuantity,
                 octQuantity, novQuantity, decQuantity)) {
             TableRowInDeliveryStatementForm row = mapInputDataToTable();

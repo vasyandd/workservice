@@ -33,21 +33,19 @@ public class ViewAllInformationController implements Initializable {
     private Map<String, DeliveryStatement> deliveryStatementsByContract;
     private Map<String, Set<DeliveryStatement>> deliveryStatementsByProduct;
     private final Map<DeliveryStatement.Row, List<Notification>> notificationsByDeliveryStatement = new HashMap<>();
+    private boolean contractSelectedInListView;
 
     private enum Color {
-        COMPLETED("-fx-background-color: #3b8618;"),
-        EXPIRED("-fx-background-color: #bb3f3f;"),
-        LAST_MONTH("-fx-background-color: #8d5025;");
+        COMPLETED("completed"),
+        EXPIRED("expired"),
+        LAST_MONTH("last_month");
 
         private final String style;
 
         Color(String style) {
             this.style = style;
         }
-
     }
-
-    private boolean contractSelectedInListView;
 
     @FXML
     private CheckBox viewCompletedRows;
@@ -55,6 +53,8 @@ public class ViewAllInformationController implements Initializable {
     private CheckBox viewExpiredRows;
     @FXML
     private CheckBox viewLastMonthRows;
+
+
     @FXML
     private ListView<String> listOfContractsOrProducts;
     @FXML
@@ -107,82 +107,6 @@ public class ViewAllInformationController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         fetchInformationForMainTable();
         setTableAndFieldsOptions();
-
-    }
-
-    private void setTableAndFieldsOptions() {
-        table.setItems(rows);
-        products.addAll(deliveryStatementsByProduct.keySet());
-        contracts.addAll(new ArrayList<>(deliveryStatementsByContract.keySet()));
-        listOfContractsOrProducts.getSelectionModel().selectedItemProperty()
-                .addListener(((observableValue, oldValue, newValue) -> {
-                    if (observableValue.getValue() != null) {
-                        setSelectedForCheckBoxFields(false, viewCompletedRows, viewLastMonthRows, viewExpiredRows);
-                        if (contractSelectedInListView) {
-                            fillTableByContract(observableValue.getValue());
-                        } else {
-                            fillTableByProduct(observableValue.getValue());
-                        }
-                    } else {
-                        title.setVisible(false);
-                        rows.clear();
-                    }
-                }));
-        viewCompletedRows.selectedProperty().addListener(((observableValue, aBoolean, t1) -> {
-            if (observableValue.getValue().booleanValue()) {
-                setSelectedForCheckBoxFields(false, viewExpiredRows, viewLastMonthRows);
-                table.getItems().removeIf(row -> !row.isCompleted);
-            } else {
-                String selectedItem = listOfContractsOrProducts.getSelectionModel().selectedItemProperty().get();
-                if (contractSelectedInListView) {
-                    fillTableByContract(selectedItem);
-                } else {
-                    fillTableByProduct(selectedItem);
-                }
-            }
-        }));
-        viewExpiredRows.selectedProperty().addListener(((observableValue, aBoolean, t1) -> {
-            if (observableValue.getValue().booleanValue()) {
-                setSelectedForCheckBoxFields(false, viewCompletedRows, viewLastMonthRows);
-                table.getItems().removeIf(row -> !row.isExpired);
-            } else {
-                String selectedItem = listOfContractsOrProducts.getSelectionModel().selectedItemProperty().get();
-                if (contractSelectedInListView) {
-                    fillTableByContract(selectedItem);
-                } else {
-                    fillTableByProduct(selectedItem);
-                }
-            }
-        }));
-        viewLastMonthRows.selectedProperty().addListener(((observableValue, aBoolean, t1) -> {
-            if (observableValue.getValue().booleanValue()) {
-                setSelectedForCheckBoxFields(false, viewExpiredRows, viewCompletedRows);
-                table.getItems().removeIf(row -> !row.isLastMonthNow);
-            } else {
-                String selectedItem = listOfContractsOrProducts.getSelectionModel().selectedItemProperty().get();
-                if (contractSelectedInListView) {
-                    fillTableByContract(selectedItem);
-                } else {
-                    fillTableByProduct(selectedItem);
-                }
-            }
-        }));
-        setCellValueFactories();
-        setRowFactories();
-    }
-
-    private void setVisibleForFields(boolean isVisible, CheckBox... fields) {
-        for (CheckBox f : fields) {
-            f.setVisible(isVisible);
-        }
-    }
-
-    ;
-
-    private void setSelectedForCheckBoxFields(boolean isSelected, CheckBox... fields) {
-        for (CheckBox f : fields) {
-            f.setSelected(isSelected);
-        }
     }
 
     private void fetchInformationForMainTable() {
@@ -193,25 +117,135 @@ public class ViewAllInformationController implements Initializable {
         deliveryStatementsByContract = DeliveryStatements.structureByContract(deliveryStatements);
     }
 
+    private void setTableAndFieldsOptions() {
+        table.setItems(rows);
+        products.addAll(deliveryStatementsByProduct.keySet());
+        contracts.addAll(new ArrayList<>(deliveryStatementsByContract.keySet()));
+        listOfContractsOrProducts.getSelectionModel().selectedItemProperty()
+                .addListener(((observableValue, oldValue, newValue) -> {
+                    if (observableValue.getValue() != null) {
+                        unselectCheckBoxFieldsExceptFor(null);
+                        fillTable(observableValue.getValue());
+                    } else {
+                        setVisibleForFields(false, title);
+                        rows.clear();
+                    }
+                }));
+        addListenerForCheckBoxFields();
+        setCellValueFactories();
+        setRowFactories();
+    }
+
+    private void fillTable(String selectedItem) {
+        if (contractSelectedInListView) {
+            fillTableByContract(selectedItem);
+        } else {
+            fillTableByProduct(selectedItem);
+        }
+    }
+
+    private void addListenerForCheckBoxFields() {
+        viewCompletedRows.selectedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (observableValue.getValue().booleanValue()) {
+                unselectCheckBoxFieldsExceptFor(viewCompletedRows);
+                table.getItems().removeIf(row -> !row.isCompleted);
+            } else {
+                String selectedItem = listOfContractsOrProducts.getSelectionModel().selectedItemProperty().get();
+                fillTable(selectedItem);
+            }
+        }));
+        viewLastMonthRows.selectedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (observableValue.getValue().booleanValue()) {
+                unselectCheckBoxFieldsExceptFor(viewLastMonthRows);
+                table.getItems().removeIf(row -> !row.isLastMonthNow);
+            } else {
+                String selectedItem = listOfContractsOrProducts.getSelectionModel().selectedItemProperty().get();
+                fillTable(selectedItem);
+            }
+        }));
+        viewExpiredRows.selectedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (observableValue.getValue().booleanValue()) {
+                unselectCheckBoxFieldsExceptFor(viewExpiredRows);
+                table.getItems().removeIf(row -> !row.isExpired);
+            } else {
+                String selectedItem = listOfContractsOrProducts.getSelectionModel().selectedItemProperty().get();
+                fillTable(selectedItem);
+            }
+        }));
+    }
+
+    private void setCellValueFactories() {
+        productOrContractCol.setCellValueFactory(new PropertyValueFactory<>("productOrContract"));
+        productOrContractCol.setSortable(true);
+        productPriceCol.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
+        actualProductQuantityCol.setCellValueFactory(new PropertyValueFactory<>("actualProductQuantity"));
+        scheduledProductQuantityCol.setCellValueFactory(new PropertyValueFactory<>("scheduledProductQuantity"));
+        periodCol.setCellValueFactory(new PropertyValueFactory<>("period"));
+        periodCol.setSortable(true);
+        janQuantityCol.setCellValueFactory(new PropertyValueFactory<>("janQuantity"));
+        febQuantityCol.setCellValueFactory(new PropertyValueFactory<>("febQuantity"));
+        marQuantityCol.setCellValueFactory(new PropertyValueFactory<>("marQuantity"));
+        aprQuantityCol.setCellValueFactory(new PropertyValueFactory<>("aprQuantity"));
+        mayQuantityCol.setCellValueFactory(new PropertyValueFactory<>("mayQuantity"));
+        junQuantityCol.setCellValueFactory(new PropertyValueFactory<>("junQuantity"));
+        julQuantityCol.setCellValueFactory(new PropertyValueFactory<>("julQuantity"));
+        augQuantityCol.setCellValueFactory(new PropertyValueFactory<>("augQuantity"));
+        sepQuantityCol.setCellValueFactory(new PropertyValueFactory<>("sepQuantity"));
+        octQuantityCol.setCellValueFactory(new PropertyValueFactory<>("octQuantity"));
+        novQuantityCol.setCellValueFactory(new PropertyValueFactory<>("novQuantity"));
+        decQuantityCol.setCellValueFactory(new PropertyValueFactory<>("decQuantity"));
+        noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
+        setWrapFields(noteCol, productOrContractCol);
+    }
+
     private void setRowFactories() {
         table.setRowFactory(tv -> new TableRow<>() {
             @Override
             public void updateItem(MainTableRow item, boolean empty) {
                 super.updateItem(item, empty);
                 if (item == null) {
-                    setStyle("");
+                    getStyleClass().clear();
                 } else if (item.isCompleted) {
-                    setStyle(Color.COMPLETED.style);
+                    getStyleClass().removeAll(Color.EXPIRED.style, Color.LAST_MONTH.style);
+                    getStyleClass().add(Color.COMPLETED.style);
+                   // setStyle(Color.COMPLETED.style);
                 } else if (item.isExpired) {
-                    setStyle(Color.EXPIRED.style);
+                    getStyleClass().removeAll(Color.COMPLETED.style, Color.LAST_MONTH.style);
+                    getStyleClass().add(Color.EXPIRED.style);
                 } else if (item.isLastMonthNow) {
-                    setStyle(Color.LAST_MONTH.style);
+                    getStyleClass().removeAll(Color.COMPLETED.style, Color.EXPIRED.style);
+                    getStyleClass().add(Color.LAST_MONTH.style);
                 } else {
-                    setStyle("");
+                    getStyleClass().clear();
                 }
             }
         });
     }
+
+
+    private void fillTableByContract(String key) {
+        rows.clear();
+        DeliveryStatement deliveryStatement = deliveryStatementsByContract.get(key);
+        rows.addAll(deliveryStatement.getRows().stream()
+                .map(row -> {
+                    Map<Month, String> productQuantityByMonth = row.getProductQuantityWithSlash();
+                    return new MainTableRow(row.getProductName(), row.getPeriod(),
+                            row.getActualProductQuantity(), row.getScheduledProductQuantity(),
+                            row.getPriceForOneProduct().toString(), productQuantityByMonth.get(Month.JANUARY),
+                            productQuantityByMonth.get(Month.FEBRUARY), productQuantityByMonth.get(Month.MARCH),
+                            productQuantityByMonth.get(Month.APRIL), productQuantityByMonth.get(Month.MAY),
+                            productQuantityByMonth.get(Month.JUNE), productQuantityByMonth.get(Month.JULY),
+                            productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
+                            productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
+                            productQuantityByMonth.get(Month.DECEMBER),
+                            Notification.mapListNotificationsToString(notificationsByDeliveryStatement.get(row)),
+                            row.isClosed(), row.isExpired(), row.isLastMonthNow());
+                })
+                .collect(Collectors.toList()));
+        title.setText(deliveryStatement.toString());
+        setVisibleForFields(true, title, viewCompletedRows, viewLastMonthRows, viewExpiredRows);
+    }
+
 
     private void fillTableByProduct(String key) {
         rows.clear();
@@ -240,28 +274,19 @@ public class ViewAllInformationController implements Initializable {
         setVisibleForFields(true, viewCompletedRows, viewLastMonthRows, viewExpiredRows);
     }
 
-    private void setCellValueFactories() {
-        productOrContractCol.setCellValueFactory(new PropertyValueFactory<>("productOrContract"));
-        productOrContractCol.setSortable(true);
-        productPriceCol.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
-        actualProductQuantityCol.setCellValueFactory(new PropertyValueFactory<>("actualProductQuantity"));
-        scheduledProductQuantityCol.setCellValueFactory(new PropertyValueFactory<>("scheduledProductQuantity"));
-        periodCol.setCellValueFactory(new PropertyValueFactory<>("period"));
-        periodCol.setSortable(true);
-        janQuantityCol.setCellValueFactory(new PropertyValueFactory<>("janQuantity"));
-        febQuantityCol.setCellValueFactory(new PropertyValueFactory<>("febQuantity"));
-        marQuantityCol.setCellValueFactory(new PropertyValueFactory<>("marQuantity"));
-        aprQuantityCol.setCellValueFactory(new PropertyValueFactory<>("aprQuantity"));
-        mayQuantityCol.setCellValueFactory(new PropertyValueFactory<>("mayQuantity"));
-        junQuantityCol.setCellValueFactory(new PropertyValueFactory<>("junQuantity"));
-        julQuantityCol.setCellValueFactory(new PropertyValueFactory<>("julQuantity"));
-        augQuantityCol.setCellValueFactory(new PropertyValueFactory<>("augQuantity"));
-        sepQuantityCol.setCellValueFactory(new PropertyValueFactory<>("sepQuantity"));
-        octQuantityCol.setCellValueFactory(new PropertyValueFactory<>("octQuantity"));
-        novQuantityCol.setCellValueFactory(new PropertyValueFactory<>("novQuantity"));
-        decQuantityCol.setCellValueFactory(new PropertyValueFactory<>("decQuantity"));
-        noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
-        setWrapFields(noteCol, productOrContractCol);
+    private void setVisibleForFields(boolean isVisible, Control... fields) {
+        for (Control f : fields) {
+            f.setVisible(isVisible);
+        }
+    }
+
+    private void unselectCheckBoxFieldsExceptFor(CheckBox checkBox) {
+        CheckBox[] checkBoxes = new CheckBox[]{viewExpiredRows, viewLastMonthRows, viewCompletedRows};
+        for (CheckBox f : checkBoxes) {
+            if (!f.equals(checkBox)) {
+                f.setSelected(false);
+            }
+        }
     }
 
     @SafeVarargs
@@ -278,31 +303,6 @@ public class ViewAllInformationController implements Initializable {
             });
         }
     }
-
-    private void fillTableByContract(String key) {
-        rows.clear();
-        DeliveryStatement deliveryStatement = deliveryStatementsByContract.get(key);
-        rows.addAll(deliveryStatement.getRows().stream()
-                .map(row -> {
-                    Map<Month, String> productQuantityByMonth = row.getProductQuantityWithSlash();
-                    return new MainTableRow(row.getProductName(), row.getPeriod(),
-                            row.getActualProductQuantity(), row.getScheduledProductQuantity(),
-                            row.getPriceForOneProduct().toString(), productQuantityByMonth.get(Month.JANUARY),
-                            productQuantityByMonth.get(Month.FEBRUARY), productQuantityByMonth.get(Month.MARCH),
-                            productQuantityByMonth.get(Month.APRIL), productQuantityByMonth.get(Month.MAY),
-                            productQuantityByMonth.get(Month.JUNE), productQuantityByMonth.get(Month.JULY),
-                            productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
-                            productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
-                            productQuantityByMonth.get(Month.DECEMBER),
-                            Notification.mapListNotificationsToString(notificationsByDeliveryStatement.get(row)),
-                            row.isClosed(), row.isExpired(), row.isLastMonthNow());
-                })
-                .collect(Collectors.toList()));
-        title.setText(deliveryStatement.toString());
-        title.setVisible(true);
-        setVisibleForFields(true, viewCompletedRows, viewLastMonthRows, viewExpiredRows);
-    }
-
 
     public void fillProductsList(ActionEvent event) {
         setVisibleForFields(false, viewExpiredRows, viewLastMonthRows, viewCompletedRows);
