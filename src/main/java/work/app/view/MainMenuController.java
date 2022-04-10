@@ -8,7 +8,7 @@ import work.app.view.util.SceneSwitcher;
 
 @Component
 @FxmlView("main_menu.fxml")
-public class MainMenuController{
+public class MainMenuController {
     private final SceneSwitcher switcher;
 
 
@@ -17,7 +17,7 @@ public class MainMenuController{
     }
 
 
-    public void switchSceneToNotificationForm(ActionEvent event)  {
+    public void switchSceneToNotificationForm(ActionEvent event) {
         switcher.switchSceneTo(NotificationFormController.class, event);
     }
 

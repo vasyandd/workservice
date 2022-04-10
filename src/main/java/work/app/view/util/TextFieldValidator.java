@@ -7,11 +7,13 @@ import java.util.function.Predicate;
 
 public class TextFieldValidator {
 
-    private TextFieldValidator(){}
+    private TextFieldValidator() {
+    }
+
     private final static String BAD_COLOR = "-fx-background-color: red;";
 
 
-    public static void addValidatorFor(Predicate<TextField> predicate, TextField...textFields) {
+    public static void addValidatorFor(Predicate<TextField> predicate, TextField... textFields) {
         for (TextField field : textFields) {
             field.textProperty().addListener((observable, oldValue, newValue) -> {
                 if (predicate.test(field)) {
@@ -23,7 +25,7 @@ public class TextFieldValidator {
         }
     }
 
-    public static boolean fieldsAreValid(TextField...fields) {
+    public static boolean fieldsAreValid(TextField... fields) {
         for (TextField field : fields) {
             if (field.getStyle().equals(TextFieldValidator.BAD_COLOR)) return false;
         }

@@ -80,7 +80,7 @@ public class NotificationFormController implements Initializable {
         TextFieldValidator.addValidatorFor(NOT_EMPTY.predicate(), date.getEditor());
     }
 
-    private void addListenerForChoiceBoxFields(){
+    private void addListenerForChoiceBoxFields() {
         contractBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (!contracts.isEmpty() && date.getValue() != null) {
                 products.clear();
