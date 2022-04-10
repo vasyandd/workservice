@@ -70,7 +70,7 @@
         </rowConstraints>
          <children>
             <Label text="Изделие" textAlignment="CENTER" />
-            <TextField fx:id="productName" prefHeight="26.0" prefWidth="150.0" promptText="Залупа" GridPane.rowIndex="1" />
+            <TextField fx:id="productName" prefHeight="26.0" prefWidth="150.0" GridPane.rowIndex="1" />
             <Label alignment="CENTER" contentDisplay="CENTER" text="Цена изделия" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" />
             <TextField fx:id="productPrice" prefHeight="26.0" prefWidth="126.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label prefHeight="18.0" prefWidth="78.0" text="Год поставки" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" />

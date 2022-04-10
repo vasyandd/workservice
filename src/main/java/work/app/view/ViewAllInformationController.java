@@ -14,9 +14,10 @@ import lombok.Setter;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import work.app.service.DeliveryStatementService;
-import work.app.service.model.DeliveryStatement;
 import work.app.service.DeliveryStatements;
+import work.app.service.model.DeliveryStatement;
 import work.app.service.model.Notification;
+import work.app.view.util.Color;
 
 import java.net.URL;
 import java.time.Month;
@@ -34,18 +35,6 @@ public class ViewAllInformationController implements Initializable {
     private Map<String, Set<DeliveryStatement>> deliveryStatementsByProduct;
     private final Map<DeliveryStatement.Row, List<Notification>> notificationsByDeliveryStatement = new HashMap<>();
     private boolean contractSelectedInListView;
-
-    private enum Color {
-        COMPLETED("completed"),
-        EXPIRED("expired"),
-        LAST_MONTH("last_month");
-
-        private final String style;
-
-        Color(String style) {
-            this.style = style;
-        }
-    }
 
     @FXML
     private CheckBox viewCompletedRows;
@@ -119,6 +108,7 @@ public class ViewAllInformationController implements Initializable {
 
     private void setTableAndFieldsOptions() {
         table.setItems(rows);
+       // table.getStylesheets().add(WorkServiceSpringBootApplication.STYLES_PATH);
         products.addAll(deliveryStatementsByProduct.keySet());
         contracts.addAll(new ArrayList<>(deliveryStatementsByContract.keySet()));
         listOfContractsOrProducts.getSelectionModel().selectedItemProperty()
@@ -203,19 +193,21 @@ public class ViewAllInformationController implements Initializable {
             @Override
             public void updateItem(MainTableRow item, boolean empty) {
                 super.updateItem(item, empty);
+                System.out.println("her");
                 if (item == null) {
-                    getStyleClass().clear();
+                    getStyleClass().removeAll(Color.EXPIRED, Color.LAST_MONTH, Color.COMPLETED);
                 } else if (item.isCompleted) {
-                    getStyleClass().removeAll(Color.EXPIRED.style, Color.LAST_MONTH.style);
-                    getStyleClass().add(Color.COMPLETED.style);
+                    System.out.println("huy");
+                    getStyleClass().removeAll(Color.EXPIRED, Color.LAST_MONTH);
+                    getStyleClass().add(Color.COMPLETED);
                 } else if (item.isExpired) {
-                    getStyleClass().removeAll(Color.COMPLETED.style, Color.LAST_MONTH.style);
-                    getStyleClass().add(Color.EXPIRED.style);
+                    getStyleClass().removeAll(Color.COMPLETED, Color.LAST_MONTH);
+                    getStyleClass().add(Color.EXPIRED);
                 } else if (item.isLastMonthNow) {
-                    getStyleClass().removeAll(Color.COMPLETED.style, Color.EXPIRED.style);
-                    getStyleClass().add(Color.LAST_MONTH.style);
+                    getStyleClass().removeAll(Color.COMPLETED, Color.EXPIRED);
+                    getStyleClass().add(Color.LAST_MONTH);
                 } else {
-                    getStyleClass().clear();
+                    getStyleClass().removeAll(Color.EXPIRED, Color.LAST_MONTH, Color.COMPLETED);
                 }
             }
         });

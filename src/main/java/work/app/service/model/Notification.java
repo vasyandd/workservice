@@ -54,6 +54,7 @@ public class Notification {
     public String toString() {
         return productQuantity + " шт. ("
                 + date.getMonth().getDisplayName(TextStyle.FULL_STANDALONE , new Locale("ru"))
-                + ") номера " +productNumbers+ "  изв. № " + number + " от " + date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+                + ") номера " + productNumbers + (number != null ? " изв. № " + number : "")
+                + " от " + date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     }
 }

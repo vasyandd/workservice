@@ -2,6 +2,8 @@ package work.app.service.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -11,6 +13,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -90,6 +93,7 @@ public final class DeliveryStatement {
         @ManyToOne(cascade = CascadeType.ALL)
         @JoinColumn(name = "ds_id")
         private DeliveryStatement deliveryStatement;
+        @NotFound(action = NotFoundAction.IGNORE)
         @OneToMany(fetch = FetchType.EAGER, mappedBy = "deliveryStatementRow", orphanRemoval = true)
         private List<Notification> notifications = new ArrayList<>();
 
@@ -113,17 +117,18 @@ public final class DeliveryStatement {
         @Transient
         public Map<Month, String> getProductQuantityWithSlash() {
             Map<Month, String> map = new HashMap<>();
-            scheduledShipment.keySet()
-                    .forEach(k -> {
-                        Integer actualQuantity = actualShipment.get(k);
-                        map.put(k, scheduledShipment.get(k) + "/" + (actualQuantity == null ? 0 : actualQuantity));
-                    });
+            Stream.of(Month.values()).forEach( month -> {
+                Integer scheduledQuantity = scheduledShipment.get(month);
+                Integer actualQuantity = actualShipment.get(month);
+                map.put(month, (scheduledQuantity != null ? scheduledQuantity : 0)
+                        + "/" + (actualQuantity != null ? actualQuantity : 0));
+            });
             return map;
         }
 
         @Transient
         public boolean isClosed() {
-            return getActualProductQuantity() == getScheduledProductQuantity();
+            return getActualProductQuantity() >= getScheduledProductQuantity();
         }
 
         @Transient

@@ -1,25 +1,25 @@
 package work.app.view.util;
 
 import javafx.scene.control.TextField;
+import work.app.WorkServiceSpringBootApplication;
 
 import java.util.function.Predicate;
 
 
-public class TextFieldValidator {
+public final class TextFieldValidator {
 
     private TextFieldValidator() {
     }
-
-    private final static String BAD_COLOR = "-fx-background-color: red;";
 
 
     public static void addValidatorFor(Predicate<TextField> predicate, TextField... textFields) {
         for (TextField field : textFields) {
             field.textProperty().addListener((observable, oldValue, newValue) -> {
                 if (predicate.test(field)) {
-                    field.setStyle(null);
+                    field.getStyleClass().removeAll(Color.INVALID_DATA);
                 } else {
-                    field.setStyle(BAD_COLOR);
+                    field.getStylesheets().add(WorkServiceSpringBootApplication.STYLES_PATH);
+                    field.getStyleClass().add(Color.INVALID_DATA);
                 }
             });
         }
@@ -27,7 +27,7 @@ public class TextFieldValidator {
 
     public static boolean fieldsAreValid(TextField... fields) {
         for (TextField field : fields) {
-            if (field.getStyle().equals(TextFieldValidator.BAD_COLOR)) return false;
+            if (field.getStyleClass().contains(Color.INVALID_DATA)) return false;
         }
         return true;
     }

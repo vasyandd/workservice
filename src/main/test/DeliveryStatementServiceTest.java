@@ -68,12 +68,8 @@ class DeliveryStatementServiceTest {
 
     @BeforeEach
     void saveDeliveryStatement() {
-        deliveryStatementService.saveDeliveryStatement(testDeliveryStatement);
-    }
-
-    @AfterEach
-    void clearTestData() {
         deliveryStatementService.deleteAll();
+        deliveryStatementService.saveDeliveryStatement(testDeliveryStatement);
     }
 
 

@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -31,6 +32,8 @@ public class WorkServiceFXApplication extends Application {
         Parent root = fxWeaver.loadView(MainMenuController.class);
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setResizable(false);
+        stage.getIcons().add(new Image(WorkServiceFXApplication.class.getResource("pepe.png").toExternalForm()));
         stage.show();
     }
 
