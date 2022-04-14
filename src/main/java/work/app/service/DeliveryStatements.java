@@ -5,7 +5,12 @@ import work.app.service.model.Contract;
 import work.app.service.model.DeliveryStatement;
 import work.app.service.model.Notification;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public final class DeliveryStatements {
     private DeliveryStatements() {
@@ -13,21 +18,17 @@ public final class DeliveryStatements {
 
     public static Map<String, DeliveryStatement> structureByContract(List<DeliveryStatement> deliveryStatements) {
         return deliveryStatements.stream()
-                .collect(HashMap::new, (map, ds) -> map.put(ds.getContract().toString(), ds), HashMap::putAll);
+                .collect(Collectors.toMap(d -> d.getContract().toString(), Function.identity()));
     }
 
-    public static Map<String, Set<DeliveryStatement>> structureByProduct(List<DeliveryStatement> deliveryStatements) {
-        Map<String, Set<DeliveryStatement>> result = new HashMap<>();
-        deliveryStatements.forEach(d -> {
+    public static Map<String, List<DeliveryStatement>> structureByProduct(List<DeliveryStatement> deliveryStatements) {
+        Map<String, List<DeliveryStatement>> result = new HashMap<>();
+        for (DeliveryStatement d : deliveryStatements) {
             d.getRows().forEach(row -> {
-                result.merge(row.getProductName(), new HashSet<>() {{
-                    add(d);
-                }}, (set, set2) -> {
-                    set.add(d);
-                    return set;
-                });
+                result.computeIfAbsent(row.getProductName(),
+                        (unused) -> new ArrayList<>()).add(d);
             });
-        });
+        }
         return result;
     }
 

@@ -94,7 +94,7 @@ public final class DeliveryStatement {
         @NotFound(action = NotFoundAction.IGNORE)
         @OneToMany(fetch = FetchType.LAZY,
                 mappedBy = "deliveryStatementRow", orphanRemoval = true)
-        private List<Notification> notifications = new ArrayList<>();
+        private List<Notification> notifications;
 
         public Row(BigInteger priceForOneProduct, String productName, Map<Month, Integer> scheduledShipment, Integer period) {
             this.priceForOneProduct = priceForOneProduct;

@@ -33,7 +33,7 @@ public class ViewAllInformationController implements Initializable {
     private final ObservableList<String> contracts = FXCollections.observableArrayList();
     private final ObservableList<MainTableRow> rows = FXCollections.observableArrayList();
     private Map<String, DeliveryStatement> deliveryStatementsByContract;
-    private Map<String, Set<DeliveryStatement>> deliveryStatementsByProduct;
+    private Map<String, List<DeliveryStatement>> deliveryStatementsByProduct;
     private final Map<DeliveryStatement.Row, List<Notification>> notificationsByDeliveryStatement = new HashMap<>();
     private boolean contractSelectedInListView;
 
@@ -238,7 +238,7 @@ public class ViewAllInformationController implements Initializable {
 
     private void fillTableByProduct(String key) {
         rows.clear();
-        Set<DeliveryStatement> deliveryStatements = deliveryStatementsByProduct.get(key);
+        List<DeliveryStatement> deliveryStatements = deliveryStatementsByProduct.get(key);
         for (DeliveryStatement d : deliveryStatements) {
             rows.addAll(d.getRows().stream()
                     .filter(row -> row.getProductName().equals(key))

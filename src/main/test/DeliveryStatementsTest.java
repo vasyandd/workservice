@@ -55,7 +55,7 @@ public class DeliveryStatementsTest {
     @Test
     @DisplayName("Проверка метода structureByProduct")
     void Check_Working_StructureByProduct_Method() {
-        Map<String, Set<DeliveryStatement>> result = DeliveryStatements.structureByProduct(testDeliveryStatements);
+        Map<String, List<DeliveryStatement>> result = DeliveryStatements.structureByProduct(testDeliveryStatements);
         for (DeliveryStatement actualDeliveryStatement : testDeliveryStatements) {
             for (DeliveryStatement.Row row : actualDeliveryStatement.getRows()) {
                 Assertions.assertTrue(result.get(row.getProductName()).contains(actualDeliveryStatement));
