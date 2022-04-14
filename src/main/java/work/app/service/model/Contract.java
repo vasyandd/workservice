@@ -15,13 +15,13 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @EqualsAndHashCode
 public class Contract {
-    private String contractNumber;
-    private LocalDate contractDate;
+    private String number;
+    private LocalDate date;
     private Integer additionalAgreement;
 
     @Override
     public String toString() {
-        return "№ " + contractNumber + " от " + contractDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+        return "№ " + number + " от " + date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
                 + (additionalAgreement != null ? " д.c. " + additionalAgreement : "");
     }
 }

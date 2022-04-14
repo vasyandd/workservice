@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SceneSwitcher {
-    private FxWeaver fxWeaver;
+    private final FxWeaver fxWeaver;
 
     public SceneSwitcher(FxWeaver fxWeaver) {
         this.fxWeaver = fxWeaver;

@@ -8,7 +8,7 @@ public class InformationWindow {
 
     public static void viewSuccessSaveWindow(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
+        alert.setTitle("Успешное сохранение");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

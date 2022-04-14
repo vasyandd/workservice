@@ -30,26 +30,6 @@ public final class TextFieldValidator {
         initializeEnumMap();
     }
 
-    public void addValidatorFor(FieldPredicate predicate, TextField... textFields) {
-        for (TextField field : textFields) {
-            field.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (predicates.get(predicate).test(field)) {
-                    field.getStyleClass().removeAll(Style.INVALID_DATA.styleClass());
-                } else {
-                    field.getStylesheets().add(WorkServiceSpringBootApplication.STYLES_PATH);
-                    field.getStyleClass().add(Style.INVALID_DATA.styleClass());
-                }
-            });
-        }
-    }
-
-    public boolean fieldsAreValid(TextField... fields) {
-        for (TextField field : fields) {
-            if (field.getStyleClass().contains(Style.INVALID_DATA.styleClass())) return false;
-        }
-        return true;
-    }
-
     private void initializeEnumMap() {
         predicates.put(NOT_EMPTY, textField -> !textField.getText().trim().isEmpty());
         predicates.put(EMPTY, predicates.get(NOT_EMPTY).negate());
@@ -76,6 +56,29 @@ public final class TextFieldValidator {
             return number > 2000 && number < 2100;
         }));
     }
+
+    public void addValidatorFor(FieldPredicate predicate, TextField... textFields) {
+        for (TextField field : textFields) {
+            field.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (predicates.get(predicate).test(field)) {
+                    field.getStyleClass().removeAll(Style.INVALID_DATA.styleClass());
+                } else {
+                    field.getStylesheets().add(WorkServiceSpringBootApplication.STYLES_PATH);
+                    field.getStyleClass().add(Style.INVALID_DATA.styleClass());
+                }
+            });
+        }
+    }
+
+    public boolean fieldsAreValid(TextField... fields) {
+        for (TextField field : fields) {
+            if (field.getStyleClass().contains(Style.INVALID_DATA.styleClass()))
+                return false;
+        }
+        return true;
+    }
+
+
 
 
 }

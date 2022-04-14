@@ -37,7 +37,7 @@ public class DeliveryStatementFormController implements Initializable {
     private final DeliveryStatementService deliveryStatementService;
     private final SceneSwitcher switcher;
     private final TextFieldValidator textFieldValidator;
-    // FXML field
+    // FXML fields
     @FXML
     private Button deleteRowButton;
     @FXML

@@ -12,10 +12,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import work.app.view.MainMenuController;
 
 public class WorkServiceFXApplication extends Application {
-
+    private final static String ICON = WorkServiceFXApplication.class.getResource("pepe.png").toExternalForm();
     private ConfigurableApplicationContext applicationContext;
 
-    private final static String STYLESHEET_PATH = "view/styles.css";
 
     @Override
     public void init() {
@@ -33,7 +32,7 @@ public class WorkServiceFXApplication extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setResizable(false);
-        stage.getIcons().add(new Image(WorkServiceFXApplication.class.getResource("pepe.png").toExternalForm()));
+        stage.getIcons().add(new Image(ICON));
         stage.show();
     }
 

@@ -31,10 +31,6 @@ import static work.app.view.util.TextFieldValidator.FieldPredicate.POSITIVE_INTE
 @Component
 @FxmlView("notification_form.fxml")
 public class NotificationFormController implements Initializable {
-    private final NotificationService notificationService;
-    private final SceneSwitcher switcher;
-    private final DeliveryStatementService deliveryStatementService;
-    private final TextFieldValidator textFieldValidator;
     @FXML
     private TextField number;
     @FXML
@@ -52,6 +48,10 @@ public class NotificationFormController implements Initializable {
     @FXML
     private Label invisibleProductQuantityLabel;
 
+    private final NotificationService notificationService;
+    private final SceneSwitcher switcher;
+    private final DeliveryStatementService deliveryStatementService;
+    private final TextFieldValidator textFieldValidator;
     private ObservableList<Contract> contracts = FXCollections.observableArrayList();
     private ObservableList<String> products = FXCollections.observableArrayList();
     private Map<Contract, Map<Integer, List<DeliveryStatement.Row>>> productsByContractForPeriod;

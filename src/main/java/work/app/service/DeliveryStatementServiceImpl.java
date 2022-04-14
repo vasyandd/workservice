@@ -52,7 +52,7 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService {
     }
 
     @Override
-    public List<DeliveryStatement> getAllDeliveryStatementWithoutNotifications() {
+    public List<DeliveryStatement> getAllDeliveryStatementsWithoutNotifications() {
         return deliveryStatementRepository.findAll();
     }
 
@@ -70,6 +70,8 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService {
 
     @Override
     public List<DeliveryStatement> getOpenDeliveryStatements() {
-        return getAllDeliveryStatementWithoutNotifications().stream().filter(d -> !d.isClosed()).collect(Collectors.toList());
+        return getAllDeliveryStatementsWithoutNotifications().stream()
+                .filter(d -> !d.isClosed())
+                .collect(Collectors.toList());
     }
 }

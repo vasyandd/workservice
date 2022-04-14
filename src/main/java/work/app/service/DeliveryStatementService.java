@@ -14,7 +14,7 @@ public interface DeliveryStatementService {
 
     List<DeliveryStatement> getAllDeliveryStatementsWithNotifications();
 
-    List<DeliveryStatement> getAllDeliveryStatementWithoutNotifications();
+    List<DeliveryStatement> getAllDeliveryStatementsWithoutNotifications();
 
     List<DeliveryStatement> getOpenDeliveryStatements();
 

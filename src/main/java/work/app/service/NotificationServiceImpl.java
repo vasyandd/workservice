@@ -6,8 +6,8 @@ import work.app.service.model.Notification;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
-    private NotificationRepository notificationRepository;
-    private DeliveryStatementService deliveryStatementService;
+    private final NotificationRepository notificationRepository;
+    private final DeliveryStatementService deliveryStatementService;
 
     public NotificationServiceImpl(DeliveryStatementService deliveryStatementService, NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
