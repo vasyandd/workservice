@@ -66,7 +66,7 @@ public class DeliveryStatementsTest {
     @Test
     @DisplayName("Проверка метода structureProductsByContractForPeriod")
     void Check_Working_StructureProductsByContractForPeriod_Method() {
-        Map<Contract, Map<Integer, Set<DeliveryStatement.Row>>> result = DeliveryStatements.structureProductsByContractForPeriod(testDeliveryStatements);
+        Map<Contract, Map<Integer, List<DeliveryStatement.Row>>> result = DeliveryStatements.structureProductsByContractForPeriod(testDeliveryStatements);
         for (DeliveryStatement actualDeliveryStatement : testDeliveryStatements) {
             for (DeliveryStatement.Row row : actualDeliveryStatement.getRows()) {
                 Assertions.assertTrue(result.get(actualDeliveryStatement.getContract()).get(row.getPeriod()).contains(row));

@@ -47,7 +47,7 @@
                <children>
                   <Label fx:id="title" alignment="CENTER" contentDisplay="CENTER" layoutX="2.0" layoutY="56.0" prefHeight="42.0" prefWidth="1225.0" text="Label" textAlignment="CENTER" textOverrun="CLIP">
                      <font>
-                        <Font size="18.0" />
+                        <Font size="24.0" />
                      </font>
                   </Label>
                   <CheckBox fx:id="viewCompletedRows" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" text="Показать только завершенные" visible="false" />

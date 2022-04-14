@@ -2,18 +2,18 @@ package work.app.service.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.*;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,22 +50,16 @@ public final class DeliveryStatement {
         return rows.stream().allMatch(Row::isClosed);
     }
 
-    public Map<Integer, Set<Row>> getNotDeliveredProductsByPeriod() {
+    public Map<Integer, List<Row>> getNotDeliveredProductsByPeriod() {
         return rows.stream()
                 .filter(row -> !row.isClosed())
-                .collect(HashMap::new, (map, row) ->
-                        map.merge(row.getPeriod(), new HashSet<>() {{
-                                    add(row);
-                                }},
-                                (set1, set2) -> {
-                                    set1.add(row);
-                                    return set1;
-                                }), HashMap::putAll);
+                .collect(Collectors.groupingBy(Row::getPeriod));
     }
 
     @Override
     public String toString() {
-        return "Ведомость поставки" + (number != null ? " № " + number : "") + " по контракту " + contract.toString();
+        return "Ведомость поставки" + (number != null ? " № " + number : "")
+                + " по контракту " + contract.toString();
     }
 
     @Getter
@@ -83,18 +77,23 @@ public final class DeliveryStatement {
         private Long id;
         private BigInteger priceForOneProduct;
         private String productName;
+
         @Type(type = "json")
         @Column(columnDefinition = "varchar")
         private Map<Month, Integer> scheduledShipment;
+
         @Type(type = "json")
         @Column(columnDefinition = "varchar")
         private Map<Month, Integer> actualShipment = new HashMap<>();
         private Integer period;
+
         @ManyToOne(cascade = CascadeType.ALL)
         @JoinColumn(name = "ds_id")
         private DeliveryStatement deliveryStatement;
+
         @NotFound(action = NotFoundAction.IGNORE)
-        @OneToMany(fetch = FetchType.EAGER, mappedBy = "deliveryStatementRow", orphanRemoval = true)
+        @OneToMany(fetch = FetchType.LAZY,
+                mappedBy = "deliveryStatementRow", orphanRemoval = true)
         private List<Notification> notifications = new ArrayList<>();
 
         public Row(BigInteger priceForOneProduct, String productName, Map<Month, Integer> scheduledShipment, Integer period) {
@@ -106,23 +105,27 @@ public final class DeliveryStatement {
 
         @Transient
         public int getActualProductQuantity() {
-            return actualShipment.values().stream().flatMapToInt(IntStream::of).sum();
+            return actualShipment.values().stream()
+                    .flatMapToInt(IntStream::of)
+                    .sum();
         }
 
         @Transient
         public int getScheduledProductQuantity() {
-            return scheduledShipment.values().stream().flatMapToInt(IntStream::of).sum();
+            return scheduledShipment.values().stream()
+                    .flatMapToInt(IntStream::of)
+                    .sum();
         }
 
         @Transient
         public Map<Month, String> getProductQuantityWithSlash() {
             Map<Month, String> map = new HashMap<>();
-            Stream.of(Month.values()).forEach( month -> {
+            for (Month month : Month.values()) {
                 Integer scheduledQuantity = scheduledShipment.get(month);
                 Integer actualQuantity = actualShipment.get(month);
                 map.put(month, (scheduledQuantity != null ? scheduledQuantity : 0)
                         + "/" + (actualQuantity != null ? actualQuantity : 0));
-            });
+            }
             return map;
         }
 

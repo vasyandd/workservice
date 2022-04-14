@@ -33,14 +33,15 @@ public final class DeliveryStatements {
 
     public static Map<DeliveryStatement.Row, List<Notification>> structureNotificationsByDeliveryStatementRow(DeliveryStatement deliveryStatement) {
         return deliveryStatement.getRows().stream()
-                .collect(HashMap::new, (map, row) ->
-                        map.put(row, row.getNotifications()), HashMap::putAll);
+                .collect(HashMap::new,
+                        (map, row) -> map.put(row, row.getNotifications()),
+                        HashMap::putAll);
     }
 
-    public static Map<Contract, Map<Integer, Set<DeliveryStatement.Row>>> structureProductsByContractForPeriod(List<DeliveryStatement> deliveryStatements) {
-        Map<Contract, Map<Integer, Set<DeliveryStatement.Row>>> result = new HashMap<>();
+    public static Map<Contract, Map<Integer, List<DeliveryStatement.Row>>> structureProductsByContractForPeriod(List<DeliveryStatement> deliveryStatements) {
+        Map<Contract, Map<Integer, List<DeliveryStatement.Row>>> result = new HashMap<>();
         for (DeliveryStatement ds : deliveryStatements) {
-            Map<Integer, Set<DeliveryStatement.Row>> products = ds.getNotDeliveredProductsByPeriod();
+            Map<Integer, List<DeliveryStatement.Row>> products = ds.getNotDeliveredProductsByPeriod();
             result.put(ds.getContract(), products);
         }
         return result;

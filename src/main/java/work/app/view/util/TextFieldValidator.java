@@ -1,73 +1,81 @@
 package work.app.view.util;
 
 import javafx.scene.control.TextField;
+import org.springframework.stereotype.Component;
 import work.app.WorkServiceSpringBootApplication;
 
+import java.util.EnumMap;
 import java.util.function.Predicate;
 
+import static work.app.view.util.TextFieldValidator.FieldPredicate.*;
 
+@Component
 public final class TextFieldValidator {
+    private final EnumMap<FieldPredicate, Predicate<TextField>> predicates = new EnumMap<>(FieldPredicate.class);
 
-    private TextFieldValidator() {
+    public enum FieldPredicate {
+        NOT_EMPTY,
+        EMPTY,
+        NOT_ZERO,
+        ZERO,
+        POSITIVE_INTEGER,
+        NOT_NEGATIVE_INTEGER,
+        POSITIVE_BIG_INTEGER,
+        POSITIVE_INTEGER_OR_EMPTY,
+        NOT_NEGATIVE_BIG_INTEGER,
+        YEAR
     }
 
+    public TextFieldValidator() {
+        initializeEnumMap();
+    }
 
-    public static void addValidatorFor(Predicate<TextField> predicate, TextField... textFields) {
+    public void addValidatorFor(FieldPredicate predicate, TextField... textFields) {
         for (TextField field : textFields) {
             field.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (predicate.test(field)) {
-                    field.getStyleClass().removeAll(Color.INVALID_DATA);
+                if (predicates.get(predicate).test(field)) {
+                    field.getStyleClass().removeAll(Style.INVALID_DATA.styleClass());
                 } else {
                     field.getStylesheets().add(WorkServiceSpringBootApplication.STYLES_PATH);
-                    field.getStyleClass().add(Color.INVALID_DATA);
+                    field.getStyleClass().add(Style.INVALID_DATA.styleClass());
                 }
             });
         }
     }
 
-    public static boolean fieldsAreValid(TextField... fields) {
+    public boolean fieldsAreValid(TextField... fields) {
         for (TextField field : fields) {
-            if (field.getStyleClass().contains(Color.INVALID_DATA)) return false;
+            if (field.getStyleClass().contains(Style.INVALID_DATA.styleClass())) return false;
         }
         return true;
     }
 
-    public enum FieldPredicate {
-        NOT_EMPTY(textField -> !textField.getText().trim().isEmpty()),
-        EMPTY(NOT_EMPTY.predicate.negate()),
-        NOT_ZERO(textField -> !textField.getText().trim().equals("0")),
-        ZERO(NOT_ZERO.predicate.negate()),
-        POSITIVE_INTEGER(NOT_EMPTY.predicate
-                .and(textField -> {
-                    try {
-                        int number = Integer.parseInt(textField.getText().trim());
-                        return number > 0;
-                    } catch (NumberFormatException e) {
-                        return false;
-                    }
-                })),
-        NOT_NEGATIVE_INTEGER(POSITIVE_INTEGER.predicate.or(ZERO.predicate)),
-        POSITIVE_BIG_INTEGER(NOT_EMPTY.predicate
-                .and(textField -> {
-                    String number = textField.getText().trim();
-                    return number.matches("\\d*") && !number.startsWith("-")
-                            && !number.equals("0");
-                })),
-        NOT_NEGATIVE_BIG_INTEGER(POSITIVE_BIG_INTEGER.predicate.or(ZERO.predicate)),
-        YEAR(POSITIVE_INTEGER.predicate
-                .and(textField -> {
-                    int number = Integer.parseInt(textField.getText().trim());
-                    return number > 2000 && number < 2100;
-                }));
-
-        private final Predicate<TextField> predicate;
-
-        FieldPredicate(Predicate<TextField> predicate) {
-            this.predicate = predicate;
-        }
-
-        public Predicate<TextField> predicate() {
-            return predicate;
-        }
+    private void initializeEnumMap() {
+        predicates.put(NOT_EMPTY, textField -> !textField.getText().trim().isEmpty());
+        predicates.put(EMPTY, predicates.get(NOT_EMPTY).negate());
+        predicates.put(NOT_ZERO, textField -> !textField.getText().trim().equals("0"));
+        predicates.put(ZERO, predicates.get(NOT_ZERO).negate());
+        predicates.put(POSITIVE_INTEGER, textField -> {
+            try {
+                int number = Integer.parseInt(textField.getText().trim());
+                return number > 0;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        });
+        predicates.put(NOT_NEGATIVE_INTEGER, predicates.get(POSITIVE_INTEGER).or(predicates.get(ZERO)));
+        predicates.put(POSITIVE_INTEGER_OR_EMPTY, predicates.get(POSITIVE_INTEGER).or(predicates.get(EMPTY)));
+        predicates.put(POSITIVE_BIG_INTEGER, predicates.get(NOT_EMPTY).and(textField -> {
+            String number = textField.getText().trim();
+            return number.matches("\\d*") && !number.startsWith("-")
+                    && !number.equals("0");
+        }));
+        predicates.put(NOT_NEGATIVE_BIG_INTEGER, predicates.get(POSITIVE_BIG_INTEGER).or(predicates.get(ZERO)));
+        predicates.put(YEAR, predicates.get(POSITIVE_INTEGER).and(textField -> {
+            int number = Integer.parseInt(textField.getText().trim());
+            return number > 2000 && number < 2100;
+        }));
     }
+
+
 }

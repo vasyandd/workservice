@@ -32,9 +32,9 @@
             <Label text="Изделие" GridPane.rowIndex="3" />
             <Label text="Дата" GridPane.rowIndex="1" />
             <Label text="Количество" GridPane.rowIndex="6" />
-            <TextField fx:id="number" promptText="0" GridPane.columnIndex="1" />
+            <TextField fx:id="number" text="0" GridPane.columnIndex="1" />
             <DatePicker fx:id="date" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="productQuantity" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <TextField fx:id="productQuantity" text="0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <Label text="Номера изделий" GridPane.rowIndex="5" />
             <TextField fx:id="productNumbers" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <ChoiceBox fx:id="productBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />

@@ -34,6 +34,7 @@ public class NotificationFormController implements Initializable {
     private final NotificationService notificationService;
     private final SceneSwitcher switcher;
     private final DeliveryStatementService deliveryStatementService;
+    private final TextFieldValidator textFieldValidator;
     @FXML
     private TextField number;
     @FXML
@@ -53,14 +54,15 @@ public class NotificationFormController implements Initializable {
 
     private ObservableList<Contract> contracts = FXCollections.observableArrayList();
     private ObservableList<String> products = FXCollections.observableArrayList();
-    private Map<Contract, Map<Integer, Set<DeliveryStatement.Row>>> productsByContractForPeriod;
+    private Map<Contract, Map<Integer, List<DeliveryStatement.Row>>> productsByContractForPeriod;
     private Map<Contract, Set<DeliveryStatement.Row>> productsByContract = new HashMap<>();
     private Map<String, Integer> productShipment = new HashMap<>();
 
-    public NotificationFormController(NotificationService notificationService, SceneSwitcher switcher, DeliveryStatementService deliveryStatementService) {
+    public NotificationFormController(NotificationService notificationService, SceneSwitcher switcher, DeliveryStatementService deliveryStatementService, TextFieldValidator textFieldValidator) {
         this.notificationService = notificationService;
         this.switcher = switcher;
         this.deliveryStatementService = deliveryStatementService;
+        this.textFieldValidator = textFieldValidator;
     }
 
     @Override
@@ -76,8 +78,8 @@ public class NotificationFormController implements Initializable {
         contractBox.setItems(contracts);
         productBox.setItems(products);
         addListenerForChoiceBoxFields();
-        TextFieldValidator.addValidatorFor(POSITIVE_INTEGER.predicate(), number, productQuantity);
-        TextFieldValidator.addValidatorFor(NOT_EMPTY.predicate(), date.getEditor());
+        textFieldValidator.addValidatorFor(POSITIVE_INTEGER, number, productQuantity);
+        textFieldValidator.addValidatorFor(NOT_EMPTY, date.getEditor());
     }
 
     private void addListenerForChoiceBoxFields() {
@@ -109,7 +111,7 @@ public class NotificationFormController implements Initializable {
     }
 
     public void saveNotification(ActionEvent event) {
-        if (TextFieldValidator.fieldsAreValid(number, date.getEditor(), productQuantity)) {
+        if (textFieldValidator.fieldsAreValid(number, date.getEditor(), productQuantity)) {
             Contract selectedContract = contractBox.getValue();
             Notification notification = new Notification(Integer.parseInt(number.getText()),
                     date.getValue(), productBox.getSelectionModel().getSelectedItem(),

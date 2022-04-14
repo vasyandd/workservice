@@ -1,12 +1,10 @@
 package work.app.service;
 
-import org.springframework.stereotype.Component;
-import work.app.service.model.Notification;
+import org.springframework.stereotype.Service;
 import work.app.repository.NotificationRepository;
+import work.app.service.model.Notification;
 
-import java.util.List;
-
-@Component
+@Service
 public class NotificationServiceImpl implements NotificationService {
     private NotificationRepository notificationRepository;
     private DeliveryStatementService deliveryStatementService;
@@ -23,8 +21,4 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
 
-    @Override
-    public List<Notification> getAllNotifications() {
-        return null;
-    }
 }

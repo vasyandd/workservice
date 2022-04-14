@@ -1,21 +1,22 @@
 package work.app.service;
 
 
-import org.springframework.stereotype.Component;
+import org.hibernate.Hibernate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import work.app.repository.DeliveryStatementRepository;
 import work.app.service.model.Contract;
 import work.app.service.model.DeliveryStatement;
 import work.app.service.model.Notification;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static work.app.service.model.DeliveryStatement.Row;
 
-@Component
+@Service
 public class DeliveryStatementServiceImpl implements DeliveryStatementService {
-    private DeliveryStatementRepository deliveryStatementRepository;
+    private final DeliveryStatementRepository deliveryStatementRepository;
 
     public DeliveryStatementServiceImpl(DeliveryStatementRepository deliveryStatementRepository) {
         this.deliveryStatementRepository = deliveryStatementRepository;
@@ -38,6 +39,7 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService {
         deliveryStatementRepository.deleteAll();
     }
 
+    @Transactional
     @Override
     public void updateDeliveryStatement(Notification notification) {
         DeliveryStatement deliveryStatement = getDeliveryStatementsByContract(notification.getContract());
@@ -49,18 +51,25 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService {
         deliveryStatementRepository.save(deliveryStatement);
     }
 
-
     @Override
-    public List<DeliveryStatement> getAllDeliveryStatements() {
-        List<DeliveryStatement> deliveryStatements = new ArrayList<>();
-        deliveryStatementRepository.findAll()
-                .iterator()
-                .forEachRemaining(deliveryStatements::add);
-        return deliveryStatements;
+    public List<DeliveryStatement> getAllDeliveryStatementWithoutNotifications() {
+        return deliveryStatementRepository.findAll();
+    }
+
+    @Transactional
+    @Override
+    public List<DeliveryStatement> getAllDeliveryStatementsWithNotifications() {
+        List<DeliveryStatement> result = deliveryStatementRepository.findAll();
+        for (DeliveryStatement ds : result) {
+            for (Row row : ds.getRows()) {
+                Hibernate.initialize(row.getNotifications());
+            }
+        }
+        return result;
     }
 
     @Override
     public List<DeliveryStatement> getOpenDeliveryStatements() {
-        return getAllDeliveryStatements().stream().filter(d -> !d.isClosed()).collect(Collectors.toList());
+        return getAllDeliveryStatementWithoutNotifications().stream().filter(d -> !d.isClosed()).collect(Collectors.toList());
     }
 }

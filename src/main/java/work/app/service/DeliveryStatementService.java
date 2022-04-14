@@ -12,7 +12,9 @@ public interface DeliveryStatementService {
 
     void updateDeliveryStatement(Notification notification);
 
-    List<DeliveryStatement> getAllDeliveryStatements();
+    List<DeliveryStatement> getAllDeliveryStatementsWithNotifications();
+
+    List<DeliveryStatement> getAllDeliveryStatementWithoutNotifications();
 
     List<DeliveryStatement> getOpenDeliveryStatements();
 

@@ -1,4 +1,7 @@
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -67,11 +70,10 @@ class DeliveryStatementServiceTest {
 
 
     @BeforeEach
-    void saveDeliveryStatement() {
+    void clear() {
         deliveryStatementService.deleteAll();
         deliveryStatementService.saveDeliveryStatement(testDeliveryStatement);
     }
-
 
     @ParameterizedTest
     @MethodSource("returnAllNotifications")
@@ -83,6 +85,8 @@ class DeliveryStatementServiceTest {
                 .getRowByProductAndPeriod(notification.getProductName(), notification.getDate().getYear())
                 .getActualProductQuantity();
 
+        Assertions.assertEquals(0 , actualShipmentInDeliveryStatementBeforeSaving);
+
         notificationService.saveNotification(notification);
 
         int actualShipmentInDeliveryStatementAfterSaving = deliveryStatementService
@@ -90,15 +94,15 @@ class DeliveryStatementServiceTest {
                 .getRowByProductAndPeriod(notification.getProductName(), notification.getDate().getYear())
                 .getActualProductQuantity();
 
-        Assertions.assertEquals(actualShipmentInDeliveryStatementAfterSaving - actualShipmentInDeliveryStatementBeforeSaving,
-                productQuantityInNotification);
+        Assertions.assertEquals(productQuantityInNotification , actualShipmentInDeliveryStatementAfterSaving);
+
     }
 
     @ParameterizedTest
     @ArgumentsSource(NotificationsWithTheSamePeriodAndProductProvider.class)
     @DisplayName("Проверка связывания в бд строки в ведомости поставки и извещения при его сохранении")
     void Should_Wiring_Notification_And_DeliveryStatementRow_When_Save_Notification(Notification notification1, Notification notification2) {
-        DeliveryStatement deliveryStatementBeforeSaving = deliveryStatementService.getDeliveryStatementsByContract(contract);
+        DeliveryStatement deliveryStatementBeforeSaving = deliveryStatementService.getAllDeliveryStatementsWithNotifications().get(0);
         for (DeliveryStatement.Row row : deliveryStatementBeforeSaving.getRows()) {
             Assertions.assertEquals(0, row.getNotifications().size());
         }
@@ -106,7 +110,8 @@ class DeliveryStatementServiceTest {
         notificationService.saveNotification(notification1);
         notificationService.saveNotification(notification2);
 
-        DeliveryStatement deliveryStatementAfterSaving = deliveryStatementService.getDeliveryStatementsByContract(contract);
+        DeliveryStatement deliveryStatementAfterSaving =
+                deliveryStatementService.getAllDeliveryStatementsWithNotifications().get(0);
 
         for (DeliveryStatement.Row row : deliveryStatementAfterSaving.getRows()) {
             if (row.getPeriod() == notification1.getDate().getYear()
@@ -118,6 +123,7 @@ class DeliveryStatementServiceTest {
         }
 
     }
+
 
     static Stream<Notification> returnAllNotifications() {
         return testNotifications.stream();

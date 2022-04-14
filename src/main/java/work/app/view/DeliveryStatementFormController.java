@@ -36,7 +36,8 @@ public class DeliveryStatementFormController implements Initializable {
     private final ObservableList<TableRowInDeliveryStatementForm> rows = FXCollections.observableArrayList();
     private final DeliveryStatementService deliveryStatementService;
     private final SceneSwitcher switcher;
-    // FXML fields
+    private final TextFieldValidator textFieldValidator;
+    // FXML field
     @FXML
     private Button deleteRowButton;
     @FXML
@@ -113,10 +114,10 @@ public class DeliveryStatementFormController implements Initializable {
     private TableColumn<TableRowInDeliveryStatementForm, Integer> decQuantityCol;
 
 
-    public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, SceneSwitcher switcher) {
+    public DeliveryStatementFormController(DeliveryStatementService deliveryStatementService, SceneSwitcher switcher, TextFieldValidator textFieldValidator) {
         this.deliveryStatementService = deliveryStatementService;
         this.switcher = switcher;
-
+        this.textFieldValidator = textFieldValidator;
     }
 
     @Override
@@ -127,13 +128,13 @@ public class DeliveryStatementFormController implements Initializable {
 
     private void setFieldsOptions() {
         period.setText(String.valueOf(LocalDate.now().getYear()));
-        TextFieldValidator.addValidatorFor(NOT_NEGATIVE_INTEGER.predicate(), janQuantity, febQuantity, marQuantity,
+        textFieldValidator.addValidatorFor(NOT_NEGATIVE_INTEGER, janQuantity, febQuantity, marQuantity,
                 aprQuantity, mayQuantity, junQuantity, julQuantity, augQuantity,
                 sepQuantity, octQuantity, novQuantity, decQuantity);
-        TextFieldValidator.addValidatorFor(NOT_NEGATIVE_BIG_INTEGER.predicate(), productPrice);
-        TextFieldValidator.addValidatorFor(NOT_EMPTY.predicate(), productName, contractNumber);
-        TextFieldValidator.addValidatorFor(POSITIVE_INTEGER.predicate().or(EMPTY.predicate()), number, agreementNumber);
-        TextFieldValidator.addValidatorFor(YEAR.predicate(), period);
+        textFieldValidator.addValidatorFor(NOT_NEGATIVE_BIG_INTEGER, productPrice);
+        textFieldValidator.addValidatorFor(NOT_EMPTY, productName, contractNumber);
+        textFieldValidator.addValidatorFor(POSITIVE_INTEGER_OR_EMPTY, number, agreementNumber);
+        textFieldValidator.addValidatorFor(YEAR, period);
         deleteRowButton.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
     }
 
@@ -180,7 +181,7 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
     public void saveDeliveryStatement(ActionEvent event) {
-        if (TextFieldValidator.fieldsAreValid(contractNumber, agreementNumber, number)) {
+        if (textFieldValidator.fieldsAreValid(contractNumber, agreementNumber, number)) {
             DeliveryStatement deliveryStatement = getDeliveryStatementFromTableView();
             deliveryStatementService.saveDeliveryStatement(deliveryStatement);
             table.getItems().clear();
@@ -218,7 +219,7 @@ public class DeliveryStatementFormController implements Initializable {
     }
 
     public void addRowInTable(ActionEvent event) {
-        if (TextFieldValidator.fieldsAreValid(productName, productPrice, period, janQuantity, febQuantity,
+        if (textFieldValidator.fieldsAreValid(productName, productPrice, period, janQuantity, febQuantity,
                 marQuantity, mayQuantity, junQuantity, julQuantity, augQuantity, sepQuantity,
                 octQuantity, novQuantity, decQuantity)) {
             TableRowInDeliveryStatementForm row = mapInputDataToTable();
