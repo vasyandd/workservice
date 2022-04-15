@@ -1,8 +1,0 @@
--------------------------------------------------------------------------------
-Test set: service.DeliveryStatementServiceTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.041 s <<< FAILURE! - in service.DeliveryStatementServiceTest
-Should_DeliveryStatement_Is_Closed_When_Classic_Notification_Is_Added_And_All_Rows_Are_Completed  Time elapsed: 0.01 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
-	at service.DeliveryStatementServiceTest.Should_DeliveryStatement_Is_Closed_When_Classic_Notification_Is_Added_And_All_Rows_Are_Completed(DeliveryStatementServiceTest.java:86)
-
