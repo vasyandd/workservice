@@ -46,14 +46,14 @@ public class Notification {
 
     public static String mapListNotificationsToString(List<Notification> notifications) {
         return notifications.stream()
-                            .map(Notification::toString)
-                            .collect(Collectors.joining(", "));
+                .map(Notification::toString)
+                .collect(Collectors.joining(", "));
     }
 
     @Override
     public String toString() {
         return productQuantity + " шт. ("
-                + date.getMonth().getDisplayName(TextStyle.FULL_STANDALONE , new Locale("ru"))
+                + date.getMonth().getDisplayName(TextStyle.FULL_STANDALONE, new Locale("ru"))
                 + ") номера " + productNumbers + (number != null ? " изв. № " + number : "")
                 + " от " + date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     }

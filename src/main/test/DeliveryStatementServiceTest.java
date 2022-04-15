@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.groupingBy;
+
 @SpringBootTest(classes = WorkServiceSpringBootApplication.class)
 class DeliveryStatementServiceTest {
 
@@ -85,7 +87,7 @@ class DeliveryStatementServiceTest {
                 .getRowByProductAndPeriod(notification.getProductName(), notification.getDate().getYear())
                 .getActualProductQuantity();
 
-        Assertions.assertEquals(0 , actualShipmentInDeliveryStatementBeforeSaving);
+        Assertions.assertEquals(0, actualShipmentInDeliveryStatementBeforeSaving);
 
         notificationService.saveNotification(notification);
 
@@ -94,7 +96,7 @@ class DeliveryStatementServiceTest {
                 .getRowByProductAndPeriod(notification.getProductName(), notification.getDate().getYear())
                 .getActualProductQuantity();
 
-        Assertions.assertEquals(productQuantityInNotification , actualShipmentInDeliveryStatementAfterSaving);
+        Assertions.assertEquals(productQuantityInNotification, actualShipmentInDeliveryStatementAfterSaving);
 
     }
 
@@ -132,19 +134,10 @@ class DeliveryStatementServiceTest {
     static class NotificationsWithTheSamePeriodAndProductProvider implements ArgumentsProvider {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
-            HashMap<String, List<Notification>> result = testNotifications.stream()
-                    .collect(HashMap::new, (map, not) -> {
-                        String key = not.getProductName() + not.getDate().getYear();
-                        map.merge(key, new ArrayList<>() {{
-                            add(not);
-                        }}, (list1, list2) -> {
-                            list1.add(not);
-                            return list1;
-                        });
-                    }, HashMap::putAll);
+            Map<String, List<Notification>> result = testNotifications.stream()
+                    .collect(groupingBy(n -> (n.getDate().getYear() + n.getProductName())));
             return result.values().stream()
-                    .map(notifications -> Arguments.of(notifications.toArray()));
-
+                    .map(n -> Arguments.of(n.toArray()));
         }
     }
 

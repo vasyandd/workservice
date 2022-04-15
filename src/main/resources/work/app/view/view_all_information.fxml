@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
@@ -12,14 +13,15 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="589.0" prefWidth="1461.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="work.app.view.ViewAllInformationController">
    <children>
       <GridPane alignment="CENTER" gridLinesVisible="true" layoutX="23.0" layoutY="-3.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="572.0" prefWidth="1079.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="514.6000366210938" minWidth="10.0" prefWidth="225.80009765625" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1232.0" minWidth="10.0" prefWidth="1230.39990234375" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="514.6000366210938" minWidth="10.0" prefWidth="237.6666748046875" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1239.9999755859376" minWidth="10.0" prefWidth="1218.7333251953125" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints maxHeight="232.0000213623047" minHeight="10.0" prefHeight="105.99998168945314" vgrow="SOMETIMES" />
@@ -43,21 +45,28 @@
                </children>
             </GridPane>
             <ListView fx:id="listOfContractsOrProducts" prefHeight="466.0" prefWidth="389.0" GridPane.rowIndex="1" />
-            <AnchorPane prefHeight="143.0" prefWidth="837.0" GridPane.columnIndex="1">
+            <AnchorPane prefHeight="118.0" prefWidth="1225.0" GridPane.columnIndex="1">
                <children>
-                  <Label fx:id="title" alignment="CENTER" contentDisplay="CENTER" layoutX="2.0" layoutY="56.0" prefHeight="42.0" prefWidth="1225.0" text="Label" textAlignment="CENTER" textOverrun="CLIP">
+                  <Label fx:id="title" alignment="CENTER" contentDisplay="CENTER" layoutX="2.0" layoutY="56.0" prefHeight="42.0" prefWidth="999.0" text="Label" textAlignment="CENTER" textOverrun="CLIP" visible="false">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <CheckBox fx:id="viewCompletedRows" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" text="Показать только завершенные" visible="false" />
-                  <CheckBox fx:id="viewExpiredRows" layoutX="14.0" layoutY="48.0" mnemonicParsing="false" text="Показать только просроченные" visible="false" />
-                  <CheckBox fx:id="viewLastMonthRows" layoutX="15.0" layoutY="77.0" mnemonicParsing="false" text="Показать почти просроченные" visible="false" />
+                  <VBox alignment="CENTER_LEFT" layoutX="1007.0" layoutY="10.0" prefHeight="104.0" prefWidth="218.0" spacing="10.0">
+                     <children>
+                        <CheckBox fx:id="viewCompletedRows" mnemonicParsing="false" text="Показать только завершенные" visible="false" />
+                        <CheckBox fx:id="viewExpiredRows" mnemonicParsing="false" text="Показать только просроченные" textAlignment="CENTER" visible="false" />
+                        <CheckBox fx:id="viewLastMonthRows" mnemonicParsing="false" text="Показать почти просроченные" visible="false" />
+                     </children>
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
+                  </VBox>
                </children>
             </AnchorPane>
             <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="465.0" prefWidth="117.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <TableView fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="466.0" prefWidth="660.0" HBox.hgrow="ALWAYS">
+                  <TableView fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="466.0" prefWidth="1110.0" style="-fx-border-width: 5;" HBox.hgrow="ALWAYS">
                     <columns>
                       <TableColumn fx:id="productOrContractCol" prefWidth="190.39999389648438" text="Изделие/Контракт" />
                       <TableColumn fx:id="productPriceCol" prefWidth="102.66665649414062" text="Цена" />
@@ -83,8 +92,11 @@
                               <TableColumn fx:id="decQuantityCol" prefWidth="39.4666748046875" text="Дек." />
                            </columns>
                         </TableColumn>
-                        <TableColumn fx:id="noteCol" prefWidth="223.9999755859376" styleClass="table-row-cell" text="Извещения" />
+                        <TableColumn fx:id="noteCol" prefWidth="211.2000732421875" styleClass="table-row-cell" text="Извещения" />
                     </columns>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
                   </TableView>
                </children>
             </HBox>

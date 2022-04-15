@@ -31,6 +31,17 @@ import static work.app.view.util.TextFieldValidator.FieldPredicate.POSITIVE_INTE
 @Component
 @FxmlView("notification_form.fxml")
 public class NotificationFormController implements Initializable {
+    private static final String SUCCESS_MESSAGE = "Извещение сохранено!";
+    private static final String BAD_MESSAGE = "Что-то выделено красныи!";
+    private final NotificationService notificationService;
+    private final SceneSwitcher switcher;
+    private final DeliveryStatementService deliveryStatementService;
+    private final TextFieldValidator textFieldValidator;
+    private final ObservableList<Contract> contracts = FXCollections.observableArrayList();
+    private final ObservableList<String> products = FXCollections.observableArrayList();
+    private final Map<String, Integer> productShipment = new HashMap<>();
+    private Map<Contract, Map<Integer, List<DeliveryStatement.Row>>> productsByContractForPeriod;
+
     @FXML
     private TextField number;
     @FXML
@@ -47,16 +58,6 @@ public class NotificationFormController implements Initializable {
     private Label invisibleInfoLabel;
     @FXML
     private Label invisibleProductQuantityLabel;
-
-    private final NotificationService notificationService;
-    private final SceneSwitcher switcher;
-    private final DeliveryStatementService deliveryStatementService;
-    private final TextFieldValidator textFieldValidator;
-    private ObservableList<Contract> contracts = FXCollections.observableArrayList();
-    private ObservableList<String> products = FXCollections.observableArrayList();
-    private Map<Contract, Map<Integer, List<DeliveryStatement.Row>>> productsByContractForPeriod;
-    private Map<Contract, Set<DeliveryStatement.Row>> productsByContract = new HashMap<>();
-    private Map<String, Integer> productShipment = new HashMap<>();
 
     public NotificationFormController(NotificationService notificationService, SceneSwitcher switcher, DeliveryStatementService deliveryStatementService, TextFieldValidator textFieldValidator) {
         this.notificationService = notificationService;
@@ -118,13 +119,12 @@ public class NotificationFormController implements Initializable {
                     Integer.parseInt(productQuantity.getText().trim()), productNumbers.getText().trim(),
                     selectedContract);
             notificationService.saveNotification(notification);
+            InformationWindow.viewSuccessSaveWindow(SUCCESS_MESSAGE);
             contracts.clear();
             switcher.switchSceneTo(MainMenuController.class, event);
         } else {
-            InformationWindow.viewInputDataNotValidWindow("Что-то до сих пор выделено красным!");
+            InformationWindow.viewInputDataNotValidWindow(BAD_MESSAGE);
         }
 
     }
-
-
 }

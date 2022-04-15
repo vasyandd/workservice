@@ -29,16 +29,6 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService {
         deliveryStatementRepository.save(deliveryStatement);
     }
 
-    @Override
-    public DeliveryStatement getDeliveryStatementsByContract(Contract contract) {
-        return deliveryStatementRepository.findByContract(contract);
-    }
-
-    @Override
-    public void deleteAll() {
-        deliveryStatementRepository.deleteAll();
-    }
-
     @Transactional
     @Override
     public void updateDeliveryStatement(Notification notification) {
@@ -49,6 +39,11 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService {
         deliveryStatementRow.addNotification(notification);
         notification.setDeliveryStatementRow(deliveryStatementRow);
         deliveryStatementRepository.save(deliveryStatement);
+    }
+
+    @Override
+    public DeliveryStatement getDeliveryStatementsByContract(Contract contract) {
+        return deliveryStatementRepository.findByContract(contract);
     }
 
     @Override
@@ -73,5 +68,10 @@ public class DeliveryStatementServiceImpl implements DeliveryStatementService {
         return getAllDeliveryStatementsWithoutNotifications().stream()
                 .filter(d -> !d.isClosed())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteAll() {
+        deliveryStatementRepository.deleteAll();
     }
 }

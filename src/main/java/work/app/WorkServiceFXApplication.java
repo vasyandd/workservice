@@ -15,7 +15,6 @@ public class WorkServiceFXApplication extends Application {
     private final static String ICON = WorkServiceFXApplication.class.getResource("pepe.png").toExternalForm();
     private ConfigurableApplicationContext applicationContext;
 
-
     @Override
     public void init() {
         String[] args = getParameters().getRaw().toArray(new String[0]);

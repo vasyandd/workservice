@@ -11,7 +11,6 @@ import static work.app.view.util.TextFieldValidator.FieldPredicate.*;
 
 @Component
 public final class TextFieldValidator {
-    private final EnumMap<FieldPredicate, Predicate<TextField>> predicates = new EnumMap<>(FieldPredicate.class);
 
     public enum FieldPredicate {
         NOT_EMPTY,
@@ -25,6 +24,8 @@ public final class TextFieldValidator {
         NOT_NEGATIVE_BIG_INTEGER,
         YEAR
     }
+
+    private final EnumMap<FieldPredicate, Predicate<TextField>> predicates = new EnumMap<>(FieldPredicate.class);
 
     public TextFieldValidator() {
         initializeEnumMap();
@@ -77,8 +78,4 @@ public final class TextFieldValidator {
         }
         return true;
     }
-
-
-
-
 }

@@ -21,7 +21,6 @@ import work.app.service.model.Notification;
 import java.net.URL;
 import java.time.Month;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static work.app.view.util.Style.*;
 
@@ -43,8 +42,6 @@ public class ViewAllInformationController implements Initializable {
     private CheckBox viewExpiredRows;
     @FXML
     private CheckBox viewLastMonthRows;
-
-
     @FXML
     private ListView<String> listOfContractsOrProducts;
     @FXML
@@ -88,7 +85,6 @@ public class ViewAllInformationController implements Initializable {
     @FXML
     private TableColumn<MainTableRow, String> noteCol;
 
-
     public ViewAllInformationController(DeliveryStatementService deliveryStatementService) {
         this.deliveryStatementService = deliveryStatementService;
     }
@@ -124,14 +120,6 @@ public class ViewAllInformationController implements Initializable {
         addListenerForCheckBoxFields();
         setCellValueFactories();
         setRowFactories();
-    }
-
-    private void fillTable(String selectedItem) {
-        if (contractSelectedInListView) {
-            fillTableByContract(selectedItem);
-        } else {
-            fillTableByProduct(selectedItem);
-        }
     }
 
     private void addListenerForCheckBoxFields() {
@@ -188,6 +176,21 @@ public class ViewAllInformationController implements Initializable {
         setWrapFields(noteCol, productOrContractCol);
     }
 
+    @SafeVarargs
+    private void setWrapFields(TableColumn<MainTableRow, String>... cols) {
+        for (TableColumn<MainTableRow, String> col : cols) {
+            col.setCellFactory(tc -> {
+                TableCell<MainTableRow, String> cell = new TableCell<>();
+                Text text = new Text();
+                cell.setGraphic(text);
+                cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+                text.wrappingWidthProperty().bind(noteCol.widthProperty());
+                text.textProperty().bind(cell.itemProperty());
+                return cell;
+            });
+        }
+    }
+
     private void setRowFactories() {
         table.setRowFactory(tv -> new TableRow<>() {
             @Override
@@ -211,56 +214,69 @@ public class ViewAllInformationController implements Initializable {
         });
     }
 
+    public void fillProductsList(ActionEvent event) {
+        setVisibleForFields(false, viewExpiredRows, viewLastMonthRows, viewCompletedRows);
+        contractSelectedInListView = false;
+        listOfContractsOrProducts.setItems(products);
+    }
+
+    public void fillContractsList(ActionEvent event) {
+        setVisibleForFields(false, viewExpiredRows, viewLastMonthRows, viewCompletedRows);
+        contractSelectedInListView = true;
+        listOfContractsOrProducts.setItems(contracts);
+    }
+
+    private void fillTable(String selectedItem) {
+        if (contractSelectedInListView) {
+            fillTableByContract(selectedItem);
+        } else {
+            fillTableByProduct(selectedItem);
+        }
+    }
 
     private void fillTableByContract(String key) {
         rows.clear();
         DeliveryStatement deliveryStatement = deliveryStatementsByContract.get(key);
-        rows.addAll(deliveryStatement.getRows().stream()
-                .map(row -> {
-                    Map<Month, String> productQuantityByMonth = row.getProductQuantityWithSlash();
-                    return new MainTableRow(row.getProductName(), row.getPeriod(),
-                            row.getActualProductQuantity(), row.getScheduledProductQuantity(),
-                            row.getPriceForOneProduct().toString(), productQuantityByMonth.get(Month.JANUARY),
-                            productQuantityByMonth.get(Month.FEBRUARY), productQuantityByMonth.get(Month.MARCH),
-                            productQuantityByMonth.get(Month.APRIL), productQuantityByMonth.get(Month.MAY),
-                            productQuantityByMonth.get(Month.JUNE), productQuantityByMonth.get(Month.JULY),
-                            productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
-                            productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
-                            productQuantityByMonth.get(Month.DECEMBER),
-                            Notification.mapListNotificationsToString(notificationsByDeliveryStatement.get(row)),
-                            row.isClosed(), row.isExpired(), row.isLastMonthNow());
-                })
-                .collect(Collectors.toList()));
+        List<MainTableRow> rowsList = new ArrayList<>();
+        for (DeliveryStatement.Row row : deliveryStatement.getRows()) {
+            rowsList.add(mapDeliveryStatementRowToMainTableRow(row, null));
+        }
+        rows.addAll(rowsList);
         title.setText(deliveryStatement.toString());
         setVisibleForFields(true, title, viewCompletedRows, viewLastMonthRows, viewExpiredRows);
     }
 
-
     private void fillTableByProduct(String key) {
         rows.clear();
         List<DeliveryStatement> deliveryStatements = deliveryStatementsByProduct.get(key);
-        for (DeliveryStatement d : deliveryStatements) {
-            rows.addAll(d.getRows().stream()
-                    .filter(row -> row.getProductName().equals(key))
-                    .map(row -> {
-                        Map<Month, String> productQuantityByMonth = row.getProductQuantityWithSlash();
-                        return new MainTableRow(d.getContract().toString(), row.getPeriod(),
-                                row.getActualProductQuantity(), row.getScheduledProductQuantity(),
-                                row.getPriceForOneProduct().toString(), productQuantityByMonth.get(Month.JANUARY),
-                                productQuantityByMonth.get(Month.FEBRUARY), productQuantityByMonth.get(Month.MARCH),
-                                productQuantityByMonth.get(Month.APRIL), productQuantityByMonth.get(Month.MAY),
-                                productQuantityByMonth.get(Month.JUNE), productQuantityByMonth.get(Month.JULY),
-                                productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
-                                productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
-                                productQuantityByMonth.get(Month.DECEMBER),
-                                Notification.mapListNotificationsToString(notificationsByDeliveryStatement.get(row)),
-                                row.isClosed(), row.isExpired(), row.isLastMonthNow());
-                    })
-                    .collect(Collectors.toList()));
+        for (DeliveryStatement deliveryStatement : deliveryStatements) {
+            List<MainTableRow> rowsList = new ArrayList<>();
+            for (DeliveryStatement.Row row : deliveryStatement.getRows()) {
+                if (row.getProductName().equals(key)) {
+                    String contract = deliveryStatement.getContract().toString();
+                    rowsList.add(mapDeliveryStatementRowToMainTableRow(row, contract));
+                }
+            }
+            rows.addAll(rowsList);
         }
         title.setText("Все ведомости поставки по изделию " + key);
-        title.setVisible(true);
-        setVisibleForFields(true, viewCompletedRows, viewLastMonthRows, viewExpiredRows);
+        setVisibleForFields(true, title, viewCompletedRows, viewLastMonthRows, viewExpiredRows);
+    }
+
+    private MainTableRow mapDeliveryStatementRowToMainTableRow(DeliveryStatement.Row row, String contract) {
+        Map<Month, String> productQuantityByMonth = row.getProductQuantityWithSlash();
+        String firstColumnValue = contract == null ? row.getProductName() : contract;
+        return new MainTableRow(firstColumnValue, row.getPeriod(),
+                row.getActualProductQuantity(), row.getScheduledProductQuantity(),
+                row.getPriceForOneProduct().toString(), productQuantityByMonth.get(Month.JANUARY),
+                productQuantityByMonth.get(Month.FEBRUARY), productQuantityByMonth.get(Month.MARCH),
+                productQuantityByMonth.get(Month.APRIL), productQuantityByMonth.get(Month.MAY),
+                productQuantityByMonth.get(Month.JUNE), productQuantityByMonth.get(Month.JULY),
+                productQuantityByMonth.get(Month.AUGUST), productQuantityByMonth.get(Month.SEPTEMBER),
+                productQuantityByMonth.get(Month.OCTOBER), productQuantityByMonth.get(Month.NOVEMBER),
+                productQuantityByMonth.get(Month.DECEMBER),
+                Notification.mapListNotificationsToString(notificationsByDeliveryStatement.get(row)),
+                row.isClosed(), row.isExpired(), row.isLastMonthNow());
     }
 
     private void setVisibleForFields(boolean isVisible, Control... fields) {
@@ -276,33 +292,6 @@ public class ViewAllInformationController implements Initializable {
                 f.setSelected(false);
             }
         }
-    }
-
-    @SafeVarargs
-    private void setWrapFields(TableColumn<MainTableRow, String>... cols) {
-        for (TableColumn<MainTableRow, String> col : cols) {
-            col.setCellFactory(tc -> {
-                TableCell<MainTableRow, String> cell = new TableCell<>();
-                Text text = new Text();
-                cell.setGraphic(text);
-                cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
-                text.wrappingWidthProperty().bind(noteCol.widthProperty());
-                text.textProperty().bind(cell.itemProperty());
-                return cell;
-            });
-        }
-    }
-
-    public void fillProductsList(ActionEvent event) {
-        setVisibleForFields(false, viewExpiredRows, viewLastMonthRows, viewCompletedRows);
-        contractSelectedInListView = false;
-        listOfContractsOrProducts.setItems(products);
-    }
-
-    public void fillContractsList(ActionEvent event) {
-        setVisibleForFields(false, viewExpiredRows, viewLastMonthRows, viewCompletedRows);
-        contractSelectedInListView = true;
-        listOfContractsOrProducts.setItems(contracts);
     }
 
     @AllArgsConstructor

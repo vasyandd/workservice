@@ -2,18 +2,22 @@ package work.app.service.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.*;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -53,13 +57,13 @@ public final class DeliveryStatement {
     public Map<Integer, List<Row>> getNotDeliveredProductsByPeriod() {
         return rows.stream()
                 .filter(row -> !row.isClosed())
-                .collect(Collectors.groupingBy(Row::getPeriod));
+                .collect(groupingBy(Row::getPeriod));
     }
 
     @Override
     public String toString() {
         return "Ведомость поставки" + (number != null ? " № " + number : "")
-                + " по контракту " + contract.toString();
+                + " к контракту " + contract.toString();
     }
 
     @Getter
@@ -138,14 +142,18 @@ public final class DeliveryStatement {
         public boolean isLastMonthNow() {
             if (isClosed()) return false;
             int currentMonthCode = LocalDate.now().getMonth().getValue();
-            return currentMonthCode == getLastScheduledMonthCode();
+            int currentYear = LocalDate.now().getYear();
+            return period == currentYear
+                    && currentMonthCode == getLastScheduledMonthCode();
         }
 
         @Transient
         public boolean isExpired() {
             if (isClosed()) return false;
             int currentMonthCode = LocalDate.now().getMonth().getValue();
-            return currentMonthCode > getLastScheduledMonthCode();
+            int currentYear = LocalDate.now().getYear();
+            return period <= currentYear
+                    && currentMonthCode > getLastScheduledMonthCode();
         }
 
         @Transient

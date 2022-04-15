@@ -1,7 +1,6 @@
 package work.app.view.util;
 
 public enum Style {
-
     COMPLETED("completed"),
     EXPIRED("expired"),
     LAST_MONTH("last_month"),

@@ -7,5 +7,4 @@ public interface NotificationService {
 
     void saveNotification(Notification notification);
 
-
 }

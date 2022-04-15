@@ -37,7 +37,7 @@ public class DeliveryStatementFormController implements Initializable {
     private final DeliveryStatementService deliveryStatementService;
     private final SceneSwitcher switcher;
     private final TextFieldValidator textFieldValidator;
-    // FXML fields
+
     @FXML
     private Button deleteRowButton;
     @FXML
@@ -218,6 +218,10 @@ public class DeliveryStatementFormController implements Initializable {
         return new DeliveryStatement(currentNumber, contract, rows);
     }
 
+    public void deleteRowInTable(ActionEvent event) {
+        table.getItems().removeAll(table.getSelectionModel().getSelectedItems());
+    }
+
     public void addRowInTable(ActionEvent event) {
         if (textFieldValidator.fieldsAreValid(productName, productPrice, period, janQuantity, febQuantity,
                 marQuantity, mayQuantity, junQuantity, julQuantity, augQuantity, sepQuantity,
@@ -229,12 +233,6 @@ public class DeliveryStatementFormController implements Initializable {
             InformationWindow.viewInputDataNotValidWindow("Что-то все еще выделено красным");
         }
     }
-
-
-    public void deleteRowInTable(ActionEvent event) {
-        table.getItems().removeAll(table.getSelectionModel().getSelectedItems());
-    }
-
 
     private TableRowInDeliveryStatementForm mapInputDataToTable() {
         return new TableRowInDeliveryStatementForm(productName.getText(),
